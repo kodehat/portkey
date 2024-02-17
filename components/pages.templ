@@ -1,15 +1,15 @@
 package components
 
 templ HomePage(portals []templ.Component) {
-  <div class="h-screen flex flex-col items-start justify-center space-y-12">
-    for _, portal := range portals {
-      @portal
-    }
-  </div>
+	<div class="h-screen flex flex-col items-start justify-center space-y-12">
+		for _, portal := range portals {
+			@portal
+		}
+	</div>
 }
 
 templ ContentPage(content string) {
-  <p class="block mb-4 leading-[1.6] tracking-[1.5px]">
-    @templ.Raw(content)
-  </p>
+	<p class="block mb-4 leading-[1.6] tracking-[1.5px]">
+		@templ.Raw(content)
+	</p>
 }

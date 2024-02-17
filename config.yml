@@ -1,0 +1,21 @@
+host: localhost
+port: 3000
+title: "This Is My Cloud Portal"
+sortAlphabetically: false
+portals:
+- title: home
+  emoji: 🏠
+  link: /
+  external: false
+- title: mails
+  emoji: ✉️
+  link: https://mail.thisismy.cloud
+  external: true
+- title: dns
+  emoji: 🌐
+  link: https://dns.thisismy.cloud
+  external: true
+- title: about
+  emoji: ❓
+  link: /about
+  external: false

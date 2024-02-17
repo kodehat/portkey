@@ -1,0 +1,15 @@
+{
+  "name": "thisismy.cloud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tailwindcss -i assets/css/main.css build -o static/css/main.css",
+    "watch": "tailwindcss -i assets/css/main.css build -o static/css/main.css --watch"
+  },
+  "author": "kodehat",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

@@ -1,0 +1,22 @@
+package components
+
+templ HomePortal(link string, title string, external bool) {
+  <a 
+    if external {
+      target="_blank" rel="nofollow"
+    }
+  href={ templ.SafeURL(link) } class="text-5xl hover:underline hover:text-slate-300">{ title }</a>
+}
+
+templ FooterPortal(link string, emoji string, title string, external bool) {
+  <div class="inline-flex items-center">
+  if emoji != "" {
+    { emoji }
+  }
+    <a 
+      if external {
+        target="_blank" rel="nofollow"
+      }
+    href={ templ.SafeURL(link) } class="mx-1 no-underline border-b-2 border-solid hover:text-slate-300">{ title }</a>
+  </div>
+}

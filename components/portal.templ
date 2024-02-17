@@ -1,22 +1,27 @@
 package components
 
-templ HomePortal(link string, title string, external bool) {
-  <a 
+templ HomePortal(link string, emoji string, title string, external bool) {
+  <span class="text-5xl font-light inline-flex items-center">
+    if emoji != "" {
+      { emoji }
+    }
+    <a 
     if external {
       target="_blank" rel="nofollow"
     }
-  href={ templ.SafeURL(link) } class="text-5xl hover:underline hover:text-slate-300">{ title }</a>
+  href={ templ.SafeURL(link) } class="mx-4 no-underline border-b-2 border-solid hover:text-slate-300">{ title }</a>
+  </span>
 }
 
 templ FooterPortal(link string, emoji string, title string, external bool) {
-  <div class="inline-flex items-center">
-  if emoji != "" {
-    { emoji }
-  }
+  <span class="inline-flex items-center">
+    if emoji != "" {
+      { emoji }
+    }
     <a 
       if external {
         target="_blank" rel="nofollow"
       }
-    href={ templ.SafeURL(link) } class="mx-1 no-underline border-b-2 border-solid hover:text-slate-300">{ title }</a>
-  </div>
+    href={ templ.SafeURL(link) } class="mx-2 no-underline border-b-2 border-solid hover:text-slate-300">{ title }</a>
+  </span>
 }

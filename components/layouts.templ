@@ -4,12 +4,21 @@ templ Base(title string) {
   <!doctype html>
   <html>
   <head>
+    <!-- Basics -->
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Favicon stuff -->
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg"/>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png"/>
+    <!-- Theme stuff -->
+    <meta name="theme-color" content="#334155"/>
+    <!-- Stylesheets -->
     <link href="/static/css/main.css" rel="stylesheet"/>
+    <!-- Deferred JavaScript -->
     <title>{ title }</title>
+    <!-- TODO: Embed analytic script here -->
   </head>
-  <body class="bg-slate-700 text-base text-slate-200 leading-[2rem] tracking-wide shadow-none">
+  <body class="bg-slate-700 text-base m-0 p-0 text-slate-200 leading-[2rem] tracking-wide shadow-none">
     { children... }
   </body>
   </html>
@@ -17,35 +26,38 @@ templ Base(title string) {
 
 templ HomeLayout(title string, contents templ.Component) {
   @Base(title) {
-    <div class="flex flex-col justify-between items-center">
+    <nav role="navigation" class="my-[1em] mx-auto flex flex-col justify-center items-center">
       @contents
-    </div>
+    </nav>
+    <footer class="w-full flex justify-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
+      <p>made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
+    </footer>
   }
 }
 
-templ ContentLayout(title string, contents templ.Component, portals []templ.Component) {
+templ ContentLayout(title string, header string, contents templ.Component, portals []templ.Component, footerText string) {
   @Base(title) {
-    <header class="flex flex-col justify-center items-start m-auto w-[45%] max-w-[64em] pt-24 pr-4 pb-4">
-      <h1 class="text-3xl mb-2 opacity-60 ">{ title }</h1>
+    <header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-24 pr-4 pb-4">
+      <h1 class="text-3xl mb-2 opacity-60 ">{ header }</h1>
     </header>
-    <main class="m-auto w-[45%] max-w-[64em]">
+    <main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">
       <article class="flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]">
         @contents
       </article>
       <nav class="flex flex-col justify-center items-center text-center my-[1em] mx-auto">
         <hr class="my-4 bg-transparent w-1/2 border border-solid opacity-30" />
-        <p class="inline ">
-        for i, portal := range portals {
-          @portal
-          if i != len(portals) - 1 {
-            &centerdot;
+        <p class="inline space-x-2">
+          for i, portal := range portals {
+            @portal
+            if i != len(portals) - 1 {
+              &#183;
+            }
           }
-        }
         </p>
       </nav>
     </main>
     <footer class="w-full flex justify-center items-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
-      Works like a portal. 
+      { footerText }
     </footer>
   }
 }

@@ -26,7 +26,7 @@ templ Base(title string) {
 
 templ HomeLayout(title string, contents templ.Component) {
 	@Base(title) {
-		<nav role="navigation" class="my-[1em] mx-auto flex flex-col justify-center items-center">
+		<nav role="navigation" class="my-16 mx-auto flex flex-col justify-center items-center">
 			@contents
 		</nav>
 		<footer class="w-full flex justify-center bg-transparent relative bottom-0 p-4 text-base opacity-80">

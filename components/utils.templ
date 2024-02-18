@@ -3,7 +3,9 @@ package components
 templ Version(buildTime string, commitHash string, goVersion string) {
 	<ul class="list-disc">
 		<li>Build time: { buildTime }</li>
-		<li>Commit hash: <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/thisismy.cloud/commit/" + commitHash) }>{ commitHash }</a></li>
+		if commitHash != "" {
+			<li>Commit hash: <a class="no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/thisismy.cloud/commit/" + commitHash) }>{ commitHash }</a></li>
+		}
 		<li>Go version: { goVersion }</li>
 	</ul>
 }

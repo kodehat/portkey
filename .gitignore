@@ -244,4 +244,6 @@ $RECYCLE.BIN/
 /thisismy.cloud
 /components/*_templ.go
 /static/**/*.css
+/static/**/*.js
+/static/**/*.js.map
 /tmp/

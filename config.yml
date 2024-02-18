@@ -54,6 +54,9 @@ pages:
     #ts3viewer_1121936 {
       margin: 0 auto;
     }
+    #ts3v_1121936 .tsv_channel .tsv_content {
+      /*color: darkgreen !important;*/
+    }
     #ts3viewer_1121936 > * > div:last-child {
       display: none;
     }
@@ -61,6 +64,6 @@ pages:
     <div id="ts3viewer_1121936"></div>
     <script src="https://static.tsviewer.com/short_expire/js/ts3viewer_loader.js"></script>
     <script>
-    var ts3v_url_1 = "https://www.tsviewer.com/ts3viewer.php?ID=1121936&text=dbdbdb&text_size=13&text_family=6&text_s_color=ffffff&text_s_weight=normal&text_s_style=normal&text_s_variant=small-caps&text_s_decoration=none&text_i_color=&text_i_weight=normal&text_i_style=normal&text_i_variant=normal&text_i_decoration=none&text_c_color=&text_c_weight=normal&text_c_style=normal&text_c_variant=normal&text_c_decoration=none&text_u_color=c7c7c7&text_u_weight=normal&text_u_style=normal&text_u_variant=normal&text_u_decoration=none&text_s_color_h=&text_s_weight_h=bold&text_s_style_h=normal&text_s_variant_h=normal&text_s_decoration_h=none&text_i_color_h=&text_i_weight_h=bold&text_i_style_h=normal&text_i_variant_h=normal&text_i_decoration_h=none&text_c_color_h=&text_c_weight_h=normal&text_c_style_h=normal&text_c_variant_h=normal&text_c_decoration_h=none&text_u_color_h=&text_u_weight_h=bold&text_u_style_h=normal&text_u_variant_h=normal&text_u_decoration_h=none&iconset=default_colored_2014";
+    var ts3v_url_1 = "https://www.tsviewer.com/ts3viewer.php?ID=1121936&text=0099ff&text_size=13&text_family=6&text_s_color=0099ff&text_s_weight=normal&text_s_style=normal&text_s_variant=small-caps&text_s_decoration=none&text_i_color=&text_i_weight=normal&text_i_style=normal&text_i_variant=normal&text_i_decoration=none&text_c_color=&text_c_weight=normal&text_c_style=normal&text_c_variant=normal&text_c_decoration=none&text_u_color=0099ff&text_u_weight=normal&text_u_style=normal&text_u_variant=normal&text_u_decoration=none&text_s_color_h=&text_s_weight_h=bold&text_s_style_h=normal&text_s_variant_h=normal&text_s_decoration_h=none&text_i_color_h=&text_i_weight_h=bold&text_i_style_h=normal&text_i_variant_h=normal&text_i_decoration_h=none&text_c_color_h=&text_c_weight_h=normal&text_c_style_h=normal&text_c_variant_h=normal&text_c_decoration_h=none&text_u_color_h=&text_u_weight_h=bold&text_u_style_h=normal&text_u_variant_h=normal&text_u_decoration_h=none&iconset=default_colored_2014";
     ts3v_display.init(ts3v_url_1, 1121936, 100);
     </script>

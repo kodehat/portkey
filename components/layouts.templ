@@ -2,7 +2,7 @@ package components
 
 templ Base(title string) {
 	<!DOCTYPE html>
-	<html>
+	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
 		<head>
 			<!-- Basics -->
 			<meta charset="UTF-8"/>
@@ -15,10 +15,32 @@ templ Base(title string) {
 			<!-- Stylesheets -->
 			<link href="/static/css/main.css" rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
+			<script defer src="/static/js/main.js"></script>
+			<!-- Set title -->
 			<title>{ title }</title>
 			<!-- TODO: Embed analytic script here -->
 		</head>
-		<body class="bg-slate-700 text-base m-0 p-0 text-slate-200 leading-[2rem] tracking-wide shadow-none">
+		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
+			<div class="flex justify-end mx-auto mt-6 lg:mt-10 mr-4 lg:mr-8">
+				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex flex-shrink-0 h-6 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 w-11 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
+					<span class="sr-only">Use setting</span>
+					<span class="relative inline-block w-5 h-5 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none dark:translate-x-5 ring-0">
+							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out" aria-hidden="true">
+								<svg  xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun w-4 h-4 text-slate-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+										<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
+								</svg>
+							</span>
+							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100 dark:duration-200 dark:ease-in" aria-hidden="true">
+								<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon w-4 h-4 text-slate-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+								</svg>
+							</span>
+					</span>
+				</button>
+			</div>
 			{ children... }
 		</body>
 	</html>
@@ -26,7 +48,7 @@ templ Base(title string) {
 
 templ HomeLayout(title string, contents templ.Component) {
 	@Base(title) {
-		<nav role="navigation" class="my-16 mx-auto flex flex-col justify-center items-center">
+		<nav class="mx-auto flex flex-col justify-center items-center">
 			@contents
 		</nav>
 		<footer class="w-full flex justify-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
@@ -37,7 +59,7 @@ templ HomeLayout(title string, contents templ.Component) {
 
 templ ContentLayout(title string, header string, contents templ.Component, portals []templ.Component, footerText string) {
 	@Base(title) {
-		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-24 pr-4 pb-4">
+		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-8 lg:pt-16 pr-4 pb-4">
 			<h1 class="text-3xl mb-2 opacity-60 ">{ header }</h1>
 		</header>
 		<main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">

@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -65,21 +66,36 @@ func main() {
 	http.Handle("/version", templ.Handler(components.ContentLayout(fmt.Sprintf("%s - %s", "Version", C.Title), "Version", components.Version(BuildTime, CommitHash, GoVersion), allFooterPortals, C.FooterText)))
 	http.Handle("/static/", staticHandler(http.FileServer(http.FS(static))))
 
+	http.Handle("/api/v1/portals", http.HandlerFunc(returnPortalsAsJson))
+	http.Handle("/api/v1/pages", http.HandlerFunc(returnPagessAsJson))
+
 	log.Printf("Listening on %s:%d\n", C.Host, C.Port)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", C.Host, C.Port), nil)
 }
 
+func returnPortalsAsJson(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(C.Portals)
+}
+
+func returnPagessAsJson(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(C.Pages)
+}
+
 type portal struct {
-	Link     string
-	Title    string
-	Emoji    string
-	External bool
+	Link     string `json:"link"`
+	Title    string `json:"title"`
+	Emoji    string `json:"emoji"`
+	External bool   `json:"external"`
 }
 
 type page struct {
-	Heading string
-	Path    string
-	Content string
+	Heading string `json:"heading"`
+	Path    string `json:"path"`
+	Content string `json:"content"`
 }
 
 type config struct {

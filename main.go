@@ -43,13 +43,11 @@ func main() {
 			return strings.ToLower(C.Portals[i].Title) < strings.ToLower(C.Portals[j].Title)
 		})
 	}
-	var allHomePortals = make([]templ.Component, len(C.Portals))
 	var allFooterPortals = make([]templ.Component, len(C.Portals))
 	for i, configPortal := range C.Portals {
-		allHomePortals[i] = components.HomePortal(configPortal.Link, configPortal.Emoji, configPortal.Title, configPortal.External)
 		allFooterPortals[i] = components.FooterPortal(configPortal.Link, configPortal.Emoji, configPortal.Title, configPortal.External)
 	}
-	home := components.HomePage(allHomePortals)
+	home := components.HomePage()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
@@ -66,11 +64,29 @@ func main() {
 	http.Handle("/version", templ.Handler(components.ContentLayout(fmt.Sprintf("%s - %s", "Version", C.Title), "Version", components.Version(BuildTime, CommitHash, GoVersion), allFooterPortals, C.FooterText)))
 	http.Handle("/static/", staticHandler(http.FileServer(http.FS(static))))
 
+	http.Handle("/_/portals", http.HandlerFunc(returnSearchedPortals))
+
 	http.Handle("/api/v1/portals", http.HandlerFunc(returnPortalsAsJson))
 	http.Handle("/api/v1/pages", http.HandlerFunc(returnPagessAsJson))
 
 	log.Printf("Listening on %s:%d\n", C.Host, C.Port)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", C.Host, C.Port), nil)
+}
+
+func returnSearchedPortals(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("search")
+	var allHomePortals = make([]templ.Component, 0)
+	for _, configPortal := range C.Portals {
+		portal := components.HomePortal(configPortal.Link, configPortal.Emoji, configPortal.Title, configPortal.External)
+		if query != "" {
+			if strings.Contains(configPortal.Title, query) {
+				allHomePortals = append(allHomePortals, portal)
+			}
+		} else {
+			allHomePortals = append(allHomePortals, portal)
+		}
+	}
+	components.PortalPartial(allHomePortals).Render(r.Context(), w)
 }
 
 func returnPortalsAsJson(w http.ResponseWriter, r *http.Request) {

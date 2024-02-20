@@ -6,7 +6,7 @@ COPY package.json ./
 
 RUN npm install
 
-COPY pkg/components pkg/components/
+COPY pkg pkg/
 COPY assets assets/
 COPY static static/
 
@@ -22,7 +22,7 @@ RUN go mod download
 COPY --from=frontend /usr/src/app/static static/
 COPY .git .git/
 COPY *.go build.sh ./
-COPY pkg/components pkg/components/
+COPY pkg pkg/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
@@ -34,7 +34,7 @@ WORKDIR /opt
 
 RUN adduser -D -H nonroot
 
-COPY --chown=nonroot:nonroot --from=backend /app/thisismy.cloud /opt/app
+COPY --chown=nonroot:nonroot --from=backend /app/portkey /opt/app
 
 EXPOSE 3000
 

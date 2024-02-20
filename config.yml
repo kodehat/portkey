@@ -8,6 +8,8 @@ portals:
   emoji: 🚥
   link: https://status.thisismy.cloud
   external: true
+  keywords:
+  - up
 - title: dns
   emoji: 🌐
   link: https://dns.thisismy.cloud
@@ -16,6 +18,8 @@ portals:
   emoji: 🕹️
   link: https://gamepanel.thisismy.cloud
   external: true
+  keywords:
+  - play
 - title: mail
   emoji: ✉️
   link: https://mail.thisismy.cloud
@@ -24,10 +28,14 @@ portals:
   emoji: 🔑
   link: https://vault.thisismy.cloud
   external: true
+  keywords:
+  - password
 - title: teamspeak 3
   emoji: 🗣️
   link: /teamspeak3
   external: false
+  keywords:
+  - voice
 - title: about
   emoji: ❓
   link: /about
@@ -36,6 +44,8 @@ portals:
   emoji: 🏠
   link: /
   external: false
+  keywords:
+  - home
 pages:
 - heading: "About"
   path: /about

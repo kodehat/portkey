@@ -14,6 +14,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/kodehat/thisismy.cloud/pkg/components"
 	"github.com/kodehat/thisismy.cloud/pkg/types"
+	"github.com/kodehat/thisismy.cloud/pkg/utils"
 	"github.com/spf13/viper"
 )
 
@@ -80,7 +81,7 @@ func returnSearchedPortals(w http.ResponseWriter, r *http.Request) {
 	for _, configPortal := range C.Portals {
 		portal := components.HomePortal(configPortal.Link, configPortal.Emoji, configPortal.Title, configPortal.External)
 		if query != "" {
-			if strings.Contains(configPortal.Title, query) {
+			if strings.Contains(configPortal.Title, query) || utils.ArrSubStr(configPortal.Keywords, query) {
 				allHomePortals = append(allHomePortals, portal)
 			}
 		} else {

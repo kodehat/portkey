@@ -1,10 +1,11 @@
 package types
 
 type Portal struct {
-	Link     string `json:"link"`
-	Title    string `json:"title"`
-	Emoji    string `json:"emoji"`
-	External bool   `json:"external"`
+	Link     string   `json:"link"`
+	Title    string   `json:"title"`
+	Emoji    string   `json:"emoji"`
+	External bool     `json:"external"`
+	Keywords []string `json:"keywords"`
 }
 
 type Page struct {

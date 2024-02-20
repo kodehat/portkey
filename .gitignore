@@ -242,7 +242,7 @@ $RECYCLE.BIN/
 
 # Custom
 /thisismy.cloud
-/components/*_templ.go
+/pkg/components/*_templ.go
 /static/**/*.css
 /static/**/*.js
 /static/**/*.js.map

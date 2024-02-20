@@ -9,6 +9,7 @@ RUN npm install
 COPY pkg pkg/
 COPY assets assets/
 COPY static static/
+COPY tailwind.config.js ./
 
 RUN npm run build
 

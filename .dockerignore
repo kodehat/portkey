@@ -243,9 +243,5 @@
 
 # Custom
 **/portkey
-**/pkg/components/*_templ.go
-**/static/**/*.css
-**/static/**/*.js
-**/static/**/*.js.map
 **/tmp
 fly.toml

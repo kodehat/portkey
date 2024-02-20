@@ -38,7 +38,7 @@ func main() {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 	log.Printf("Looking for config.y[a]ml in: %s\n", configPath)
-	loadConfig(F.ConfigPath)
+	loadConfig(configPath)
 
 	if C.SortAlphabetically {
 		sort.Slice(C.Portals, func(i, j int) bool {
@@ -105,12 +105,13 @@ func returnPagessAsJson(w http.ResponseWriter, r *http.Request) {
 
 func loadConfig(configPath string) {
 	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
+	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
 	viper.SetDefault("title", "Your Portal")
 	viper.SetDefault("footerText", "Works like a portal.")
+	viper.SafeWriteConfig()
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))

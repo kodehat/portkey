@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for portkey-demo on 2024-02-20T17:45:45+01:00
+# fly.toml app configuration file generated for portkey-demo on 2024-02-20T18:26:21+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -6,7 +6,15 @@
 app = 'portkey-demo'
 primary_region = 'ams'
 
+[experimental]
+  cmd = ['--config-path', '/config']
+
 [build]
+
+[[mounts]]
+  source = 'portkey_config'
+  destination = '/config'
+  initial_size = '1'
 
 [http_service]
   internal_port = 3000

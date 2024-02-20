@@ -11,7 +11,8 @@ templ Base(title string) {
 			<link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg"/>
 			<link rel="icon" type="image/png" href="/static/img/favicon.png"/>
 			<!-- Theme stuff -->
-			<meta name="theme-color" content="#334155"/>
+			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
+			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
 			<!-- Stylesheets -->
 			<link href="/static/css/main.css" rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
@@ -41,6 +42,7 @@ templ Base(title string) {
 					</span>
 				</button>
 			</div>
+			<h1 class="mb-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">portkey</h1>
 			{ children... }
 		</body>
 	</html>

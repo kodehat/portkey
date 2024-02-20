@@ -14,9 +14,9 @@ templ HomePage() {
 			hx-target="#search-results"
 			hx-indicator=".htmx-indicator"
 			@keydown.window.prevent.ctrl.k="$nextTick(() => { $el.focus(); });"
-			@keydown.prevent.window.cmd.k="$nextTick(() => { $el.focus(); });"
+			@keydown.window.prevent.cmd.k="$nextTick(() => { $el.focus(); });"
 			type="text"
-			class="bg-slate-50 border-2 border-slate-300 text-slate-900 text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5  dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500"
+			class="bg-slate-50 border-2 border-slate-300 text-slate-900 text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5  dark:bg-slate-600 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500"
 			placeholder="Search..."
 			required
 		/>

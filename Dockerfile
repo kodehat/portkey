@@ -6,7 +6,7 @@ COPY package.json ./
 
 RUN npm install
 
-COPY components components/
+COPY pkg/components pkg/components/
 COPY assets assets/
 COPY static static/
 
@@ -22,7 +22,7 @@ RUN go mod download
 COPY --from=frontend /usr/src/app/static static/
 COPY .git .git/
 COPY *.go build.sh ./
-COPY components components/
+COPY pkg/components pkg/components/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate

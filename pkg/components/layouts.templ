@@ -8,8 +8,11 @@ templ Base(title string) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- Favicon stuff -->
-			<link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg"/>
-			<link rel="icon" type="image/png" href="/static/img/favicon.png"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png"/>
+			<link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png"/>
+			<link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16x16.png"/>
+			<link rel="manifest" href="/static/img/site.webmanifest"/>
+			<link rel="shortcut icon" href="/static/img/favicon.ico"/>
 			<!-- Theme stuff -->
 			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
 			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
@@ -22,7 +25,10 @@ templ Base(title string) {
 			<!-- TODO: Embed analytic script here -->
 		</head>
 		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
-			<div class="flex justify-end mx-auto mt-6 lg:mt-10 mr-4 lg:mr-8">
+			<div class="flex justify-between items-center mt-6 lg:mt-10 mx-4 lg:mx-8">
+				<div class="inline-flex">
+					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-lg" src="/static/img/android-chrome-512x512.png" alt="logo"/>
+				</div>
 				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex flex-shrink-0 h-6 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 w-11 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
 					<span class="sr-only">Use setting</span>
 					<span class="relative inline-block w-5 h-5 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none dark:translate-x-5 ring-0">

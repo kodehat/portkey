@@ -12,7 +12,8 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/kodehat/thisismy.cloud/components"
+	"github.com/kodehat/thisismy.cloud/pkg/components"
+	"github.com/kodehat/thisismy.cloud/pkg/types"
 	"github.com/spf13/viper"
 )
 
@@ -26,8 +27,8 @@ var (
 	GoVersion  string = "N/A"
 )
 
-var C config
-var F flags
+var C types.Config
+var F types.Flags
 
 func main() {
 	loadFlags()
@@ -101,29 +102,6 @@ func returnPagessAsJson(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(C.Pages)
 }
 
-type portal struct {
-	Link     string `json:"link"`
-	Title    string `json:"title"`
-	Emoji    string `json:"emoji"`
-	External bool   `json:"external"`
-}
-
-type page struct {
-	Heading string `json:"heading"`
-	Path    string `json:"path"`
-	Content string `json:"content"`
-}
-
-type config struct {
-	Host               string
-	Port               int
-	Title              string
-	FooterText         string
-	SortAlphabetically bool
-	Portals            []portal
-	Pages              []page
-}
-
 func loadConfig(configPath string) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -139,15 +117,11 @@ func loadConfig(configPath string) {
 	viper.Unmarshal(&C)
 }
 
-type flags struct {
-	ConfigPath string
-}
-
 func loadFlags() {
 	var configPath string
 	flag.StringVar(&configPath, "config-path", ".", "path where config.yml can be found")
 	flag.Parse()
-	F = flags{
+	F = types.Flags{
 		ConfigPath: configPath,
 	}
 }

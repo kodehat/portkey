@@ -14,6 +14,9 @@ portals:
   emoji: 🌐
   link: https://dns.thisismy.cloud
   external: true
+  keywords:
+  - domain
+  - nameserver
 - title: game panel
   emoji: 🕹️
   link: https://gamepanel.thisismy.cloud

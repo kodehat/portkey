@@ -1,8 +1,11 @@
-module github.com/kodehat/thisismy.cloud
+module github.com/kodehat/portkey
 
 go 1.21.3
 
-require github.com/a-h/templ v0.2.543
+require (
+	github.com/a-h/templ v0.2.543
+	github.com/spf13/viper v1.18.2
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -16,7 +19,6 @@ require (
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.18.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect

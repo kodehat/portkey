@@ -241,9 +241,9 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,go,node
 
 # Custom
-/thisismy.cloud
-/pkg/components/*_templ.go
-/static/**/*.css
-/static/**/*.js
-/static/**/*.js.map
-/tmp/
+portkey
+./pkg/components/*_templ.go
+./static/**/*.css
+./static/**/*.js
+./static/**/*.js.map
+./tmp/

@@ -1,82 +1,53 @@
 host: localhost
 port: 3000
-title: "This Is My Cloud Portal"
+title: "portkey"
 footerText: "Works like a portal."
 sortAlphabetically: false
 portals:
-- title: status
-  emoji: 🚥
-  link: https://status.thisismy.cloud
-  external: true
-  keywords:
-  - up
-- title: dns
-  emoji: 🌐
-  link: https://dns.thisismy.cloud
-  external: true
-  keywords:
-  - domain
-  - nameserver
-- title: game panel
-  emoji: 🕹️
-  link: https://gamepanel.thisismy.cloud
-  external: true
-  keywords:
-  - play
-- title: mail
-  emoji: ✉️
-  link: https://mail.thisismy.cloud
-  external: true
-- title: vault
+- title: 1password
   emoji: 🔑
-  link: https://vault.thisismy.cloud
+  link: https://my.1password.eu/
   external: true
   keywords:
-  - password
-- title: teamspeak 3
-  emoji: 🗣️
-  link: /teamspeak3
-  external: false
+  - passwords
+  - vault
+  - 2fa
+  - totp
+- title: gmail
+  emoji: ✉️
+  link: https://mail.google.com
+  external: true
   keywords:
-  - voice
+  - emails
+- title: x (twitter)
+  emoji: 🐦
+  link: https://twitter.com
+  external: true
+- title: github
+  emoji: 💻
+  link: https://github.com/
+  external: true
+  keywords:
+  - code
+  - collaboration
 - title: about
   emoji: ❓
   link: /about
   external: false
-- title: portal
+  keywords:
+  - info
+- title: version
+  emoji: 🔢
+  link: /version
+  external: false
+- title: home
   emoji: 🏠
   link: /
   external: false
-  keywords:
-  - home
 pages:
 - heading: "About"
   path: /about
   content: |-
-    This website is used to have a collection of <em>links</em> that allow you to quickly head over to different <em>applications</em>.
-- heading: "Teamspeak 3"
-  path: /teamspeak3
-  content: |-
-    I am hosting a TeamSpeak 3 server at <a href="ts3server://teamspeak.tadir.de?port=9987">teamspeak.tadir.de</a>.This server has no password and is only meant for friends of mine (and their friends and so on).</br>
-    <strong>TL;DR:</strong> The server is not for public use!</br>
+    This website is used to have a collection of <em>links</em> that allow you to quickly head over to different <em>applications</em>.</br>
     </br>
-    <style>
-    .ts3v_user_tooltip {
-      max-height: 25px;
-    }
-    #ts3viewer_1121936 {
-      margin: 0 auto;
-    }
-    #ts3v_1121936 .tsv_channel .tsv_content {
-      /*color: darkgreen !important;*/
-    }
-    #ts3viewer_1121936 > * > div:last-child {
-      display: none;
-    }
-    </style>
-    <div id="ts3viewer_1121936"></div>
-    <script src="https://static.tsviewer.com/short_expire/js/ts3viewer_loader.js"></script>
-    <script>
-    var ts3v_url_1 = "https://www.tsviewer.com/ts3viewer.php?ID=1121936&text=0099ff&text_size=13&text_family=6&text_s_color=0099ff&text_s_weight=normal&text_s_style=normal&text_s_variant=small-caps&text_s_decoration=none&text_i_color=&text_i_weight=normal&text_i_style=normal&text_i_variant=normal&text_i_decoration=none&text_c_color=&text_c_weight=normal&text_c_style=normal&text_c_variant=normal&text_c_decoration=none&text_u_color=0099ff&text_u_weight=normal&text_u_style=normal&text_u_variant=normal&text_u_decoration=none&text_s_color_h=&text_s_weight_h=bold&text_s_style_h=normal&text_s_variant_h=normal&text_s_decoration_h=none&text_i_color_h=&text_i_weight_h=bold&text_i_style_h=normal&text_i_variant_h=normal&text_i_decoration_h=none&text_c_color_h=&text_c_weight_h=normal&text_c_style_h=normal&text_c_variant_h=normal&text_c_decoration_h=none&text_u_color_h=&text_u_weight_h=bold&text_u_style_h=normal&text_u_variant_h=normal&text_u_decoration_h=none&iconset=default_colored_2014";
-    ts3v_display.init(ts3v_url_1, 1121936, 100);
-    </script>
+    You can additionally define smaller <em>custom pages</em> in the configuration file.

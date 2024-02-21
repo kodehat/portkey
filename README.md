@@ -1,4 +1,4 @@
-<p style="text-align: center;"><img style="border: 0px solid; border-radius: .5rem; width: 10rem; height: 10rem;" src="docs/images/logo.png" alt="portkey logo"></p>
+<p align="center"><img src="docs/images/logo.png" alt="portkey logo"></p>
 
 <h1 align="center">portkey</h1>
 <div align="center">

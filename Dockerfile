@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 
-RUN npm install --include dev --ignore-scripts
+RUN npm install --ignore-scripts --include=dev
 
 COPY internal internal/
 COPY assets assets/

@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
-  content: ["./pkg/components/*.templ"],
+  content: ["./internal/components/*.templ"],
   theme: {
     extend: {
       animation: {

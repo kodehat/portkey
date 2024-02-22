@@ -45,7 +45,7 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL("https://github.com/kodehat/thisismy.cloud/commit/" + commitHash)
+			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL("https://github.com/kodehat/portkey/commit/" + commitHash)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -57,7 +57,7 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(commitHash)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/utils.templ`, Line: 6, Col: 282}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/utils.templ`, Line: 6, Col: 275}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

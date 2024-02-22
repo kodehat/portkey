@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "ch-macbookairm1_vscode",
+    "projectKey": "kodehat_portkey"
+  }
+}

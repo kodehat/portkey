@@ -4,9 +4,9 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 
-RUN npm install
+RUN npm install --include dev --ignore-scripts
 
-COPY pkg pkg/
+COPY internal internal/
 COPY assets assets/
 COPY static static/
 COPY tailwind.config.js ./
@@ -23,7 +23,7 @@ RUN go mod download
 COPY --from=frontend /usr/src/app/static static/
 COPY .git .git/
 COPY *.go build.sh ./
-COPY pkg pkg/
+COPY internal internal/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
@@ -33,9 +33,10 @@ FROM alpine:3.19.1
 
 WORKDIR /opt
 
-RUN adduser -D -H nonroot
+COPY --from=backend /app/portkey /opt/app
 
-COPY --chown=nonroot:nonroot --from=backend /app/portkey /opt/app
+RUN adduser -D -H nonroot && \
+  chmod +x /opt/app
 
 EXPOSE 3000
 

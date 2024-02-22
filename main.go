@@ -12,9 +12,9 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/kodehat/portkey/pkg/components"
-	"github.com/kodehat/portkey/pkg/types"
-	"github.com/kodehat/portkey/pkg/utils"
+	"github.com/kodehat/portkey/internal/components"
+	"github.com/kodehat/portkey/internal/types"
+	"github.com/kodehat/portkey/internal/utils"
 	"github.com/spf13/viper"
 )
 

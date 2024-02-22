@@ -21,7 +21,7 @@ import (
 //go:embed static
 var static embed.FS
 
-// build flags
+// Injected during build.
 var (
 	BuildTime  string = "N/A"
 	CommitHash string
@@ -30,8 +30,10 @@ var (
 
 var C types.Config
 var F types.Flags
+var B types.BuildDetails
 
 func main() {
+	loadBuildDetails()
 	loadFlags()
 	configPath, err := filepath.Abs(F.ConfigPath)
 	if err != nil {
@@ -54,16 +56,16 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			w.WriteHeader(http.StatusNotFound)
-			templ.Handler(components.ContentLayout(fmt.Sprintf("%s - %s", "404 Not Found", C.Title), "404 Not Found", components.NotFound(), allFooterPortals, C.FooterText)).ServeHTTP(w, r)
+			templ.Handler(components.ContentLayout(utils.PageTitle("404 Not Found", C.Title), "404 Not Found", components.NotFound(), allFooterPortals, C.FooterText)).ServeHTTP(w, r)
 			return
 		}
 		templ.Handler(components.HomeLayout(C.Title, home)).ServeHTTP(w, r)
 	})
 
 	for _, page := range C.Pages {
-		http.Handle(page.Path, templ.Handler(components.ContentLayout(fmt.Sprintf("%s - %s", page.Heading, C.Title), page.Heading, components.ContentPage(page.Content), allFooterPortals, C.FooterText)))
+		http.Handle(page.Path, templ.Handler(components.ContentLayout(utils.PageTitle(page.Heading, C.Title), page.Heading, components.ContentPage(page.Content), allFooterPortals, C.FooterText)))
 	}
-	http.Handle("/version", templ.Handler(components.ContentLayout(fmt.Sprintf("%s - %s", "Version", C.Title), "Version", components.Version(BuildTime, CommitHash, GoVersion), allFooterPortals, C.FooterText)))
+	http.Handle("/version", templ.Handler(components.ContentLayout(utils.PageTitle("Version", C.Title), "Version", components.Version(B), allFooterPortals, C.FooterText)))
 	http.Handle("/static/", staticHandler(http.FileServer(http.FS(static))))
 
 	http.Handle("/_/portals", http.HandlerFunc(returnSearchedPortals))
@@ -101,6 +103,14 @@ func returnPagessAsJson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(C.Pages)
+}
+
+func loadBuildDetails() {
+	B = types.BuildDetails{
+		BuildTime:  BuildTime,
+		CommitHash: CommitHash,
+		GoVersion:  GoVersion,
+	}
 }
 
 func loadConfig(configPath string) {

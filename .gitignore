@@ -242,7 +242,7 @@ $RECYCLE.BIN/
 
 # Custom
 portkey
-pkg/components/*_templ.go
+internal/components/*_templ.go
 static/**/*.css
 static/**/*.js
 static/**/*.js.map

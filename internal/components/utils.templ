@@ -1,12 +1,14 @@
 package components
 
-templ Version(buildTime string, commitHash string, goVersion string) {
+import "github.com/kodehat/portkey/internal/types"
+
+templ Version(buildDetails types.BuildDetails) {
 	<ul class="list-none">
-		<li>Build time: { buildTime }</li>
-		if commitHash != "" {
-			<li>Commit hash: <a class="no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + commitHash) }>{ commitHash }</a></li>
+		<li>Build time: { buildDetails.BuildTime }</li>
+		if buildDetails.CommitHash != "" {
+			<li>Commit hash: <a class="no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></li>
 		}
-		<li>Go version: { goVersion }</li>
+		<li>Go version: { buildDetails.GoVersion }</li>
 	</ul>
 }
 

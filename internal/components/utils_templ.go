@@ -10,7 +10,9 @@ import "context"
 import "io"
 import "bytes"
 
-func Version(buildTime string, commitHash string, goVersion string) templ.Component {
+import "github.com/kodehat/portkey/internal/types"
+
+func Version(buildDetails types.BuildDetails) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -28,9 +30,9 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(buildTime)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.BuildTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 4, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 6, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -40,12 +42,12 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if commitHash != "" {
+		if buildDetails.CommitHash != "" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li>Commit hash: <a class=\"no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300\" target=\"_blank\" rel=\"nofollow\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL("https://github.com/kodehat/portkey/commit/" + commitHash)
+			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -55,9 +57,9 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(commitHash)
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.CommitHash)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 6, Col: 275}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 8, Col: 301}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -73,9 +75,9 @@ func Version(buildTime string, commitHash string, goVersion string) templ.Compon
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(goVersion)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.GoVersion)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 8, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/utils.templ`, Line: 10, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

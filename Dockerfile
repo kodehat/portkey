@@ -31,6 +31,13 @@ RUN bash build.sh
 
 FROM alpine:3.19.1
 
+LABEL org.opencontainers.image.authors='dev@codehat.de' \
+      org.opencontainers.image.url='https://www.portkey.page' \
+      org.opencontainers.image.documentation='https://github.com/kodehat/portkey' \
+      org.opencontainers.image.source='https://github.com/kodehat/portkey' \
+      org.opencontainers.image.vendor='kodehat' \
+      org.opencontainers.image.licenses='AGPL-3.0'
+
 WORKDIR /opt
 
 COPY --from=backend /app/portkey /opt/app

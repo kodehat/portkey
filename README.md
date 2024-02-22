@@ -14,6 +14,11 @@
 <br />
 
 <div align="center">
+  <!-- Sonar quality gate -->
+  <a href="https://sonarcloud.io/project/overview?id=kodehat_portkey">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=kodehat_portkey&metric=alert_status"
+      alt="Sonar quality gate" />
+  </a>
   <!-- GitHub stars -->
   <a href="https://github.com/kodehat/portkey">
     <img src="https://img.shields.io/github/stars/kodehat/portkey"
@@ -22,10 +27,10 @@
   <!-- Go version -->
   <img src="https://img.shields.io/github/go-mod/go-version/kodehat/portkey"
       alt="Go version" />
-  <!-- Docker Hub -->
-  <a href="https://travis-ci.org/choojs/choo">
-    <img src="https://img.shields.io/docker/pulls/kodehat/portkey"
-      alt="Docker Hub" />
+  <!-- Docker image size -->
+  <a href="https://hub.docker.com/r/codehat/portkey">
+    <img src="https://img.shields.io/docker/image-size/codehat/portkey"
+      alt="Docker image size" />
   </a>
 </div>
 

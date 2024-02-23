@@ -15,9 +15,9 @@ else
     commit_hash=$latest_commit
 fi
 
-if [[ $(go version) =~ [0-9]+\.[0-9]+\.[0-9]+ ]];
+if command -v go > /dev/null 2>&1
 then
-    go_version=${BASH_REMATCH[0]}
+    go_version=$(go version | sed -nr 's/.*([0-9]+\.[0-9]+\.[0-9]+).*/\1/p')
 fi
 
 FLAG="-X $TARGET_PACKAGE.BuildTime=$BUILD_TIME"

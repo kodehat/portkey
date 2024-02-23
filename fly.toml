@@ -6,15 +6,8 @@
 app = 'portkey-demo'
 primary_region = 'ams'
 
-[experimental]
-  cmd = ['--config-path', '/config']
-
-[build]
-
-[[mounts]]
-  source = 'portkey_config'
-  destination = '/config'
-  initial_size = '1'
+[env]
+  HOST = '0.0.0.0'
 
 [http_service]
   internal_port = 3000

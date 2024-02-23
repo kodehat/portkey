@@ -1,33 +1,35 @@
 package components
 
-templ HomePortal(link string, emoji string, title string, external bool) {
+import "github.com/kodehat/portkey/internal/models"
+
+templ HomePortal(portal models.Portal) {
 	<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light inline-flex items-center">
-		if emoji != "" {
-			{ emoji }
+		if portal.Emoji != "" {
+			{ portal.Emoji }
 		}
 		<a
-			if external {
+			if portal.External {
 				target="_blank"
 				rel="nofollow"
 			}
-			href={ templ.SafeURL(link) }
+			href={ templ.SafeURL(portal.Link) }
 			class="mx-4 whitespace-nowrap no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
-		>{ title }</a>
+		>{ portal.Title }</a>
 	</span>
 }
 
-templ FooterPortal(link string, emoji string, title string, external bool) {
+templ FooterPortal(portal models.Portal) {
 	<span class="mx-2 inline-flex items-center">
-		if emoji != "" {
-			{ emoji }
+		if portal.Emoji != "" {
+			{ portal.Emoji }
 		}
 		<a
-			if external {
+			if portal.External {
 				target="_blank"
 				rel="nofollow"
 			}
-			href={ templ.SafeURL(link) }
+			href={ templ.SafeURL(portal.Link) }
 			class="ml-1 no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
-		>{ title }</a>
+		>{ portal.Title }</a>
 	</span>
 }

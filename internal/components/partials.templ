@@ -1,7 +1,9 @@
 package components
 
-templ PortalPartial(portals []templ.Component) {
+import "github.com/kodehat/portkey/internal/models"
+
+templ PortalPartial(portals []models.Portal) {
 	for _, portal := range portals {
-		@portal
+		@HomePortal(portal)
 	}
 }

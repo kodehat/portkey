@@ -1,6 +1,8 @@
 package components
 
-templ Base(title string) {
+import "github.com/kodehat/portkey/internal/config"
+
+templ Base(pageTitle string, config config.Config) {
 	<!DOCTYPE html>
 	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
 		<head>
@@ -21,7 +23,7 @@ templ Base(title string) {
 			<!-- Deferred JavaScript -->
 			<script defer src="/static/js/main.js"></script>
 			<!-- Set title -->
-			<title>{ title }</title>
+			<title>{ config.Title }</title>
 			<!-- TODO: Embed analytic script here -->
 		</head>
 		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
@@ -48,27 +50,27 @@ templ Base(title string) {
 					</span>
 				</button>
 			</div>
-			<h1 class="mb-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">portkey</h1>
+			<h1 class="my-6 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">{ config.Title }</h1>
 			{ children... }
 		</body>
 	</html>
 }
 
-templ HomeLayout(title string, contents templ.Component) {
-	@Base(title) {
+templ HomeLayout(pageTitle string, config config.Config, contents templ.Component) {
+	@Base(pageTitle, config) {
 		<nav class="my-4 lg:my-8 mx-auto flex flex-col justify-center items-center">
 			@contents
 		</nav>
 		<footer class="w-full flex justify-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
-			<p>made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
+			@templ.Raw(config.Footer)
 		</footer>
 	}
 }
 
-templ ContentLayout(title string, header string, contents templ.Component, portals []templ.Component, footerText string) {
-	@Base(title) {
+templ ContentLayout(pageTitle string, config config.Config, contents templ.Component) {
+	@Base(pageTitle, config) {
 		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-8 lg:pt-16 pr-4 pb-4">
-			<h1 class="text-3xl mb-2 opacity-60 ">{ header }</h1>
+			<h1 class="text-3xl mb-2 opacity-60 ">{ pageTitle }</h1>
 		</header>
 		<main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">
 			<article class="flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]">
@@ -77,9 +79,9 @@ templ ContentLayout(title string, header string, contents templ.Component, porta
 			<nav class="flex flex-col justify-center items-center text-center my-[1em] mx-auto">
 				<hr class="my-4 bg-transparent w-1/2 border border-solid opacity-30"/>
 				<p class="inline space-x-2">
-					for i, portal := range portals {
-						@portal
-						if i != len(portals) - 1 {
+					for i, portal := range config.Portals {
+						@FooterPortal(portal)
+						if i != len(config.Portals) - 1 {
 							&#183;
 						}
 					}
@@ -87,7 +89,7 @@ templ ContentLayout(title string, header string, contents templ.Component, porta
 			</nav>
 		</main>
 		<footer class="w-full flex justify-center items-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
-			{ footerText }
+			@templ.Raw(config.Footer)
 		</footer>
 	}
 }

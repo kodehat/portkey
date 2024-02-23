@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -14,9 +15,9 @@ import (
 
 type Config struct {
 	Host               string
-	Port               int
+	Port               string
 	Title              string
-	FooterText         string
+	Footer             string
 	SortAlphabetically bool
 	Portals            []models.Portal
 	Pages              []models.Page
@@ -29,8 +30,8 @@ type Flags struct {
 var C Config
 var F Flags
 
-func init() {
-	loadFlags()
+func Load() {
+	LoadFlags()
 	configPath, err := filepath.Abs(F.ConfigPath)
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
@@ -39,9 +40,13 @@ func init() {
 	loadConfig(F.ConfigPath)
 }
 
-func loadFlags() {
+func LoadFlags() {
 	var configPath string
-	flag.StringVar(&configPath, "config-path", ".", "path where config.yml can be found")
+	workDir, err := os.Getwd()
+	if err != nil {
+		workDir = "."
+	}
+	flag.StringVar(&configPath, "config-path", workDir, "path where config.yml can be found")
 	flag.Parse()
 	F = Flags{
 		ConfigPath: configPath,

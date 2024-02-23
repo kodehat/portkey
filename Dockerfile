@@ -29,7 +29,7 @@ COPY internal internal/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
-RUN sh build.sh $VERSION
+RUN sh build.sh "$VERSION"
 
 FROM alpine:3.19.1
 

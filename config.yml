@@ -1,7 +1,8 @@
 host: localhost
 port: 3000
 title: "portkey"
-footerText: "Works like a portal."
+footer: |-
+  <p>made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
 sortAlphabetically: false
 portals:
 - title: 1password

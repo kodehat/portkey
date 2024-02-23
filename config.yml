@@ -1,8 +1,9 @@
 host: localhost
 port: 3000
 title: "portkey"
+# Remember that Tailwind classes used here only work if already used somewhere else because the bundler couldn't look here!
 footer: |-
-  <p>made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
+  <p><a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.portkey.page/">portkey</a> made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
 sortAlphabetically: false
 portals:
 - title: 1password

@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"net/http"
@@ -23,8 +23,8 @@ func (w *NotFoundRespWr) Write(p []byte) (int, error) {
 	return len(p), nil // Lie that we successfully written it
 }
 
-// staticHandler Redirect to 404 page if static file not found https://stackoverflow.com/a/47286697
-func staticHandler(h http.Handler) http.HandlerFunc {
+// StaticHandler Redirect to 404 page if static file not found https://stackoverflow.com/a/47286697
+func StaticHandler(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		nfrw := &NotFoundRespWr{ResponseWriter: w}
 		h.ServeHTTP(nfrw, r)

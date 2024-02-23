@@ -1,34 +1,30 @@
 #!/bin/sh
 
-clear
-
-TRG_PKG='main'
+TARGET_PACKAGE='github.com/kodehat/portkey/internal/build'
 BUILD_TIME=$(date -u +"%Y.%m.%d_%H:%M:%S")
-CommitHash=N/A
-GoVersion=N/A
+
+commit_hash=
+version=${1:-dev}
+go_version=unknown
+
+latest_commit=$(git log -1 --pretty=format:%h || echo 'N/A')
+if [[ latest_commit =~ 'fatal' ]];
+then
+    commit_hash=
+else
+    commit_hash=$latest_commit
+fi
 
 if [[ $(go version) =~ [0-9]+\.[0-9]+\.[0-9]+ ]];
 then
-    GoVersion=${BASH_REMATCH[0]}
+    go_version=${BASH_REMATCH[0]}
 fi
 
-GH=$(git log -1 --pretty=format:%h || echo 'N/A')
-if [[ GH =~ 'fatal' ]];
-then
-    CommitHash=N/A
-else
-    CommitHash=$GH
-fi
+FLAG="-X $TARGET_PACKAGE.BuildTime=$BUILD_TIME"
+FLAG="$FLAG -X $TARGET_PACKAGE.CommitHash=$commit_hash"
+FLAG="$FLAG -X $TARGET_PACKAGE.Version=$version"
+FLAG="$FLAG -X $TARGET_PACKAGE.GoVersion=$go_version"
 
-FLAG="-X $TRG_PKG.BuildTime=$BUILD_TIME"
-FLAG="$FLAG -X $TRG_PKG.CommitHash=$CommitHash"
-FLAG="$FLAG -X $TRG_PKG.GoVersion=$GoVersion"
+echo "[Go v${go_version}] Building portkey at ${BUILD_TIME} with commit ${commit_hash:-unknown} in version ${version}."
 
-if [[ $1 =~ '-i' ]];
-then
-    echo 'go install'
-    go install -v -ldflags "$FLAG"
-else
-    echo 'go build'
-    go build -v -ldflags "$FLAG"
-fi
+CGO_ENABLED=0 go build -ldflags "${FLAG}"

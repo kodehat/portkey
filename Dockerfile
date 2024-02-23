@@ -1,5 +1,7 @@
 FROM node:20.11.1-alpine3.18 AS frontend
 
+ARG VERSION=dev
+
 WORKDIR /usr/src/app
 
 COPY package.json ./
@@ -27,7 +29,7 @@ COPY internal internal/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
-RUN bash build.sh
+RUN sh build.sh $VERSION
 
 FROM alpine:3.19.1
 
@@ -40,12 +42,15 @@ LABEL org.opencontainers.image.authors='dev@codehat.de' \
 
 WORKDIR /opt
 
-COPY --from=backend /app/portkey /opt/app
+COPY --from=backend /app/portkey ./app
+# Provide a default config. Can be overwritten by mounting as volume by user.
+COPY config.yml .
 
-RUN adduser -D -H nonroot && \
-  chmod +x /opt/app
+RUN apk add --no-cache tzdata && \
+  adduser -D -H nonroot && \
+  chmod +x ./app
 
-EXPOSE 3000
+EXPOSE 3000/tcp
 
 USER nonroot:nonroot
 

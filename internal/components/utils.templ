@@ -1,13 +1,14 @@
 package components
 
-import "github.com/kodehat/portkey/internal/types"
+import "github.com/kodehat/portkey/internal/build"
 
-templ Version(buildDetails types.BuildDetails) {
+templ Version(buildDetails build.BuildDetails) {
 	<ul class="list-none">
 		<li>Build time: { buildDetails.BuildTime }</li>
 		if buildDetails.CommitHash != "" {
 			<li>Commit hash: <a class="no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></li>
 		}
+		<li>Version: { buildDetails.Version }</li>
 		<li>Go version: { buildDetails.GoVersion }</li>
 	</ul>
 }

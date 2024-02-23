@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"embed"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"log"
@@ -13,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/server"
 )
@@ -24,6 +27,7 @@ var static embed.FS
 
 func main() {
 	ctx := context.Background()
+	build.LoadBuildDetails(getCssResourceHash())
 	config.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -64,4 +68,12 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 	}()
 	wg.Wait()
 	return nil
+}
+
+func getCssResourceHash() string {
+	cssFile, _ := static.ReadFile("static/css/main.css")
+	hasher := sha256.New()
+	hasher.Write(cssFile)
+	sha := hex.EncodeToString(hasher.Sum(nil))
+	return sha[:8]
 }

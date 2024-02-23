@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/components"
 	"github.com/kodehat/portkey/internal/config"
 )
@@ -18,7 +19,7 @@ func pageHandler() []pageHandlerInfo {
 	for i, page := range config.C.Pages {
 		pageHandlerInfos[i] = pageHandlerInfo{
 			pagePath:    page.Path,
-			handlerFunc: templ.Handler(components.ContentLayout(page.Heading, config.C, components.ContentPage(page.Content))).ServeHTTP,
+			handlerFunc: templ.Handler(components.ContentLayout(page.Heading, config.C, build.B, components.ContentPage(page.Content))).ServeHTTP,
 		}
 	}
 	return pageHandlerInfos

@@ -1,10 +1,19 @@
 package components
 
 import "github.com/kodehat/portkey/internal/config"
+import "github.com/kodehat/portkey/internal/build"
+import "fmt"
 
-templ Base(pageTitle string, config config.Config) {
+templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetails) {
 	<!DOCTYPE html>
 	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
+		<!-- === portkey === -->
+		@templ.Raw(fmt.Sprintf("<!-- build time: %s -->", build.BuildTime))
+		if buildDetails.CommitHash != "" {
+			@templ.Raw(fmt.Sprintf("<!-- commit hash: %s -->", build.CommitHash))
+		}
+		@templ.Raw(fmt.Sprintf("<!-- version: %s -->", build.Version))
+		@templ.Raw(fmt.Sprintf("<!-- go version: %s -->", build.GoVersion))
 		<head>
 			<!-- Basics -->
 			<meta charset="UTF-8"/>
@@ -19,7 +28,7 @@ templ Base(pageTitle string, config config.Config) {
 			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
 			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
 			<!-- Stylesheets -->
-			<link href="/static/css/main.css" rel="stylesheet"/>
+			<link href={ "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
 			<script defer src="/static/js/main.js"></script>
 			<!-- Set title -->
@@ -56,8 +65,8 @@ templ Base(pageTitle string, config config.Config) {
 	</html>
 }
 
-templ HomeLayout(pageTitle string, config config.Config, contents templ.Component) {
-	@Base(pageTitle, config) {
+templ HomeLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
+	@Base(pageTitle, config, buildDetails) {
 		<nav class="my-4 lg:my-8 mx-auto flex flex-col justify-center items-center">
 			@contents
 		</nav>
@@ -67,8 +76,8 @@ templ HomeLayout(pageTitle string, config config.Config, contents templ.Componen
 	}
 }
 
-templ ContentLayout(pageTitle string, config config.Config, contents templ.Component) {
-	@Base(pageTitle, config) {
+templ ContentLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
+	@Base(pageTitle, config, buildDetails) {
 		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-8 lg:pt-16 pr-4 pb-4">
 			<h1 class="text-3xl mb-2 opacity-60 ">{ pageTitle }</h1>
 		</header>

@@ -30,17 +30,22 @@ type BuildDetails struct {
 
 	// GoVersion Go version the application was build with.
 	GoVersion string
+
+	// CssHash is not injected but initialized with the hashed content of the main CSS file
+	// to prevent bad browser caching.
+	CssHash string
 }
 
 // B contains the build details of the application.
-var B BuildDetails = newBuildDetails()
+var B BuildDetails
 
-// newBuildDetails loads the build details struct B during startup.
-func newBuildDetails() BuildDetails {
-	return BuildDetails{
+// LoadBuildDetails loads the build details struct B when called.
+func LoadBuildDetails(cssHash string) {
+	B = BuildDetails{
 		BuildTime:  BuildTime,
 		CommitHash: CommitHash,
 		Version:    Version,
 		GoVersion:  GoVersion,
+		CssHash:    cssHash,
 	}
 }

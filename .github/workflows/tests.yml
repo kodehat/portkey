@@ -1,0 +1,42 @@
+name: Tests
+on:
+  pull_request:
+    branches: [ main, 'feature/**' ]
+  push:
+    branches: [ main, 'feature/**' ]
+jobs:
+  test:
+    name: Run tests
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+        cache: false
+    - uses: actions/checkout@v4
+    - name: Run Go tests
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - run: go test -v ./...
+    
+    # Build the UI assets
+    - name: Build UI assets
+      if: startsWith(matrix.os, 'ubuntu') == true
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+    - if: startsWith(matrix.os, 'ubuntu') == true
+      run: npm install
+    - if: startsWith(matrix.os, 'ubuntu') == true
+      run: npm run build

@@ -2,9 +2,10 @@ on:
   push:
     branches: [ main ]
 
-name: Build Docker latest images
+name: Build latest Docker images
 jobs:
   docker:
+    name: Build Docker images
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository

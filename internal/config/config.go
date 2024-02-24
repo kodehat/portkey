@@ -21,6 +21,7 @@ type Config struct {
 	SortAlphabetically bool
 	Portals            []models.Portal
 	Pages              []models.Page
+	HeaderAddition     string
 }
 
 type Flags struct {

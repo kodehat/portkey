@@ -18,6 +18,7 @@ type Config struct {
 	Port               string
 	Title              string
 	Footer             string
+	ShowTopIcon        bool
 	SortAlphabetically bool
 	Portals            []models.Portal
 	Pages              []models.Page

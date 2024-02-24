@@ -39,10 +39,12 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			}
 		</head>
 		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
-			<div class="flex justify-between items-center mt-6 lg:mt-10 ml-6 mr-3 lg:ml-12 lg:mr-6">
+			<div class={"flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6"}>
+			if config.ShowTopIcon {
 				<div class="inline-flex">
 					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-lg" src="/static/img/android-chrome-512x512.png" alt="logo"/>
 				</div>
+			}
 				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex flex-shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
 					<span class="sr-only">Use setting</span>
 					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">

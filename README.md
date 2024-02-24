@@ -8,7 +8,7 @@
   <strong>Repository of the portkey application</strong>
 </div>
 <div align="center">
-  A simple web portal that can act as entrypoint for your links/urls. Also supports adding small custom pages.
+  A simple web portal that can act as startup page and shows a collection of links/urls. It also supports adding small custom pages.
 </div>
 
 <br />
@@ -47,7 +47,7 @@
 </div>
 
 <div align="center">
-  <sub>Small web application made with Go. Built with ❤︎ by
+  <sub>As magical as in Harry Potter. Built with ☕️ by
   <a href="https://www.codehat.de">CodeHat</a> and
   <a href="https://github.com/kodehat/portkey/graphs/contributors">
     contributors
@@ -67,9 +67,12 @@
 
 ## Features
 
-- Show a configurable collection of links.
-- Easily add smaller custom pages through configuration.
-- Includes a search box that also searches for specific keywords.
+- 🔗 Shows a collection of links acting as startup page or similiar.
+- 🔎 Includes a search box with configurable keyword support.
+- 📄 Can be configured easily by modifying only one file.
+- 🗒️ Also supports adding smaller custom pages.
+- 🌓 Dark and light mode available.
+- 🪰 Very lightweight application with Docker images available.
 
 ## Screenshots
 
@@ -100,8 +103,77 @@ Download the `portkey` file for your OS. Probably to a location that is in your 
 ## Usage
 
 1. Create a `config.yml` or use the [example configuration](https://github.com/kodehat/portkey/blob/main/config.yml) from this repository and configure it as you want.
+> You can find a detailed explanation of all configuration options [here](#configuration).
 2. Start the application with `portkey --config-path=<path_to_config_yml>`. Providing the path to the configuration file is optional if it's in the working directory.
 3. Open browser at defined host and port. Default is <http://localhost:3000>
+
+## Configuration
+
+The `config.yml` contains the following configuration options:
+
+### Server
+
+```yaml
+# Set the host where the application should bind to.
+host: localhost
+# Set the port where the application should bind to.
+port: 3000
+```
+
+### Styling
+
+```yaml
+# Title of the application shown in the browser tab and on the front page.
+title: "portkey"
+# Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications.
+headerAddition: |-
+  <script async src="https://analytics.example.com"></script>
+# Footer (HTML support) that is shown on every page.
+# Remember that Tailwind CSS classes used here do only work if already used somewhere else in the application because the bundler couldn't look here!
+footer: |-
+  <p>This is a footer!</p>
+# Defines whether portkey's application icon should be shown at the top left of the front page.
+showTopIcon: true
+# If true all links are sorted alphabetically when shown on the front page. Otherwise they are shown in the order they are defined.
+sortAlphabetically: false
+```
+
+### Portals (Links)
+
+```yaml
+# Defines a list of portals (links) that have additional attributes defining their appearance.
+portals:
+  # Name of the link
+- title: example
+  # (Optional) An emoji shown in front of the title.
+  emoji: 🔗
+  # Link where the portal will lead to (can be relative for custom pages or absolute otherwise)
+  link: https://example.com/
+  # If the link configured for this portal opens an external url or a relative one.
+  external: true
+  # Additional keywords used by the search feature.
+  keywords:
+  - url
+  - example
+```
+
+### Custom pages
+
+```yaml
+# Defines a list of custom pages that are made available at the defined paths.
+# Important: These are not automatically added to the list of portals and have to be added manually!
+# This may be changed in the future.
+pages:
+  # Heading for the custom page. Shown in browser tab and as heading on the page.
+- heading: Custom
+  # Path where the custom page will be available.
+  path: /custom
+  # Content of the custom page and it supports using HTML.
+  # The same CSS rules apply as for the footer!
+  content: |-
+    This is a <em>custom page</em></br>
+    It also supports using <strong>HTML</strong>!
+```
 
 ## Docker
 
@@ -116,11 +188,15 @@ docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 portkey:la
 
 ### Application Code
 
-**portkey** is a *go* application. You can install its dependencies with `go mod download`.
+**portkey** is a *Go* application. You can install its dependencies with `go mod download`.
+
+Live reloading is possible by installing [air](https://github.com/cosmtrek/air) and calling `air`.
 
 ### Frontend
 
-The frontend dependencies (e.g. TailwindCSS, AlpineJS) can be installed with `npm install --include dev`. They can be watched with `npm run watch` and built with `npm run build`.
+The frontend dependencies (e.g. TailwindCSS, AlpineJS) can be installed with `npm install --include dev`.
+
+They can be watched with `npm run watch` and built with `npm run build`.
 
 ### Templates
 
@@ -128,7 +204,7 @@ A library called [templ](https://templ.guide) is used for the templates. To gene
 
 ## See Also
 
-The whole application is heavily inspired by a theme for the static site generator Hugo. You can find the theme at [victoriadrake/hugo-theme-sam](https://github.com/victoriadrake/hugo-theme-sam). I wanted something more dynamic while also trying out something with Golang and improving in the language.
+The whole application is heavily inspired by a theme for the static site generator Hugo. You can find the theme at [victoriadrake/hugo-theme-sam](https://github.com/victoriadrake/hugo-theme-sam). I wanted something more dynamic while also trying out Go and improving in the language.
 
 ## License
 

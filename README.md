@@ -37,7 +37,7 @@
 <div align="center">
   <h3>
     <a href="https://www.portkey.page">
-      Website
+      Website (GitHub)
     </a>
     <span> | </span>
     <a href="https://github.com/kodehat/portkey/blob/main/.github/CONTRIBUTING.md">
@@ -60,6 +60,7 @@
 - [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Configuration](#configuration)
 - [Docker](#docker)
 - [Development](#development)
 - [See Also](#see-also)
@@ -181,7 +182,8 @@ There are also Docker images available at Docker hub that you can use. You can s
 
 ```sh
 # Assumes that there is a config.yml in the current directory.
-docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 portkey:latest
+# It is porbably better to use a specific version than 'latest'.
+docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 codehat/portkey:latest
 ```
 
 ## Development

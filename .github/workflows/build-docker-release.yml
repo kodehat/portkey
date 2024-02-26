@@ -1,15 +1,15 @@
-name: Build and push latest Docker images
+name: Build and push release Docker images
 
 on:
-  push:
-    branches: [ main ]
+  release:
+    types: [ created ]
 
 jobs:
   docker:
     name: Build and push Docker images
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Set up QEMU
@@ -24,11 +24,21 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Parse semver
+      id: semver_parser 
+      uses: booxmedialtd/ws-action-parse-semver@v1.4.7
+      with:
+        input_string: '${{ github.ref_name }}'
+        version_extractor_regex: 'v(.*)$'
+
     - name: Build and push Docker images
       uses: docker/build-push-action@v5
       with:
         context: .
         platforms: linux/amd64,linux/arm64
+        build-args: |
+          "VERSION=${{ github.ref_name }}"
         push: true
         tags: |
-          codehat/portkey:latest
+          codehat/portkey:${{ github.ref_name }}
+          codehat/portkey:v${{ steps.semver_parser.outputs.major }}.${{ steps.semver_parser.outputs.minor }}

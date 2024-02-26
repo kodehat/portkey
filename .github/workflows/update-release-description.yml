@@ -1,0 +1,31 @@
+name: Update release description
+
+on: 
+  release:
+    types: [ created ]
+
+jobs:
+
+  release-description:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Generate a changelog
+      uses: orhun/git-cliff-action@v3
+      with:
+        config: cliff.toml
+        args: --latest --tag "${{ github.ref_name }}" --exclude-path "CHANGELOG.md"
+      env:
+        OUTPUT: CHANGELOG.md
+
+    - name: Update release description
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        bodyFile: CHANGELOG.md

@@ -1,0 +1,34 @@
+name: Update changelog file
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  changelog:
+    name: Generate and update changelog
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: 'main'
+        fetch-depth: 0
+
+    - name: Generate a changelog
+      uses: orhun/git-cliff-action@v3
+      with:
+        config: cliff.toml
+        args: --tag "${{ github.ref_name }}" --exclude-path "CHANGELOG.md"
+      env:
+        OUTPUT: CHANGELOG.md
+
+    - name: Commit and push changelog
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        set +e
+        git add CHANGELOG.md
+        git commit -m "ci: update changelog"
+        git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
+        git push -u origin main

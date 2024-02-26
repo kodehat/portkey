@@ -3,6 +3,9 @@ name: Build and push latest Docker images
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+    - 'README.md'
+    - 'CHANGELOG.md'
 
 jobs:
   docker:

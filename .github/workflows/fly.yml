@@ -3,6 +3,9 @@ name: Fly Deploy Demo Instance
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+    - 'README.md'
+    - 'CHANGELOG.md'
 
 jobs:
   deploy:

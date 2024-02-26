@@ -5,6 +5,9 @@ on:
     branches: [ main, 'feature/**' ]
   push:
     branches: [ main, 'feature/**' ]
+    paths-ignore:
+    - 'README.md'
+    - 'CHANGELOG.md'
 
 jobs:
   test:

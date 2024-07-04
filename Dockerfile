@@ -1,4 +1,4 @@
-FROM node:20.11.1-alpine3.18 AS frontend
+FROM node:20.15.0-alpine3.19 AS frontend
 
 ARG VERSION=dev
 
@@ -15,7 +15,7 @@ COPY tailwind.config.js ./
 
 RUN npm run build
 
-FROM golang:1.21.7-alpine3.19 AS backend
+FROM golang:1.22.5-alpine3.19 AS backend
 
 WORKDIR /app
 

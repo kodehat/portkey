@@ -1,7 +1,5 @@
 FROM node:20.15.0-alpine3.19 AS frontend
 
-ARG VERSION=dev
-
 WORKDIR /usr/src/app
 
 COPY package.json ./
@@ -17,6 +15,8 @@ RUN npm run build
 
 FROM golang:1.22.5-alpine3.19 AS backend
 
+ARG VERSION=dev
+
 WORKDIR /app
 
 COPY go.mod go.sum ./
@@ -29,7 +29,7 @@ COPY internal internal/
 
 RUN apk add --no-cache git bash
 RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
-RUN sh build.sh -v "$VERSION"
+RUN ./build.sh -v "$VERSION"
 
 FROM alpine:3.19.1
 

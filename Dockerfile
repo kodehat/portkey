@@ -28,10 +28,10 @@ COPY *.go build.sh ./
 COPY internal internal/
 
 RUN apk add --no-cache git bash
-RUN go install github.com/a-h/templ/cmd/templ@latest && templ generate
+RUN go install github.com/a-h/templ/cmd/templ@v0.2.747 && templ generate
 RUN ./build.sh -v "$VERSION"
 
-FROM alpine:3.19.1
+FROM alpine:3.19.2
 
 LABEL org.opencontainers.image.authors='dev@codehat.de' \
       org.opencontainers.image.url='https://www.portkey.page' \

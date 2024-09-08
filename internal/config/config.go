@@ -18,6 +18,7 @@ type Config struct {
 	Port               string
 	ContextPath        string
 	Title              string
+	HideTitle          bool
 	Footer             string
 	ShowTopIcon        bool
 	SortAlphabetically bool

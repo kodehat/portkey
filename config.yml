@@ -2,6 +2,7 @@ host: localhost
 port: 3000
 contextPath: ""
 title: "portkey"
+hideTitle: false
 headerAddition: |-
   <script async src="https://usage.portkey.page/script.js" data-account-id="d068776a-de0a-4f1f-a70c-546bb0a84b50"></script>
 footer: |-

@@ -128,6 +128,8 @@ contextPath: ""
 ```yaml
 # Title of the application shown in the browser tab and on the front page.
 title: "portkey"
+# Allows to hide the title.
+hideTitle: false
 # Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications.
 headerAddition: |-
   <script async src="https://analytics.example.com"></script>

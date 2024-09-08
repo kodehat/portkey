@@ -16,6 +16,7 @@ import (
 type Config struct {
 	Host               string
 	Port               string
+	ContextPath        string
 	Title              string
 	Footer             string
 	ShowTopIcon        bool
@@ -61,6 +62,7 @@ func loadConfig(configPath string) {
 	viper.AddConfigPath(configPath)
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
+	viper.SetDefault("contextPath", "")
 	viper.SetDefault("title", "Your Portal")
 	viper.SetDefault("footerText", "Works like a portal.")
 	viper.AutomaticEnv()
@@ -69,9 +71,27 @@ func loadConfig(configPath string) {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 	viper.Unmarshal(&C)
+
+	postConfigHook()
+}
+
+// portConfigHook is used to make dynamic changes to already loaded config values.
+func postConfigHook() {
 	if C.SortAlphabetically {
 		sort.Slice(C.Portals, func(i, j int) bool {
 			return strings.ToLower(C.Portals[i].Title) < strings.ToLower(C.Portals[j].Title)
 		})
+	}
+
+	if C.ContextPath != "" {
+		for i := range C.Portals {
+			if !C.Portals[i].External {
+				C.Portals[i].Link = C.ContextPath + C.Portals[i].Link
+			}
+		}
+
+		for i := range C.Pages {
+			C.Pages[i].Path = C.ContextPath + C.Pages[i].Path
+		}
 	}
 }

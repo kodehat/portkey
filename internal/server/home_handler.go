@@ -12,7 +12,7 @@ import (
 func homeHandler() http.HandlerFunc {
 	home := components.HomePage()
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
+		if r.URL.Path != config.C.ContextPath+"/" {
 			w.WriteHeader(http.StatusNotFound)
 			templ.Handler(components.ContentLayout("404 Not Found", config.C, build.B, components.NotFound())).ServeHTTP(w, r)
 			return

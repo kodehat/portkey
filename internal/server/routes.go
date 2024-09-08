@@ -4,11 +4,13 @@ import (
 	"embed"
 	"log"
 	"net/http"
+
+	"github.com/kodehat/portkey/internal/config"
 )
 
 func addRoutes(mux *http.ServeMux, logger *log.Logger, static embed.FS) {
 	// Home
-	mux.HandleFunc("/", homeHandler())
+	mux.HandleFunc(config.C.ContextPath+"/", homeHandler())
 
 	// Custom pages
 	for _, pageHandler := range pageHandler() {
@@ -16,16 +18,16 @@ func addRoutes(mux *http.ServeMux, logger *log.Logger, static embed.FS) {
 	}
 
 	// Fix pages
-	mux.HandleFunc("/version", versionHandler())
-	mux.HandleFunc("/healthz", healthHandler())
+	mux.HandleFunc(config.C.ContextPath+"/version", versionHandler())
+	mux.HandleFunc(config.C.ContextPath+"/healthz", healthHandler())
 
 	// Static
-	mux.HandleFunc("/static/", staticHandler(static))
+	mux.HandleFunc(config.C.ContextPath+"/static/", staticHandler(static))
 
 	// htmx
-	mux.HandleFunc("/_/portals", portalsHandler())
+	mux.HandleFunc(config.C.ContextPath+"/_/portals", portalsHandler())
 
 	// REST
-	mux.HandleFunc("/api/portals", portalsRestHandler())
-	mux.HandleFunc("/api/pages", pagesRestHandler())
+	mux.HandleFunc(config.C.ContextPath+"/api/portals", portalsRestHandler())
+	mux.HandleFunc(config.C.ContextPath+"/api/pages", pagesRestHandler())
 }

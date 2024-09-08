@@ -19,18 +19,18 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- Favicon stuff -->
-			<link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png"/>
-			<link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png"/>
-			<link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16x16.png"/>
-			<link rel="manifest" href="/static/img/site.webmanifest"/>
-			<link rel="shortcut icon" href="/static/img/favicon.ico"/>
+			<link rel="apple-touch-icon" sizes="180x180" href={ config.ContextPath + "/static/img/apple-touch-icon.png" }/>
+			<link rel="icon" type="image/png" sizes="32x32" href={ config.ContextPath + "/static/img/favicon-32x32.png" }/>
+			<link rel="icon" type="image/png" sizes="16x16" href={ config.ContextPath + "/static/img/favicon-16x16.png" }/>
+			<link rel="manifest" href={ config.ContextPath + "/static/img/site.webmanifest" }/>
+			<link rel="shortcut icon" href={ config.ContextPath + "/static/img/favicon.ico" }/>
 			<!-- Theme stuff -->
 			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
 			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
 			<!-- Stylesheets -->
-			<link href={ "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
+			<link href={ config.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
-			<script defer src="/static/js/main.js"></script>
+			<script defer src={ config.ContextPath + "/static/js/main.js" }></script>
 			<!-- Set title -->
 			<title>{ pageTitle } - { config.Title }</title>
 			<!-- Header addition -->
@@ -42,7 +42,7 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			<div class={"flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6"}>
 			if config.ShowTopIcon {
 				<div class="inline-flex">
-					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-lg" src="/static/img/android-chrome-512x512.png" alt="logo"/>
+					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-lg" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
 				</div>
 			}
 				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex flex-shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
@@ -64,7 +64,7 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 					</span>
 				</button>
 			</div>
-			<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">{ config.Title }</h1>
+			<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
 			{ children... }
 		</body>
 	</html>

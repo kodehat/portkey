@@ -1,5 +1,7 @@
 package components
 
+import "github.com/kodehat/portkey/internal/config"
+
 templ HomePage() {
 	<div class="mt-4 relative max-w-xs md:max-w-sm w-full">
 		<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -9,7 +11,7 @@ templ HomePage() {
 		</div>
 		<input
 			name="search"
-			hx-get="/_/portals"
+			hx-get={ config.C.ContextPath + "/_/portals" }
 			hx-trigger="load, input changed delay:500ms, search"
 			hx-target="#search-results"
 			hx-indicator=".htmx-indicator"

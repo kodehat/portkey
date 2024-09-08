@@ -119,6 +119,8 @@ The `config.yml` contains the following configuration options:
 host: localhost
 # Set the port where the application should bind to.
 port: 3000
+# Set the context path (aka base-url) portkey is hosted under. Must not be specified unless you're using a reverse proxy and are hosting portkey under a directory. If that's the case then you can set this value to e.g. /portkey or whatever the directory is called. Note that the forward slash (/) in the beginning is required!
+contextPath: ""
 ```
 
 ### Styling

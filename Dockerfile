@@ -1,4 +1,4 @@
-FROM node:20.15.0-alpine3.19 AS frontend
+FROM node:20.17.0-alpine3.20 AS frontend
 
 WORKDIR /usr/src/app
 
@@ -13,7 +13,7 @@ COPY tailwind.config.js ./
 
 RUN npm run build
 
-FROM golang:1.22.5-alpine3.19 AS backend
+FROM golang:1.23.1-alpine3.20 AS backend
 
 ARG VERSION=dev
 
@@ -28,10 +28,10 @@ COPY *.go build.sh ./
 COPY internal internal/
 
 RUN apk add --no-cache git bash
-RUN go install github.com/a-h/templ/cmd/templ@v0.2.747 && templ generate
+RUN go install github.com/a-h/templ/cmd/templ@v0.2.778 && templ generate
 RUN ./build.sh -v "$VERSION"
 
-FROM alpine:3.19.2
+FROM alpine:3.20.3
 
 LABEL org.opencontainers.image.authors='dev@codehat.de' \
       org.opencontainers.image.url='https://www.portkey.page' \

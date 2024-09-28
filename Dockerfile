@@ -27,9 +27,9 @@ COPY .git .git/
 COPY *.go build.sh ./
 COPY internal internal/
 
-RUN apk add --no-cache git bash
-RUN go install github.com/a-h/templ/cmd/templ@v0.2.778 && templ generate
-RUN ./build.sh -v "$VERSION"
+RUN apk add --no-cache git bash && \
+  go install github.com/a-h/templ/cmd/templ@v0.2.778 && templ generate && \
+  ./build.sh -v "$VERSION"
 
 FROM alpine:3.20.3
 

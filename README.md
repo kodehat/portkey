@@ -115,6 +115,10 @@ The `config.yml` contains the following configuration options:
 ### Server
 
 ```yaml
+# Can be changed to reduce or increase logs. Values could be "ERROR", "WARN", "INFO" (default) or "DEBUG.
+logLevel: INFO
+# If enabled logs are in JSON format.
+logJson: false
 # Set the host where the application should bind to.
 host: localhost
 # Set the port where the application should bind to.

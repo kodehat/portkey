@@ -12,10 +12,11 @@ import (
 )
 
 var CONFIG_EMPTY config.Config = config.Config{
-	Host:    "localhost",
-	Port:    "3000",
-	Portals: []models.Portal{},
-	Pages:   []models.Page{},
+	LogLevel: "INFO",
+	Host:     "localhost",
+	Port:     "3000",
+	Portals:  []models.Portal{},
+	Pages:    []models.Page{},
 }
 
 func setup(t *testing.T, config config.Config) error {

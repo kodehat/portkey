@@ -3,7 +3,8 @@ package config
 import (
 	"flag"
 	"fmt"
-	"log"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sort"
@@ -14,6 +15,8 @@ import (
 )
 
 type Config struct {
+	LogLevel                   string
+	LogJson                    bool
 	Host                       string
 	Port                       string
 	ContextPath                string
@@ -38,11 +41,10 @@ var F Flags
 
 func Load() {
 	LoadFlags()
-	configPath, err := filepath.Abs(F.ConfigPath)
+	_, err := filepath.Abs(F.ConfigPath)
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
-	log.Printf("Looking for config.y[a]ml in: %s\n", configPath)
 	loadConfig(F.ConfigPath)
 }
 
@@ -63,6 +65,7 @@ func loadConfig(configPath string) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
+	viper.SetDefault("logLevel", "INFO")
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
 	viper.SetDefault("contextPath", "")
@@ -98,4 +101,22 @@ func postConfigHook() {
 			C.Pages[i].Path = C.ContextPath + C.Pages[i].Path
 		}
 	}
+}
+
+func (c Config) GetLogLevel() (slog.Level, error) {
+	var level slog.Level
+	err := level.UnmarshalText([]byte(c.LogLevel))
+	return level, err
+}
+
+func (c Config) GetLogHandler(w io.Writer) slog.Handler {
+	logLevel, err := c.GetLogLevel()
+	if err != nil {
+		panic(fmt.Errorf("unable to unmarshal log level: %w", err))
+	}
+	logHandlerOptions := &slog.HandlerOptions{Level: logLevel}
+	if c.LogJson {
+		return slog.NewJSONHandler(w, logHandlerOptions)
+	}
+	return slog.NewTextHandler(w, logHandlerOptions)
 }

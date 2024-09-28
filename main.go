@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -19,8 +19,6 @@ import (
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/server"
 )
-
-const LOGGER_PREFIX string = "[portkey] "
 
 //go:embed static
 var static embed.FS
@@ -38,7 +36,8 @@ func main() {
 func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, stderr io.Writer) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
-	logger := log.New(stdout, LOGGER_PREFIX, log.Lmsgprefix|log.Ldate|log.Ltime)
+	logger := slog.New(config.GetLogHandler(stdout))
+	slog.SetDefault(logger)
 	srv := server.NewServer(
 		logger,
 		&config,
@@ -49,7 +48,7 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 		Handler: srv,
 	}
 	go func() {
-		logger.Printf("Listening on %s\n", httpServer.Addr)
+		logger.Info("server is now accepting connections", "address", httpServer.Addr)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Fprintf(os.Stderr, "error listening and serving: %s\n", err)
 		}

@@ -12,7 +12,7 @@ tmp_dir = "tmp"
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = ""
+  full_bin = "LOGLEVEL=DEBUG ./portkey"
   include_dir = []
   include_ext = ["go", "tpl", "templ", "html", "yml", "css", "js"]
   include_file = []

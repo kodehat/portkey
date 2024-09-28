@@ -1,7 +1,7 @@
 package server
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type portalsHandler struct {
-	logger *log.Logger
+	logger *slog.Logger
 }
 
 func (p portalsHandler) handle() http.HandlerFunc {
@@ -36,12 +36,14 @@ func (p portalsHandler) handle() http.HandlerFunc {
 
 func (p portalsHandler) isSearchResult(query string, portal models.Portal) bool {
 	if strings.Contains(portal.Title, query) || utils.ArrSubStr(portal.Keywords, query) {
-		return strings.Contains(portal.Title, query) || utils.ArrSubStr(portal.Keywords, query)
+		p.logger.Debug("direct match for search found", "query", query, "portal", portal.Title)
+		return true
 	}
 
 	if !config.C.SearchWithStringSimilarity {
 		return false
 	}
+	p.logger.Debug("searching with string similarity", "query", query)
 
 	levenshteinMetric := metrics.NewLevenshtein()
 	similar := p.isSimilar(query, portal.Title, levenshteinMetric, config.C.MinimumStringSimilarity)
@@ -59,5 +61,6 @@ func (p portalsHandler) isSearchResult(query string, portal models.Portal) bool 
 
 func (p portalsHandler) isSimilar(str string, reference string, metric strutil.StringMetric, minimumSimilarity float64) bool {
 	similarity := strutil.Similarity(str, reference, metric)
+	p.logger.Debug("similarity check", "str", str, "reference", reference, "similarity", similarity)
 	return similarity > minimumSimilarity
 }

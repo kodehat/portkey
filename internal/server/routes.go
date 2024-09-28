@@ -2,13 +2,13 @@ package server
 
 import (
 	"embed"
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/kodehat/portkey/internal/config"
 )
 
-func addRoutes(mux *http.ServeMux, logger *log.Logger, static embed.FS) {
+func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	// Home
 	mux.HandleFunc(config.C.ContextPath+"/", homeHandler())
 

@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,go,node
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,go,node
+# Created by https://www.toptal.com/developers/gitignore/api/go,node,linux,macos,windows,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=go,node,linux,macos,windows,visualstudiocode
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -212,6 +212,25 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -238,7 +257,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,go,node
+# End of https://www.toptal.com/developers/gitignore/api/go,node,linux,macos,windows,visualstudiocode
 
 # Custom
 portkey

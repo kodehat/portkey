@@ -25,7 +25,7 @@ func addRoutes(mux *http.ServeMux, logger *log.Logger, static embed.FS) {
 	mux.HandleFunc(config.C.ContextPath+"/static/", staticHandler(static))
 
 	// htmx
-	mux.HandleFunc(config.C.ContextPath+"/_/portals", portalsHandler())
+	mux.HandleFunc(config.C.ContextPath+"/_/portals", portalsHandler{logger}.handle())
 
 	// REST
 	mux.HandleFunc(config.C.ContextPath+"/api/portals", portalsRestHandler())

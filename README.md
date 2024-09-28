@@ -141,6 +141,10 @@ footer: |-
 showTopIcon: true
 # If true all links are sorted alphabetically when shown on the front page. Otherwise they are shown in the order they are defined.
 sortAlphabetically: false
+# If true search query is also compared to portals and keywords using Levenshtein string metric.
+searchWithStringSimilarity: false
+# Minimum required similarity for results when 'searchWithStringSimilarity' is 'true'. Must be between '0.0' (0%) and '1.0' (100%).
+minimumStringSimilarity: 0.5
 ```
 
 ### Portals (Links)

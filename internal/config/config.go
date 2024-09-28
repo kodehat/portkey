@@ -14,17 +14,19 @@ import (
 )
 
 type Config struct {
-	Host               string
-	Port               string
-	ContextPath        string
-	Title              string
-	HideTitle          bool
-	Footer             string
-	ShowTopIcon        bool
-	SortAlphabetically bool
-	Portals            []models.Portal
-	Pages              []models.Page
-	HeaderAddition     string
+	Host                       string
+	Port                       string
+	ContextPath                string
+	Title                      string
+	HideTitle                  bool
+	Footer                     string
+	ShowTopIcon                bool
+	SortAlphabetically         bool
+	SearchWithStringSimilarity bool
+	MinimumStringSimilarity    float64
+	Portals                    []models.Portal
+	Pages                      []models.Page
+	HeaderAddition             string
 }
 
 type Flags struct {
@@ -66,6 +68,7 @@ func loadConfig(configPath string) {
 	viper.SetDefault("contextPath", "")
 	viper.SetDefault("title", "Your Portal")
 	viper.SetDefault("footerText", "Works like a portal.")
+	viper.SetDefault("minimumStringSimilarity", 0.75)
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {

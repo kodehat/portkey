@@ -9,6 +9,8 @@ footer: |-
   <p><a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.portkey.page/">portkey</a> made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
 showTopIcon: true
 sortAlphabetically: false
+searchWithStringSimilarity: true
+minimumStringSimilarity: 0.5
 portals:
 - title: 1password
   emoji: 🔑

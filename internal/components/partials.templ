@@ -1,6 +1,7 @@
 package components
 
 import "github.com/kodehat/portkey/internal/models"
+import "github.com/kodehat/portkey/internal/config"
 
 templ PortalPartial(portals []models.Portal) {
 	if len(portals) == 0 {
@@ -9,7 +10,11 @@ templ PortalPartial(portals []models.Portal) {
 		</span>
 	} else {
 		for _, portal := range portals {
-			@HomePortal(portal)
+			if config.C.ShowKeywordsAsTooltips {
+				@HomePortalWithToolTip(portal)
+			} else {
+				@HomePortal(portal)
+			}
 		}
 	}
 }

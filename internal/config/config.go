@@ -24,6 +24,7 @@ type Config struct {
 	HideTitle                  bool
 	Footer                     string
 	ShowTopIcon                bool
+	ShowKeywordsAsTooltips     bool
 	SortAlphabetically         bool
 	SearchWithStringSimilarity bool
 	MinimumStringSimilarity    float64

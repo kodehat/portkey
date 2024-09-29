@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-09-29
+### Details
+#### Added
+- Add Docker build script for local building by @kodehat
+- Add possibility to host under a specific path by @kodehat
+- Add possibility to hide the title by @kodehat
+- Add searching with string similarity using levenshtein metric by @kodehat
+- Add log level to tests by @kodehat
+- Add log configuration keys to README by @kodehat
+- Add tooltips for keywords of portals by @kodehat
+
+#### Changed
+- Update dependencies by @kodehat
+- Update go version in GitHub actions by @kodehat
+- Update dependencies by @kodehat
+- Update dependencies by @kodehat
+- Make icon in top left 'full' round by @kodehat
+- Update workflows by @kodehat
+- Create dependabot.yml by @kodehat
+- Bump tailwindcss from 3.4.10 to 3.4.13 by @dependabot[bot]
+- Bump esbuild from 0.23.1 to 0.24.0 by @dependabot[bot]
+- Bump concurrently from 8.2.2 to 9.0.1 by @dependabot[bot]
+- Bump husky from 9.1.5 to 9.1.6 by @dependabot[bot]
+- Bump docker/build-push-action from 5 to 6 by @dependabot[bot]
+- Append ignored files for Visual Studio Code to .gitignore by @kodehat
+- Use log/slog for logging with configurable log level and JSON logs by @kodehat
+- Show message if no search results were found by @kodehat
+- Improve README.md development section by @kodehat
+
+#### Fixed
+- Version missing in Docker images by @kodehat
+- Clean go.mod by @kodehat
+- Fix SonarQube configuration by @kodehat
+- Merge RUN instructions in Dockerfile by @kodehat
+- Tooltip not closed on mobile by @kodehat
+
+## New Contributors
+* @dependabot[bot] made their first contribution
 ## [1.0.0] - 2024-02-26
 ### Details
 #### Added
@@ -41,4 +79,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files by @kodehat
 - Remove generated files by @kodehat
 
+[1.1.0]: https://github.com/kodehat/portkey/compare/v1.0.0..v1.1.0
 

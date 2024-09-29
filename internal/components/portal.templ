@@ -2,6 +2,27 @@ package components
 
 import "github.com/kodehat/portkey/internal/models"
 
+templ HomePortalWithToolTip(portal models.Portal) {
+	if len(portal.Keywords) == 0 {
+		@HomePortal(portal)
+	} else {
+		<div x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false" class="relative">
+			@HomePortal(portal)
+			<div x-show="open" class="mt-2.5 w-full absolute flex flex-wrap justify-center z-10 top-full text-center px-2 py-1 gap-x-2 gap-y-2 rounded-md bg-slate-300 dark:bg-slate-800">
+				for _, keyword := range portal.Keywords {
+					@tooltip(keyword)
+				}
+			</div>
+		</div>
+	}
+}
+
+templ tooltip(keyword string) {
+	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-100 px-2 py-1 text-xs lg:text-base font-normal md:font-ligh ring-1 ring-inset ring-slate-500/10 dark:ring-slate-300/10">
+		{ keyword }
+	</span>
+}
+
 templ HomePortal(portal models.Portal) {
 	<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light inline-flex items-center">
 		if portal.Emoji != "" {

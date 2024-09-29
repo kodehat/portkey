@@ -143,6 +143,8 @@ footer: |-
   <p>This is a footer!</p>
 # Defines whether portkey's application icon should be shown at the top left of the front page.
 showTopIcon: true
+# If true keywords of portals are shown as tooltip on hover.
+showKeywordsAsTooltips: false
 # If true all links are sorted alphabetically when shown on the front page. Otherwise they are shown in the order they are defined.
 sortAlphabetically: false
 # If true search query is also compared to portals and keywords using Levenshtein string metric.

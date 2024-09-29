@@ -206,8 +206,6 @@ docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 codehat/po
 
 **portkey** is a *Go* application. You can install its dependencies with `go mod download`.
 
-Live reloading is possible by installing [air](https://github.com/cosmtrek/air) and calling `air`.
-
 ### Frontend
 
 The frontend dependencies (e.g. TailwindCSS, AlpineJS) can be installed with `npm install --include dev`.
@@ -216,7 +214,23 @@ They can be watched with `npm run watch` and built with `npm run build`.
 
 ### Templates
 
-A library called [templ](https://templ.guide) is used for the templates. To generate the `.go` files from the templates, it has to be installed. See [here](https://templ.guide/quick-start/installation) how to do this. Afterwards you can generate the compiled templates with `templ generate`.
+A library called [templ](https://templ.guide) is used for the templates. To generate the `.go` files from the templates, it has to be installed. You can install `templ` with:
+
+```sh
+go install github.com/a-h/templ/cmd/templ@v0.2.778
+```
+
+Afterwards you can generate the compiled templates with `templ generate`.
+
+### Live Reload
+
+Live reloading is possible by installing [air](https://github.com/cosmtrek/air) and calling `air`.
+
+You can install `air` with:
+
+```sh
+go install github.com/air-verse/air@latest
+```
 
 ## See Also
 

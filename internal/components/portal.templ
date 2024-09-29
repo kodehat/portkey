@@ -6,7 +6,7 @@ templ HomePortalWithToolTip(portal models.Portal) {
 	if len(portal.Keywords) == 0 {
 		@HomePortal(portal)
 	} else {
-		<div x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false" class="relative">
+		<div x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false" @click.outside="open = false" class="relative">
 			@HomePortal(portal)
 			<div x-show="open" class="mt-2.5 w-full absolute flex flex-wrap justify-center z-10 top-full text-center px-2 py-1 gap-x-2 gap-y-2 rounded-md bg-slate-300 dark:bg-slate-800">
 				for _, keyword := range portal.Keywords {

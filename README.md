@@ -61,6 +61,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Metrics](#metrics)
 - [Docker](#docker)
 - [Development](#development)
 - [See Also](#see-also)
@@ -122,9 +123,15 @@ logJson: false
 # Set the host where the application should bind to.
 host: localhost
 # Set the port where the application should bind to.
-port: 3000
+port: 1414
 # Set the context path (aka base-url) portkey is hosted under. Must not be specified unless you're using a reverse proxy and are hosting portkey under a directory. If that's the case then you can set this value to e.g. /portkey or whatever the directory is called. Note that the forward slash (/) in the beginning is required!
 contextPath: ""
+# Enables the HTTP server that serves metrics that can be scraped by e.g. Prometheus.
+enableMetrics: false
+# Set the host where the metrics server should bind to.
+metricsHost: localhost
+# Set the port where the metrics server should bind to.
+metricsPort: 1515
 ```
 
 ### Styling
@@ -188,6 +195,34 @@ pages:
   content: |-
     This is a <em>custom page</em></br>
     It also supports using <strong>HTML</strong>!
+```
+
+## Metrics
+
+Metrics can be enabled with the `enableMetrics` configuration key and are served on a dedicated HTTP server. By default they are served on `http://localhost:1515/metrics`. Use this address to configure your tool of choice (e.g. [Prometheus](https://prometheus.io/)) to scrape the exported metrics.
+
+Besides the default metrics provided by the [Prometheus instrumentation library for Go applications ](https://github.com/prometheus/client_golang), the following additional metrics are provided:
+
+```plain
+# HELP portkey_page_handler_requests_total Total number of HTTP requests by page.
+# TYPE portkey_page_handler_requests_total counter
+portkey_page_handler_requests_total{path="<page_path>"} 0
+
+# HELP portkey_portal_handler_requests_total Total number of HTTP requests by portal.
+# TYPE portkey_portal_handler_requests_total counter
+portkey_portal_handler_requests_total{portal="<portal_title>"} 0
+
+# HELP portkey_search_requests_no_results_total Total number of HTTP requests for search with no results.
+# TYPE portkey_search_requests_no_results_total counter
+portkey_search_requests_no_results_total 0
+
+# HELP portkey_search_requests_with_results_total Total number of HTTP requests for search with at least one result.
+# TYPE portkey_search_requests_with_results_total counter
+portkey_search_requests_with_results_total 0
+
+# HELP portkey_version_info Version information about portkey.
+# TYPE portkey_version_info gauge
+portkey_version_info{buildTime="2024.10.09_17:29:19",commitHash="4fd1a0f",goVersion="1.23.1",version="dev"} 1
 ```
 
 ## Docker

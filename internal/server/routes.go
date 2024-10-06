@@ -12,9 +12,15 @@ func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	// Home
 	mux.HandleFunc(config.C.ContextPath+"/", homeHandler())
 
-	// Custom pages
+	// Register portals.
+	portalHandler := portalHandler{logger}
+	for _, portalHandler := range portalHandler.handle() {
+		mux.HandleFunc(config.C.ContextPath+portalHandler.portalPath, portalHandler.handlerFunc)
+	}
+
+	// Register pages.
 	for _, pageHandler := range pageHandler() {
-		mux.HandleFunc(pageHandler.pagePath, pageHandler.handlerFunc)
+		mux.HandleFunc(config.C.ContextPath+pageHandler.pagePath, pageHandler.handlerFunc)
 	}
 
 	// Fix pages
@@ -25,9 +31,13 @@ func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	mux.HandleFunc(config.C.ContextPath+"/static/", staticHandler(static))
 
 	// htmx
-	mux.HandleFunc(config.C.ContextPath+"/_/portals", portalsHandler{logger}.handle())
+	mux.HandleFunc(config.C.ContextPath+"/_/portals", searchHandler{logger}.handle())
 
 	// REST
 	mux.HandleFunc(config.C.ContextPath+"/api/portals", portalsRestHandler())
 	mux.HandleFunc(config.C.ContextPath+"/api/pages", pagesRestHandler())
+}
+
+func addMetricRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("/metrics", metricsHandler())
 }

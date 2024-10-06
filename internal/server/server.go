@@ -18,3 +18,12 @@ func NewServer(
 	var handler http.Handler = mux
 	return handler
 }
+
+func NewMetricsServer(
+	logger *slog.Logger,
+) http.Handler {
+	mux := http.NewServeMux()
+	addMetricRoutes(mux)
+	var handler http.Handler = mux
+	return handler
+}

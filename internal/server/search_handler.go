@@ -9,15 +9,16 @@ import (
 	"github.com/adrg/strutil/metrics"
 	"github.com/kodehat/portkey/internal/components"
 	"github.com/kodehat/portkey/internal/config"
+	imetrics "github.com/kodehat/portkey/internal/metrics"
 	"github.com/kodehat/portkey/internal/models"
 	"github.com/kodehat/portkey/internal/utils"
 )
 
-type portalsHandler struct {
+type searchHandler struct {
 	logger *slog.Logger
 }
 
-func (p portalsHandler) handle() http.HandlerFunc {
+func (p searchHandler) handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query().Get("search")
 		var homePortals = make([]models.Portal, 0)
@@ -30,11 +31,18 @@ func (p portalsHandler) handle() http.HandlerFunc {
 				homePortals = append(homePortals, configPortal)
 			}
 		}
+		if config.C.EnableMetrics && query != "" {
+			if len(homePortals) > 0 {
+				imetrics.M.SearchWithResultsCounter.Inc()
+			} else {
+				imetrics.M.SearchNoResultsCounter.Inc()
+			}
+		}
 		components.PortalPartial(homePortals).Render(r.Context(), w)
 	}
 }
 
-func (p portalsHandler) isSearchResult(query string, portal models.Portal) bool {
+func (p searchHandler) isSearchResult(query string, portal models.Portal) bool {
 	if strings.Contains(portal.Title, query) || utils.ArrSubStr(portal.Keywords, query) {
 		p.logger.Debug("direct match for search found", "query", query, "portal", portal.Title)
 		return true
@@ -59,7 +67,7 @@ func (p portalsHandler) isSearchResult(query string, portal models.Portal) bool 
 	return false
 }
 
-func (p portalsHandler) isSimilar(str string, reference string, metric strutil.StringMetric, minimumSimilarity float64) bool {
+func (p searchHandler) isSimilar(str string, reference string, metric strutil.StringMetric, minimumSimilarity float64) bool {
 	similarity := strutil.Similarity(str, reference, metric)
 	p.logger.Debug("similarity check", "str", str, "reference", reference, "similarity", similarity)
 	return similarity > minimumSimilarity

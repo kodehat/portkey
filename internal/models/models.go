@@ -1,5 +1,7 @@
 package models
 
+import "regexp"
+
 // Portal struct containing information about a portal.
 // This is used later as a link destination shown to the user.
 type Portal struct {
@@ -19,6 +21,13 @@ type Portal struct {
 	// Keywords allows defining additional keywords used by the search.
 	// This can make getting reasonable search results a lot easier.
 	Keywords []string `json:"keywords"`
+}
+
+var /* const */ alphaNumDashOnlyRegex = regexp.MustCompile("[^a-zA-Z0-9-]")
+
+// TitleForUrl returns the portal's title with alpha-numerical (and dash) characters only.
+func (portal Portal) TitleForUrl() string {
+	return alphaNumDashOnlyRegex.ReplaceAllString(portal.Title, "")
 }
 
 // Page struct defines a custom page that consists of a heading, content and a path,

@@ -33,7 +33,7 @@ templ HomePortal(portal models.Portal) {
 				target="_blank"
 				rel="nofollow"
 			}
-			href={ templ.SafeURL(portal.Link) }
+			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
 			class="mx-4 whitespace-nowrap no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
 		>{ portal.Title }</a>
 	</span>
@@ -49,7 +49,7 @@ templ FooterPortal(portal models.Portal) {
 				target="_blank"
 				rel="nofollow"
 			}
-			href={ templ.SafeURL(portal.Link) }
+			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
 			class="ml-1 no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
 		>{ portal.Title }</a>
 	</span>

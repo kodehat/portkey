@@ -20,6 +20,9 @@ type Config struct {
 	Host                       string
 	Port                       string
 	ContextPath                string
+	EnableMetrics              bool
+	MetricsHost                string
+	MetricsPort                string
 	Title                      string
 	HideTitle                  bool
 	Footer                     string
@@ -70,6 +73,8 @@ func loadConfig(configPath string) {
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
 	viper.SetDefault("contextPath", "")
+	viper.SetDefault("metricsHost", "localhost")
+	viper.SetDefault("metricsPort", "1515")
 	viper.SetDefault("title", "Your Portal")
 	viper.SetDefault("footerText", "Works like a portal.")
 	viper.SetDefault("minimumStringSimilarity", 0.75)

@@ -1,6 +1,9 @@
 host: localhost
 port: 3000
 contextPath: ""
+enableMetrics: true
+metricsHost: localhost
+metricsPort: 3030
 title: "portkey"
 hideTitle: false
 headerAddition: |-
@@ -48,10 +51,6 @@ portals:
 - title: version
   emoji: 🔢
   link: /version
-  external: false
-- title: home
-  emoji: 🏠
-  link: /
   external: false
 pages:
 - heading: "About"

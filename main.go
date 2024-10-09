@@ -17,6 +17,7 @@ import (
 
 	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/config"
+	"github.com/kodehat/portkey/internal/metrics"
 	"github.com/kodehat/portkey/internal/server"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	ctx := context.Background()
 	build.LoadBuildDetails(getCssResourceHash())
 	config.Load()
+	metrics.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
@@ -53,6 +55,20 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 			fmt.Fprintf(os.Stderr, "error listening and serving: %s\n", err)
 		}
 	}()
+	var metricHttpServer *http.Server
+	if config.EnableMetrics {
+		metricsSrv := server.NewMetricsServer(logger)
+		metricHttpServer = &http.Server{
+			Addr:    net.JoinHostPort(config.MetricsHost, config.MetricsPort),
+			Handler: metricsSrv,
+		}
+		go func() {
+			logger.Info("metrics server is now accepting connections", "address", metricHttpServer.Addr)
+			if err := metricHttpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				fmt.Fprintf(os.Stderr, "error listening and serving: %s\n", err)
+			}
+		}()
+	}
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -63,6 +79,11 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 		defer cancel()
 		if err := httpServer.Shutdown(shutdownCtx); err != nil {
 			fmt.Fprintf(os.Stderr, "error shutting down http server: %s\n", err)
+		}
+		if metricHttpServer != nil {
+			if err := metricHttpServer.Shutdown(shutdownCtx); err != nil {
+				fmt.Fprintf(os.Stderr, "error shutting down metrics server: %s\n", err)
+			}
 		}
 	}()
 	wg.Wait()

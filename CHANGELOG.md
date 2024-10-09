@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-10-09
+### Details
+#### Added
+- Add Prometheus metrics by @kodehat
+
+#### Changed
+- Bump wangyoucao577/go-release-action from 1.51 to 1.52 by @dependabot[bot]
+- Bump htmx.org from 2.0.2 to 2.0.3 by @dependabot[bot]
+- Do not stop Fly machine by @kodehat
+
 ## [1.1.0] - 2024-09-29
 ### Details
 #### Added
@@ -41,8 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Merge RUN instructions in Dockerfile by @kodehat
 - Tooltip not closed on mobile by @kodehat
 
-## New Contributors
-* @dependabot[bot] made their first contribution
 ## [1.0.0] - 2024-02-26
 ### Details
 #### Added
@@ -79,5 +87,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files by @kodehat
 - Remove generated files by @kodehat
 
+[1.2.0]: https://github.com/kodehat/portkey/compare/v1.1.0..v1.2.0
 [1.1.0]: https://github.com/kodehat/portkey/compare/v1.0.0..v1.1.0
 

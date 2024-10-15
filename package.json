@@ -16,7 +16,7 @@
   "license": "AGPL-3.0",
   "devDependencies": {
     "@alpinejs/persist": "^3.14.2",
-    "alpinejs": "^3.14.1",
+    "alpinejs": "^3.14.2",
     "concurrently": "^9.0.1",
     "esbuild": "^0.24.0",
     "htmx.org": "^2.0.3",

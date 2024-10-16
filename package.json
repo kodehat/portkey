@@ -15,7 +15,7 @@
   "author": "kodehat",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@alpinejs/persist": "^3.14.2",
+    "@alpinejs/persist": "^3.14.3",
     "alpinejs": "^3.14.3",
     "concurrently": "^9.0.1",
     "esbuild": "^0.24.0",

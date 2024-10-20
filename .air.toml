@@ -5,14 +5,14 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./portkey"
-  cmd = "npm run build && templ generate . && ./build.sh"
+  # "build.sh" is not used here for building to stay compatible across different operating systems.
+  cmd = "npm run build && templ generate . && go build"
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "node_modules", "static"]
+  exclude_dir = ["assets", "tmp", "vendor", "node_modules", "static"]
   exclude_file = []
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = "LOGLEVEL=DEBUG ./portkey"
   include_dir = []
   include_ext = ["go", "tpl", "templ", "html", "yml", "css", "js"]
   include_file = []
@@ -25,7 +25,7 @@ tmp_dir = "tmp"
   rerun = false
   rerun_delay = 500
   send_interrupt = false
-  stop_on_error = false
+  stop_on_error = true
 
 [color]
   app = ""

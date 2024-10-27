@@ -27,7 +27,8 @@ COPY .git .git/
 COPY *.go build.sh ./
 COPY internal internal/
 
-RUN apk add --no-cache git bash && \
+# "curl" is added only for Docker healthchecks!
+RUN apk add --no-cache bash curl git && \
   go install github.com/a-h/templ/cmd/templ@v0.2.778 && templ generate && \
   ./build.sh -v "$VERSION"
 

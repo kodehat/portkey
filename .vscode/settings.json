@@ -2,5 +2,14 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "kodehat-github",
     "projectKey": "kodehat_portkey"
+  },
+  "terminal.integrated.env.linux": {
+    "LOGLEVEL": "debug",
+  },
+  "terminal.integrated.env.osx": {
+    "LOGLEVEL": "debug",
+  },
+  "terminal.integrated.env.windows": {
+    "LOGLEVEL": "debug",
   }
 }

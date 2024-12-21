@@ -67,6 +67,9 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			if !config.HideTitle {
 				<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
 			}
+			if config.Subtitle != "" {
+				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-5xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">{ config.Subtitle }</h3>
+			}
 			{ children... }
 		</body>
 	</html>

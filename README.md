@@ -141,6 +141,8 @@ metricsPort: 1515
 title: "portkey"
 # Allows to hide the title.
 hideTitle: false
+# If set, a subtitle is shown below the title.
+subtitle: "Where do you want to go?"
 # Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications.
 headerAddition: |-
   <script async src="https://analytics.example.com"></script>

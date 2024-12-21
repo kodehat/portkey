@@ -25,6 +25,7 @@ type Config struct {
 	MetricsPort                string
 	Title                      string
 	HideTitle                  bool
+	Subtitle                   string
 	Footer                     string
 	ShowTopIcon                bool
 	ShowKeywordsAsTooltips     bool

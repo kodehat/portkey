@@ -17,7 +17,7 @@
   "devDependencies": {
     "@alpinejs/persist": "^3.14.8",
     "alpinejs": "^3.14.8",
-    "concurrently": "^9.1.0",
+    "concurrently": "^9.1.1",
     "esbuild": "^0.24.2",
     "htmx.org": "^2.0.4",
     "husky": "^9.1.7",

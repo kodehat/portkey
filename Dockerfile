@@ -13,7 +13,7 @@ COPY tailwind.config.js ./
 
 RUN npm run build
 
-FROM golang:1.23.4-alpine3.21 AS backend
+FROM golang:1.23.5-alpine3.21 AS backend
 
 ARG VERSION=dev
 

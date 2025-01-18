@@ -254,7 +254,7 @@ They can be watched with `npm run watch` and built with `npm run build`.
 A library called [templ](https://templ.guide) is used for the templates. To generate the `.go` files from the templates, it has to be installed. You can install `templ` with:
 
 ```sh
-go install github.com/a-h/templ/cmd/templ@v0.2.793
+go install github.com/a-h/templ/cmd/templ@v0.3.819
 ```
 
 Afterwards you can generate the compiled templates with `templ generate`.

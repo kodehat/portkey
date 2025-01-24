@@ -14,31 +14,42 @@ import (
 	"github.com/kodehat/portkey/internal/utils"
 )
 
+const searchQueryParam = "search"
+
 type searchHandler struct {
 	logger *slog.Logger
 }
 
 func (p searchHandler) handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		query := r.URL.Query().Get("search")
-		var homePortals = make([]models.Portal, 0)
-		for _, configPortal := range config.C.Portals {
-			if query != "" {
-				if p.isSearchResult(query, configPortal) {
-					homePortals = append(homePortals, configPortal)
-				}
-			} else {
-				homePortals = append(homePortals, configPortal)
-			}
-		}
+		query := r.URL.Query().Get(searchQueryParam)
+		homePortals := p.queryHomePortals(query)
 		if config.C.EnableMetrics && query != "" {
-			if len(homePortals) > 0 {
-				imetrics.M.SearchWithResultsCounter.Inc()
-			} else {
-				imetrics.M.SearchNoResultsCounter.Inc()
-			}
+			p.increaseMetrics(len(homePortals) > 0)
 		}
 		components.PortalPartial(homePortals).Render(r.Context(), w)
+	}
+}
+
+func (p searchHandler) queryHomePortals(query string) []models.Portal {
+	var homePortals = make([]models.Portal, 0)
+	for _, configPortal := range config.C.Portals {
+		if query != "" {
+			if p.isSearchResult(query, configPortal) {
+				homePortals = append(homePortals, configPortal)
+			}
+		} else {
+			homePortals = append(homePortals, configPortal)
+		}
+	}
+	return homePortals
+}
+
+func (p searchHandler) increaseMetrics(hasSearchResults bool) {
+	if hasSearchResults {
+		imetrics.M.SearchWithResultsCounter.Inc()
+	} else {
+		imetrics.M.SearchNoResultsCounter.Inc()
 	}
 }
 

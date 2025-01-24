@@ -29,7 +29,7 @@ COPY internal internal/
 
 # "curl" is added only for Docker healthchecks!
 RUN apk add --no-cache bash curl git && \
-  go install github.com/a-h/templ/cmd/templ@v0.2.793 && templ generate && \
+  go install github.com/a-h/templ/cmd/templ@v0.3.819 && templ generate && \
   ./build.sh -v "$VERSION"
 
 FROM alpine:3.21.2

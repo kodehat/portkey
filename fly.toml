@@ -24,3 +24,11 @@ primary_region = 'ams'
 
 [[vm]]
   size = 'shared-cpu-1x'
+
+[http_service.http_options.response.headers]
+  Strict-Transport-Security = 'max-age=31536000; includeSubDomains'
+  Content-Security-Policy = "default-src 'self' analytics.thisismy.cloud;"
+  X-Frame-Options = 'SAMEORIGIN'
+  X-Content-Type-Options = 'nosniff'
+  Referrer-Policy = 'strict-origin-when-cross-origin'
+  Permissions-Policy = "geolocation=(), microphone=(), camera=(), fullscreen=(self), payment=()"

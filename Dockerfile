@@ -9,7 +9,6 @@ RUN npm install --ignore-scripts --include=dev
 COPY internal internal/
 COPY assets assets/
 COPY static static/
-COPY tailwind.config.js ./
 
 RUN npm run build
 

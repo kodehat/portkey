@@ -45,9 +45,9 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
 				</div>
 			}
-				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex flex-shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
+				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
 					<span class="sr-only">Use setting</span>
-					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">
+					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">
 						<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out" aria-hidden="true">
 							<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -96,7 +96,7 @@ templ ContentLayout(pageTitle string, config config.Config, buildDetails build.B
 				@contents
 			</article>
 			<nav class="flex flex-col justify-center items-center text-center my-[1em] mx-auto">
-				<hr class="my-4 bg-transparent w-1/2 border border-solid opacity-30"/>
+				<hr class="my-4 bg-transparent w-1/2 border-slate-700 dark:border-slate-300 border-solid opacity-30"/>
 				<p class="inline space-x-2">
 					for i, portal := range config.Portals {
 						@FooterPortal(portal)

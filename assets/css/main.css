@@ -1,6 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Tailwind CSS */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --animate-progress: progress 1s infinite linear;
+  --transform-origin-left-right: 0% 50%;
+  @keyframes progress {
+    0% {
+      transform: translateX(0) scaleX(0);
+    }
+    40% {
+      transform: translateX(0) scaleX(0.4);
+    }
+    100% {
+      transform: translateX(100%) scaleX(0.5);
+    }
+  }
+}
 
 /* Alpine.js */
 

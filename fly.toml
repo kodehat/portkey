@@ -10,7 +10,7 @@ primary_region = 'ams'
   HOST = '0.0.0.0'
   METRICSHOST = '0.0.0.0'
 
-[http_service]
+[[services]]
   internal_port = 3000
   force_https = true
   auto_stop_machines = "off"
@@ -18,17 +18,31 @@ primary_region = 'ams'
   min_machines_running = 0
   processes = ['app']
 
+  [services.concurrency]
+    hard_limit = 500
+    soft_limit = 400
+    type = "connections"
+
+[[services.ports]]
+  handlers = ["http"]
+  port = 80
+  force_https = true 
+
+[[services.ports]]
+  handlers = ["tls", "http"]
+  port = 443
+
+  [services.ports.http_options.response.headers]
+    Strict-Transport-Security = 'max-age=31536000; includeSubDomains'
+    Content-Security-Policy = "default-src 'self' 'unsafe-eval' analytics.thisismy.cloud;"
+    X-Frame-Options = 'SAMEORIGIN'
+    X-Content-Type-Options = 'nosniff'
+    Referrer-Policy = 'strict-origin-when-cross-origin'
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(), fullscreen=(self)"
+
 [metrics]
   port = 3030
   path = "/metrics"
 
 [[vm]]
   size = 'shared-cpu-1x'
-
-[http_service.http_options.response.headers]
-  Strict-Transport-Security = 'max-age=31536000; includeSubDomains'
-  Content-Security-Policy = "default-src 'self' analytics.thisismy.cloud;"
-  X-Frame-Options = 'SAMEORIGIN'
-  X-Content-Type-Options = 'nosniff'
-  Referrer-Policy = 'strict-origin-when-cross-origin'
-  Permissions-Policy = "geolocation=(), microphone=(), camera=(), fullscreen=(self), payment=()"

@@ -7,8 +7,8 @@ app = 'portkey-demo'
 primary_region = 'ams'
 
 [env]
-  HOST = '0.0.0.0'
-  METRICSHOST = '0.0.0.0'
+  PORTKEY_HOST = '0.0.0.0'
+  PORTKEY_METRICSHOST = '0.0.0.0'
 
 [[services]]
   internal_port = 3000

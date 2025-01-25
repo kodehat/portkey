@@ -14,7 +14,7 @@ func homeHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != config.C.ContextPath+"/" {
 			w.WriteHeader(http.StatusNotFound)
-			templ.Handler(components.ContentLayout("404 Not Found", config.C, build.B, components.NotFound())).ServeHTTP(w, r)
+			templ.Handler(components.ContentLayout("404 Not Found", "", config.C, build.B, components.NotFound())).ServeHTTP(w, r)
 			return
 		}
 		templ.Handler(components.HomeLayout("Home", config.C, build.B, home)).ServeHTTP(w, r)

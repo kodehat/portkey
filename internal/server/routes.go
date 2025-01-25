@@ -9,16 +9,22 @@ import (
 )
 
 func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
+	// Dev Mode browser reload
+	if config.C.DevMode {
+		logger.Info("registering dev mode", "devMode", true)
+		mux.HandleFunc(config.C.ContextPath+"/reload", devModeHandler{logger}.handle())
+	}
+
 	// Home
 	mux.HandleFunc(config.C.ContextPath+"/", homeHandler())
 
-	// Register portals.
+	// Dynamic portals
 	portalHandler := portalHandler{logger}
 	for _, portalHandler := range portalHandler.handle() {
 		mux.HandleFunc(config.C.ContextPath+portalHandler.portalPath, portalHandler.handlerFunc)
 	}
 
-	// Register pages.
+	// Dynamic pages
 	for _, pageHandler := range pageHandler() {
 		mux.HandleFunc(config.C.ContextPath+pageHandler.pagePath, pageHandler.handlerFunc)
 	}

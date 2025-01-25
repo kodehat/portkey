@@ -25,7 +25,7 @@ func pageHandler() []pageHandlerInfo {
 		}
 		pageHandlerInfos[i] = pageHandlerInfo{
 			pagePath:    page.Path,
-			handlerFunc: pageMetricsHandler(page, templ.Handler(components.ContentLayout(page.Heading, config.C, build.B, components.ContentPage(page.Content)))).ServeHTTP,
+			handlerFunc: pageMetricsHandler(page, templ.Handler(components.ContentLayout(page.Heading, page.Subtitle, config.C, build.B, components.ContentPage(page.Content)))).ServeHTTP,
 		}
 	}
 	return pageHandlerInfos

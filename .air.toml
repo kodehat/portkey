@@ -8,7 +8,7 @@ tmp_dir = "tmp"
   # "build.sh" is not used here for building to stay compatible across different operating systems.
   cmd = "npm run build && templ generate . && go build"
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "node_modules", "static"]
+  exclude_dir = ["tmp", "vendor", "node_modules", "static"]
   exclude_file = []
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false

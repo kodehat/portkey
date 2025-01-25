@@ -3,6 +3,7 @@ import persist from '@alpinejs/persist';
 
 import htmx from 'htmx.org';
 
+htmx.config.includeIndicatorStyles = false;
 // Work against 'unsafe-inline' CSP.
 htmx.config.includeIndicatorStyles = false;
 // Work against 'unsafe-eval' CSP.
@@ -15,4 +16,4 @@ window.Alpine = Alpine;
 Alpine.plugin(persist);
 Alpine.start();
 
-console.log("JavaScript is running!");
+console.debug("JavaScript is running!");

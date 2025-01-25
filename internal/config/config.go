@@ -15,6 +15,7 @@ import (
 )
 
 type Config struct {
+	DevMode                    bool
 	LogLevel                   string
 	LogJson                    bool
 	Host                       string
@@ -55,11 +56,13 @@ func Load() {
 
 func LoadFlags() {
 	var configPath string
+	var envPrefix string
 	workDir, err := os.Getwd()
 	if err != nil {
 		workDir = "."
 	}
 	flag.StringVar(&configPath, "config-path", workDir, "path where config.yml can be found")
+	flag.StringVar(&envPrefix, "env-prefix", "", "prefix for environment variables")
 	flag.Parse()
 	F = Flags{
 		ConfigPath: configPath,
@@ -70,6 +73,7 @@ func loadConfig(configPath string) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
+	viper.SetDefault("devMode", false)
 	viper.SetDefault("logLevel", "INFO")
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
@@ -79,6 +83,8 @@ func loadConfig(configPath string) {
 	viper.SetDefault("title", "Your Portal")
 	viper.SetDefault("footerText", "Works like a portal.")
 	viper.SetDefault("minimumStringSimilarity", 0.75)
+	viper.SetDefault("headerAddition", "")
+	viper.SetEnvPrefix("portkey")
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -99,7 +105,7 @@ func postConfigHook() {
 
 	if C.ContextPath != "" {
 		for i := range C.Portals {
-			if !C.Portals[i].External {
+			if !C.Portals[i].IsExternal() {
 				C.Portals[i].Link = C.ContextPath + C.Portals[i].Link
 			}
 		}

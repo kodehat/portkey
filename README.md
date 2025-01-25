@@ -106,10 +106,14 @@ Download the `portkey` file for your OS. Probably to a location that is in your 
 
 1. Create a `config.yml` or use the [example configuration](https://github.com/kodehat/portkey/blob/main/config.yml) from this repository and configure it as you want.
 > You can find a detailed explanation of all configuration options [here](#configuration).
-2. Start the application with `portkey --config-path=<path_to_config_yml>`. Providing the path to the configuration file is optional if it's in the working directory.
+2. Start the application with `portkey --config-path=<dir_to_config_yml>`. Providing the path to the configuration file is optional if it's in the working directory.
 3. Open browser at defined host and port. Default is <http://localhost:3000>
 
 ## Configuration
+
+`portkey` is configured with a single configuration file called `config.yml`. You can pass its location using the `--config-path` argument.
+
+You can also overwrite configuration values from file by using environment variables in uppercase and prefixed with `PORTKEY_`. For instance, the configuration key `host` can be passed as environment variable `PORTKEY_HOST`.
 
 The `config.yml` contains the following configuration options:
 
@@ -190,6 +194,8 @@ portals:
 pages:
   # Heading for the custom page. Shown in browser tab and as heading on the page.
 - heading: Custom
+  # If true, shows the (optionally configured subtitle also on this page.
+  showSubtitle: true
   # Path where the custom page will be available.
   path: /custom
   # Content of the custom page and it supports using HTML.

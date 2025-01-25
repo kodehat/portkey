@@ -3,7 +3,7 @@ package components
 import "github.com/kodehat/portkey/internal/config"
 
 templ HomePage() {
-	<div class="mt-4 relative max-w-xs md:max-w-sm w-full">
+	<div class="mt-4 lg:mt-2 relative max-w-xs md:max-w-sm w-full">
 		<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-slate-500 dark:text-slate-400">
 				<path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd"></path>
@@ -14,7 +14,7 @@ templ HomePage() {
 			hx-get={ config.C.ContextPath + "/_/portals" }
 			hx-trigger="load, input changed delay:500ms, search"
 			hx-target="#search-results"
-			hx-indicator=".htmx-indicator"
+			hx-indicator=".htmx-indicator,#search-results"
 			@keydown.window.prevent.ctrl.k="$nextTick(() => { $el.focus(); });"
 			@keydown.window.prevent.cmd.k="$nextTick(() => { $el.focus(); });"
 			type="text"
@@ -32,11 +32,11 @@ templ HomePage() {
 			<div class="progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right"></div>
 		</div>
 	</div>
-	<div id="search-results" class="flex flex-col items-start justify-center space-y-12 mt-4"></div>
+	<div id="search-results" class="flex flex-col items-start justify-center space-y-10 md:space-y-14 mt-2"></div>
 }
 
 templ ContentPage(content string) {
-	<p class="block mb-4 leading-[1.6] tracking-[1.5px]">
+	<p class="block text-base md:text-lg mb-4 leading-[1.6] tracking-[1.5px]">
 		@templ.Raw(content)
 	</p>
 }

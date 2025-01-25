@@ -26,7 +26,6 @@ COPY .git .git/
 COPY *.go build.sh ./
 COPY internal internal/
 
-# "curl" is added only for Docker healthchecks!
 RUN apk add --no-cache bash curl git && \
   go install github.com/a-h/templ/cmd/templ@v0.3.819 && templ generate && \
   ./build.sh -v "$VERSION"
@@ -42,16 +41,18 @@ LABEL org.opencontainers.image.authors='dev@codehat.de' \
 
 WORKDIR /opt
 
-COPY --from=backend /app/portkey ./app
+COPY --from=backend /app/portkey ./portkey
 # Provide a default config. Can be overwritten by mounting as volume by user.
 COPY config.yml .
 
-RUN apk add --no-cache tzdata && \
+# "curl" is added only for Docker healthchecks!
+RUN apk add --no-cache tzdata curl && \
   adduser -D -H nonroot && \
-  chmod +x ./app
+  chmod +x ./portkey
 
 EXPOSE 3000/tcp
 
 USER nonroot:nonroot
 
-ENTRYPOINT [ "./app" ]
+ENTRYPOINT [ "/opt/portkey" ]
+CMD [ "--config-path=/opt/" ]

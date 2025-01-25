@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t portkey:dev --no-cache --force-rm --progress=plain .
+docker build -t portkey:dev --force-rm --progress=plain .

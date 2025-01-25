@@ -4,12 +4,18 @@
     "projectKey": "kodehat_portkey"
   },
   "terminal.integrated.env.linux": {
-    "LOGLEVEL": "debug",
+    "PORTKEY_LOGLEVEL": "debug",
+    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   },
   "terminal.integrated.env.osx": {
-    "LOGLEVEL": "debug",
+    "PORTKEY_LOGLEVEL": "debug",
+    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   },
   "terminal.integrated.env.windows": {
-    "LOGLEVEL": "debug",
+    "PORTKEY_LOGLEVEL": "debug",
+    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   }
 }

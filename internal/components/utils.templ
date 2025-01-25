@@ -3,16 +3,69 @@ package components
 import "github.com/kodehat/portkey/internal/build"
 
 templ Version(buildDetails build.BuildDetails) {
-	<ul class="list-none">
-		<li>Build time: { buildDetails.BuildTime }</li>
+	<dl class="grid grid-cols-[repeat(2,auto)] gap-x-8">
+		<dt>Build Time</dt>
+		<dd class="text-left">{ buildDetails.BuildTime }</dd>
 		if buildDetails.CommitHash != "" {
-			<li>Commit hash: <a class="no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></li>
+			<dt>Commit Hash</dt>
+			<dd class="text-left"><a class="no-underline border-b-1 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></dd>
 		}
-		<li>Version: { buildDetails.Version }</li>
-		<li>Go version: { buildDetails.GoVersion }</li>
-	</ul>
+		<dt>Version</dt>
+		<dd class="text-left">{ buildDetails.Version }</dd>
+		<dt>Go Version</dt>
+		<dd class="text-left">{ buildDetails.GoVersion }</dd>
+	</dl>
 }
 
 templ NotFound() {
 	<strong>404</strong> nothing found here...
+}
+
+templ DevModeSnippet(contextPath string) {
+	@templ.JSONScript("contextPath", contextPath)
+	<script>
+		const contextPath = JSON.parse(document.getElementById('contextPath').textContent);
+		const maxReconnectCount = 5;
+		const reconnectTimeout = 1;
+		
+		var reconnectCount = 0;
+		var isReloading = false;
+
+		function connect() {
+			console.log("[🤖] Connecting to WebSocket.");
+			var ws = new WebSocket("ws://" + document.location.host + contextPath + "/reload");
+
+			ws.onopen = function() {
+				if (reconnectCount > 0) {
+					console.log("[🤖] Socket reconnected. Forcing browser reload.");
+					isReloading = true;
+					ws.close();
+					location.reload();
+				} else {
+					console.log("[🤖] Socket connected.");
+				}
+			};
+			ws.onclose = function (e) {
+				if (isReloading) {
+					return;
+				}
+				if (reconnectCount >= maxReconnectCount) {
+					console.error("[🤖] Maximum reconnect count reached. Please refresh the page manually.");
+					ws.close();
+					return;
+				}
+				reconnectRetry = reconnectCount++ + reconnectTimeout;
+				console.log("[🤖] Socket was closed. Reconnect #" + reconnectCount + " will be attempted in " + reconnectRetry + " seconds.");
+				setTimeout(connect, reconnectRetry * 1000);
+			};
+		}
+		
+		// When page is manually refreshed, listen to the event and prevent reloading behavior by setting flag.
+		window.addEventListener('beforeunload', function (e) {
+			isReloading = true;
+			return;
+		});
+
+		connect();
+	</script>
 }

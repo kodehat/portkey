@@ -20,7 +20,7 @@ type portalHandlerInfo struct {
 func (p portalHandler) handle() []portalHandlerInfo {
 	portalHandlerInfos := make([]portalHandlerInfo, 0)
 	for _, portal := range config.C.Portals {
-		if portal.External {
+		if portal.IsExternal() {
 			fixedTitleUrl := portal.TitleForUrl()
 			if fixedTitleUrl != portal.Title {
 				slog.Debug("fixed title", "old", portal.Title, "new", fixedTitleUrl)

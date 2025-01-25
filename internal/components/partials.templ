@@ -1,12 +1,15 @@
 package components
 
-import "github.com/kodehat/portkey/internal/models"
-import "github.com/kodehat/portkey/internal/config"
+import (
+	"github.com/kodehat/portkey/internal/config"
+	"github.com/kodehat/portkey/internal/models"
+)
 
 templ PortalPartial(portals []models.Portal) {
 	if len(portals) == 0 {
-		<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light inline-flex items-center">
-			<i>no results</i>
+		<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
+			❌
+			<span class="ml-4 whitespace-nowrap">no results</span>
 		</span>
 	} else {
 		for _, portal := range portals {

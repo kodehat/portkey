@@ -18,39 +18,39 @@ templ HomePortalWithToolTip(portal models.Portal) {
 }
 
 templ tooltip(keyword string) {
-	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-100 px-2 py-1 text-xs lg:text-base font-normal md:font-ligh ring-1 ring-inset ring-slate-500/10 dark:ring-slate-300/10">
+	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-100 px-2 py-1 text-xs lg:text-base font-normal ring-1 ring-inset ring-slate-500/10 dark:ring-slate-300/10">
 		{ keyword }
 	</span>
 }
 
 templ HomePortal(portal models.Portal) {
-	<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light inline-flex items-center">
+	<span class="no-underline border-b-3 pb-2 border-solid border-slate-300 dark:border-slate-800 text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
 		if portal.Emoji != "" {
 			{ portal.Emoji }
 		}
 		<a
-			if portal.External {
+			if portal.IsExternal() {
 				target="_blank"
 				rel="nofollow"
 			}
 			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
-			class="mx-4 whitespace-nowrap no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
+			class="ml-4 whitespace-nowrap hover:text-slate-800 dark:hover:text-slate-300"
 		>{ portal.Title }</a>
 	</span>
 }
 
 templ FooterPortal(portal models.Portal) {
-	<span class="mx-2 inline-flex items-center">
+	<span class="no-underline border-b-1 border-solid border-slate-300 dark:border-slate-800 mx-2 inline-flex items-center">
 		if portal.Emoji != "" {
 			{ portal.Emoji }
 		}
 		<a
-			if portal.External {
+			if portal.IsExternal() {
 				target="_blank"
 				rel="nofollow"
 			}
 			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
-			class="ml-1 no-underline border-b-2 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300"
+			class="ml-1 hover:text-slate-800 dark:hover:text-slate-300"
 		>{ portal.Title }</a>
 	</span>
 }

@@ -10,7 +10,7 @@ subtitle: "Where do you want to go?"
 headerAddition: |-
   <script defer src="https://analytics.thisismy.cloud/script.js" data-website-id="72fa7b3a-10fa-4273-ae81-d3218b879e06"></script>
 footer: |-
-  <p><a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.portkey.page/">portkey</a> made with ☕️ by <a class="no-underline border-b-2 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
+  <p><a class="no-underline border-b-1 border-solid" target="_blank" rel="nofollow" href="https://www.portkey.page/">portkey</a> made with ☕️ by <a class="no-underline border-b-1 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
 showTopIcon: true
 showKeywordsAsTooltips: true
 sortAlphabetically: false
@@ -20,7 +20,6 @@ portals:
 - title: 1password
   emoji: 🔑
   link: https://my.1password.eu/
-  external: true
   keywords:
   - passwords
   - vault
@@ -29,32 +28,28 @@ portals:
 - title: gmail
   emoji: ✉️
   link: https://mail.google.com
-  external: true
   keywords:
   - emails
 - title: x (twitter)
   emoji: 🐦
   link: https://twitter.com
-  external: true
 - title: github
   emoji: 💻
   link: https://github.com/
-  external: true
   keywords:
   - code
   - collaboration
 - title: about
   emoji: ❓
   link: /about
-  external: false
   keywords:
   - info
 - title: version
   emoji: 🔢
   link: /version
-  external: false
 pages:
 - heading: "About"
+  subtitle: "What is this thing?"
   path: /about
   content: |-
     This website is used to have a collection of <em>links</em> that allow you to quickly head over to different <em>applications</em>.</br>

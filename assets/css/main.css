@@ -49,15 +49,23 @@
 
 /* htmx */
 
-.htmx-indicator{
+.htmx-indicator {
   opacity: 0;
   transition: opacity 100ms ease-in;
 }
 
-.htmx-request .htmx-indicator{
+.htmx-request .htmx-indicator {
   opacity: 1
 }
 
-.htmx-request.htmx-indicator{
+.htmx-request.htmx-indicator {
   opacity: 1
+}
+
+.htmx-request #search-results {
+  display: none;
+}
+
+.htmx-request#search-results {
+  display: none;
 }

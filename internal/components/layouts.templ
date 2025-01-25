@@ -1,10 +1,12 @@
 package components
 
-import "github.com/kodehat/portkey/internal/config"
-import "github.com/kodehat/portkey/internal/build"
-import "fmt"
+import (
+	"fmt"
+	"github.com/kodehat/portkey/internal/build"
+	"github.com/kodehat/portkey/internal/config"
+)
 
-templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetails) {
+templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDetails build.BuildDetails) {
 	<!DOCTYPE html>
 	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
 		<!-- === portkey === -->
@@ -31,21 +33,24 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			<link href={ config.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
 			<script defer src={ config.ContextPath + "/static/js/main.js" }></script>
+			if config.DevMode {
+				@DevModeSnippet(config.ContextPath)
+			}
 			<!-- Set title -->
 			<title>{ pageTitle } - { config.Title }</title>
-			<!-- Header addition -->
 			if config.HeaderAddition != "" {
+				<!-- Header addition -->
 				@templ.Raw(config.HeaderAddition)
 			}
 		</head>
 		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
-			<div class={"flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6"}>
-			if config.ShowTopIcon {
-				<div class="inline-flex">
-					<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
-				</div>
-			}
-				<button @click="darkMode =! darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
+			<div class={ "flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6" }>
+				if config.ShowTopIcon {
+					<div class="inline-flex">
+						<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
+					</div>
+				}
+				<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
 					<span class="sr-only">Use setting</span>
 					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">
 						<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out" aria-hidden="true">
@@ -65,10 +70,10 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 				</button>
 			</div>
 			if !config.HideTitle {
-				<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none drop-shadow-xl shadow-slate-400"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
+				<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
 			}
-			if config.Subtitle != "" {
-				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-5xl tracking-tight leading-none drop-shadow-xl shadow-slate-400">{ config.Subtitle }</h3>
+			if pageSubtitle != "" {
+				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-[2.25rem] tracking-normal leading-none opacity-85">{ pageSubtitle }</h3>
 			}
 			{ children... }
 		</body>
@@ -76,8 +81,8 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 }
 
 templ HomeLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
-	@Base(pageTitle, config, buildDetails) {
-		<nav class="my-4 lg:my-8 mx-auto flex flex-col justify-center items-center">
+	@Base(pageTitle, config.Subtitle, config, buildDetails) {
+		<nav class="mb-4 lg:mb-8 mx-auto flex flex-col justify-center items-center">
 			@contents
 		</nav>
 		<footer class="w-full flex justify-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
@@ -86,10 +91,10 @@ templ HomeLayout(pageTitle string, config config.Config, buildDetails build.Buil
 	}
 }
 
-templ ContentLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
-	@Base(pageTitle, config, buildDetails) {
-		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-8 lg:pt-16 pr-4 pb-4">
-			<h1 class="text-3xl mb-2 opacity-60 ">{ pageTitle }</h1>
+templ ContentLayout(pageTitle string, pageSubtitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
+	@Base(pageTitle, pageSubtitle, config, buildDetails) {
+		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-4 lg:pt-6 pr-4 pb-4">
+			<h1 class="text-3xl md:text-4xl mb-2 opacity-65 ">{ pageTitle }</h1>
 		</header>
 		<main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">
 			<article class="flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]">

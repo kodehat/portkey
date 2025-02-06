@@ -3,7 +3,7 @@ module github.com/kodehat/portkey
 go 1.23
 
 require (
-	github.com/a-h/templ v0.3.819
+	github.com/a-h/templ v0.3.833
 	github.com/adrg/strutil v0.3.1
 	github.com/coder/websocket v1.8.12
 	github.com/prometheus/client_golang v1.20.5

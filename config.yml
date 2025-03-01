@@ -8,7 +8,7 @@ title: "portkey"
 hideTitle: false
 subtitle: "Where do you want to go?"
 headerAddition: |-
-  <script defer src="https://analytics.thisismy.cloud/script.js" data-website-id="72fa7b3a-10fa-4273-ae81-d3218b879e06"></script>
+  <script defer src="https://analytics.thisismy.cloud/script.js" data-website-id="72fa7b3a-10fa-4273-ae81-d3218b879e06" data-domains="demo.portkey.page"></script>
 footer: |-
   <p><a class="no-underline border-b-1 border-solid" target="_blank" rel="nofollow" href="https://www.portkey.page/">portkey</a> made with ☕️ by <a class="no-underline border-b-1 border-solid" target="_blank" rel="nofollow" href="https://www.codehat.de">CodeHat</a></p>
 showTopIcon: true

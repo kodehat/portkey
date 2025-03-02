@@ -5,17 +5,17 @@
   },
   "terminal.integrated.env.linux": {
     "PORTKEY_LOGLEVEL": "debug",
-    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_ENV": "dev",
     "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   },
   "terminal.integrated.env.osx": {
     "PORTKEY_LOGLEVEL": "debug",
-    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_ENV": "dev",
     "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   },
   "terminal.integrated.env.windows": {
     "PORTKEY_LOGLEVEL": "debug",
-    "PORTKEY_DEVMODE": "true",
+    "PORTKEY_ENV": "dev",
     "PORTKEY_HEADERADDITION": "<!-- dummy -->",
   }
 }

@@ -10,7 +10,7 @@ import (
 
 func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	// Dev Mode browser reload
-	if config.C.DevMode {
+	if config.C.IsDevMode() {
 		logger.Info("registering dev mode", "devMode", true)
 		mux.HandleFunc(config.C.ContextPath+"/reload", devModeHandler{logger}.handle())
 	}

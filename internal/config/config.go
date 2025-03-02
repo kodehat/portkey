@@ -1,46 +1,20 @@
 package config
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 
-	"github.com/kodehat/portkey/internal/models"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
-
-type Config struct {
-	DevMode                    bool
-	LogLevel                   string
-	LogJson                    bool
-	Host                       string
-	Port                       string
-	ContextPath                string
-	EnableMetrics              bool
-	MetricsHost                string
-	MetricsPort                string
-	Title                      string
-	HideTitle                  bool
-	Subtitle                   string
-	Footer                     string
-	ShowTopIcon                bool
-	ShowKeywordsAsTooltips     bool
-	SortAlphabetically         bool
-	SearchWithStringSimilarity bool
-	MinimumStringSimilarity    float64
-	Portals                    []models.Portal
-	Pages                      []models.Page
-	HeaderAddition             string
-}
-
-type Flags struct {
-	ConfigPath string
-}
 
 var C Config
 var F Flags
@@ -73,7 +47,7 @@ func loadConfig(configPath string) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
-	viper.SetDefault("devMode", false)
+	viper.SetDefault("env", Prod)
 	viper.SetDefault("logLevel", "INFO")
 	viper.SetDefault("host", "localhost")
 	viper.SetDefault("port", "1414")
@@ -90,7 +64,29 @@ func loadConfig(configPath string) {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
-	viper.Unmarshal(&C)
+	if err = viper.Unmarshal(&C, viper.DecodeHook(mapstructure.ComposeDecodeHookFunc(
+		// Custom decode hook for EnvLevel.
+		func(f reflect.Type, t reflect.Type, data any) (any, error) {
+			if f.Kind() != reflect.String {
+				return data, nil
+			}
+			if t != reflect.TypeOf(Dev) {
+				return data, nil
+			}
+			switch data.(string) {
+			case "dev":
+				return Dev, nil
+			case "prod":
+				return Prod, nil
+			}
+			return nil, errors.New("invalid env level")
+		},
+		// Default functions from viper.
+		mapstructure.StringToTimeDurationHookFunc(),
+		mapstructure.StringToSliceHookFunc(","),
+	))); err != nil {
+		panic(fmt.Sprintf("unable to decode into struct %s", err))
+	}
 
 	postConfigHook()
 }
@@ -132,4 +128,8 @@ func (c Config) GetLogHandler(w io.Writer) slog.Handler {
 		return slog.NewJSONHandler(w, logHandlerOptions)
 	}
 	return slog.NewTextHandler(w, logHandlerOptions)
+}
+
+func (c Config) IsDevMode() bool {
+	return c.Env == Dev
 }

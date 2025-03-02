@@ -33,7 +33,7 @@ templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDet
 			<link href={ config.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
 			<script defer src={ config.ContextPath + "/static/js/main.js" }></script>
-			if config.DevMode {
+			if config.IsDevMode() {
 				@DevModeSnippet(config.ContextPath)
 			}
 			<!-- Set title -->

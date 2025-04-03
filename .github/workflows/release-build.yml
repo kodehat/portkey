@@ -39,7 +39,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-    - run: go install github.com/a-h/templ/cmd/templ@v0.3.856 && templ generate
+    - run: go install github.com/a-h/templ/cmd/templ@v0.3.857 && templ generate
 
     - name: Build and upload binaries
       uses: wangyoucao577/go-release-action@v1.53

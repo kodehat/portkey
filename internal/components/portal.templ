@@ -24,7 +24,7 @@ templ tooltip(keyword string) {
 }
 
 templ HomePortal(portal models.Portal) {
-	<span class="no-underline border-b-3 pb-2 border-solid border-slate-300 dark:border-slate-800 text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
+	<span class="no-underline border-b-3 pb-2 border-solid border-slate-300 dark:border-slate-800 text-[2rem] md:text-4xl lg:text-5xl font-normal tracking-wide inline-flex items-center">
 		if portal.Emoji != "" {
 			{ portal.Emoji }
 		}
@@ -34,7 +34,7 @@ templ HomePortal(portal models.Portal) {
 				rel="nofollow"
 			}
 			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
-			class="ml-4 whitespace-nowrap hover:text-slate-800 dark:hover:text-slate-300"
+			class="ml-8 md:ml-6 lg:ml-4 whitespace-nowrap hover:text-slate-800 dark:hover:text-slate-300"
 		>{ portal.Title }</a>
 	</span>
 }

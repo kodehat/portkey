@@ -12,7 +12,7 @@ COPY static static/
 
 RUN npm run build
 
-FROM golang:1.24.2-alpine3.21 AS backend
+FROM golang:1.24.3-alpine3.21 AS backend
 
 ARG VERSION=dev
 

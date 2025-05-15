@@ -22,6 +22,6 @@
     "htmx.org": "^2.0.4",
     "husky": "^9.1.7",
     "tailwindcss": "^4.1.7",
-    "@tailwindcss/cli": "^4.1.6"
+    "@tailwindcss/cli": "^4.1.7"
   }
 }

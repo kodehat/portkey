@@ -36,6 +36,7 @@ type Config struct {
 	Portals                    []models.Portal
 	Pages                      []models.Page
 	HeaderAddition             string
+	HideSearchBar              bool
 }
 
 type Flags struct {

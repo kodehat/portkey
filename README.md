@@ -164,6 +164,8 @@ sortAlphabetically: false
 searchWithStringSimilarity: false
 # Minimum required similarity for results when 'searchWithStringSimilarity' is 'true'. Must be between '0.0' (0%) and '1.0' (100%).
 minimumStringSimilarity: 0.5
+# If true, search bar is hidden. Can be useful with a low amount of portals making the search unnecessary.
+hideSearchBar: false
 ```
 
 ### Portals (Links)

@@ -20,7 +20,9 @@ jobs:
       uses: orhun/git-cliff-action@v4
       with:
         config: cliff.toml
-        args: --latest --tag "${{ github.ref_name }}" --exclude-path "CHANGELOG.md"
+        # Always using latest here instead of specific tag only until implemented.
+        # See: https://github.com/orhun/git-cliff/issues/1133
+        args: --latest --strip "header" --exclude-path "CHANGELOG.md"
       env:
         OUTPUT: CHANGELOG.md
 

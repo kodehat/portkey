@@ -12,6 +12,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        # See: https://github.com/orgs/community/discussions/25305#discussioncomment-10728028
+        ssh-key: ${{ secrets.REPO_UPDATE_KEY }}
         ref: 'main'
         fetch-depth: 0
 

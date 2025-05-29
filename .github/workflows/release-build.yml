@@ -42,7 +42,7 @@ jobs:
     - run: go install github.com/a-h/templ/cmd/templ@v0.3.865 && templ generate
 
     - name: Build and upload binaries
-      uses: wangyoucao577/go-release-action@v1.52
+      uses: wangyoucao577/go-release-action@v1.53
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}

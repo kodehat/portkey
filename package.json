@@ -19,7 +19,7 @@
     "alpinejs": "^3.14.9",
     "concurrently": "^9.1.2",
     "esbuild": "^0.25.5",
-    "htmx.org": "^2.0.4",
+    "htmx.org": "^2.0.5",
     "husky": "^9.1.7",
     "tailwindcss": "^4.1.8",
     "@tailwindcss/cli": "^4.1.8"

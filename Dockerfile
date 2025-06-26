@@ -1,4 +1,4 @@
-FROM node:24.1.0-alpine3.21 AS frontend
+FROM node:24.3.0-alpine3.21 AS frontend
 
 WORKDIR /usr/src/app
 

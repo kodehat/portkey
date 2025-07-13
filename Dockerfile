@@ -1,4 +1,4 @@
-FROM node:24.1.0-alpine3.21 AS frontend
+FROM node:24.4.0-alpine3.21 AS frontend
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY static static/
 
 RUN npm run build
 
-FROM golang:1.24.4-alpine3.21 AS backend
+FROM golang:1.24.5-alpine3.21 AS backend
 
 ARG VERSION=dev
 
@@ -27,7 +27,7 @@ COPY *.go build.sh ./
 COPY internal internal/
 
 RUN apk add --no-cache bash curl git && \
-  go install github.com/a-h/templ/cmd/templ@v0.3.898 && templ generate && \
+  go install github.com/a-h/templ/cmd/templ@v0.3.906 && templ generate && \
   ./build.sh -v "$VERSION"
 
 FROM alpine:3.22.0

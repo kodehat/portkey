@@ -14,7 +14,7 @@ jobs:
     concurrency: deploy-group
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Deploy to Fly
       uses: superfly/flyctl-actions/setup-flyctl@master

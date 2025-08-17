@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         # See: https://github.com/orgs/community/discussions/25305#discussioncomment-10728028
         ssh-key: ${{ secrets.REPO_UPDATE_KEY }}

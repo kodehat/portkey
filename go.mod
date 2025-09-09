@@ -7,7 +7,7 @@ toolchain go1.25.0
 require (
 	github.com/a-h/templ v0.3.943
 	github.com/adrg/strutil v0.3.1
-	github.com/coder/websocket v1.8.13
+	github.com/coder/websocket v1.8.14
 	github.com/prometheus/client_golang v1.23.0
 	github.com/spf13/viper v1.21.0
 )

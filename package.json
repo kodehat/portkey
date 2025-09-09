@@ -21,7 +21,7 @@
     "esbuild": "^0.25.9",
     "htmx.org": "^2.0.6",
     "husky": "^9.1.7",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^4.1.13",
     "@tailwindcss/cli": "^4.1.12"
   }
 }

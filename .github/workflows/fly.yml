@@ -14,10 +14,10 @@ jobs:
     concurrency: deploy-group
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
     - name: Deploy to Fly
-      uses: superfly/flyctl-actions/setup-flyctl@master
+      uses: superfly/flyctl-actions/setup-flyctl@63da3ecc5e2793b98a3f2519b3d75d4f4c11cec2 # master
     - run: flyctl deploy --remote-only
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

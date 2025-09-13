@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         # See: https://github.com/orgs/community/discussions/25305#discussioncomment-10728028
         ssh-key: ${{ secrets.REPO_UPDATE_KEY }}
@@ -18,7 +18,7 @@ jobs:
         fetch-depth: 0
 
     - name: Generate a changelog
-      uses: orhun/git-cliff-action@v4
+      uses: orhun/git-cliff-action@98c93442bb05a455a77bee982867857ae748eeea # v4.5.1
       with:
         config: cliff.toml
         args: --tag "${{ github.ref_name }}" --exclude-path "CHANGELOG.md"
@@ -26,11 +26,13 @@ jobs:
         OUTPUT: CHANGELOG.md
 
     - name: Commit and push changelog
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         set +e
         git add CHANGELOG.md
         git commit -m "ci: update changelog"
-        git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
+        git remote set-url origin "https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         git push -u origin main

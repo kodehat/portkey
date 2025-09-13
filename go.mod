@@ -2,7 +2,7 @@ module github.com/kodehat/portkey
 
 go 1.25
 
-toolchain go1.25.0
+toolchain go1.25.1
 
 require (
 	github.com/a-h/templ v0.3.943

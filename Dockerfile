@@ -30,7 +30,7 @@ RUN apk add --no-cache bash curl git && \
   go install github.com/a-h/templ/cmd/templ@v0.3.943 && templ generate && \
   ./build.sh -v "$VERSION"
 
-FROM alpine:3.22.1
+FROM alpine:3.22.2
 
 LABEL org.opencontainers.image.authors='dev@codehat.de' \
       org.opencontainers.image.url='https://www.portkey.page' \

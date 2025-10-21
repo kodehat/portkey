@@ -36,14 +36,14 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-    - run: go install github.com/a-h/templ/cmd/templ@v0.3.943 && templ generate
+    - run: go install github.com/a-h/templ/cmd/templ@v0.3.960 && templ generate
     - run: go test -v ./...
     
     - name: Build assets
       if: startsWith(matrix.os, 'ubuntu') == true
       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
       with:
-        node-version: 24
+        node-version: 25
         cache: 'npm'
     - if: startsWith(matrix.os, 'ubuntu') == true
       run: npm install

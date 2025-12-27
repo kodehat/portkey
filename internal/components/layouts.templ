@@ -43,7 +43,7 @@ templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDet
 				@templ.Raw(config.HeaderAddition)
 			}
 		</head>
-		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-[2rem] tracking-wide shadow-none">
+		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-8 tracking-wide shadow-none">
 			<div class={ "flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6" }>
 				if config.ShowTopIcon {
 					<div class="inline-flex">

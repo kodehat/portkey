@@ -8,7 +8,7 @@ templ Version(buildDetails build.BuildDetails) {
 		<dd class="text-left">{ buildDetails.BuildTime }</dd>
 		if buildDetails.CommitHash != "" {
 			<dt>Commit Hash</dt>
-			<dd class="text-left"><a class="no-underline border-b-1 border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></dd>
+			<dd class="text-left"><a class="no-underline border-b border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300" target="_blank" rel="nofollow" href={ templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash) }>{ buildDetails.CommitHash }</a></dd>
 		}
 		<dt>Version</dt>
 		<dd class="text-left">{ buildDetails.Version }</dd>

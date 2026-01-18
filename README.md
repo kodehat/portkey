@@ -179,8 +179,6 @@ portals:
   emoji: 🔗
   # Link where the portal will lead to (can be relative for custom pages or absolute otherwise)
   link: https://example.com/
-  # If the link configured for this portal opens an external url or a relative one.
-  external: true
   # Additional keywords used by the search feature.
   keywords:
   - url

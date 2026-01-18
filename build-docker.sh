@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t portkey:dev --force-rm --progress=plain .
+docker build -t codehat/portkey:local --force-rm --progress=plain .

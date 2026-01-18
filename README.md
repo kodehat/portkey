@@ -259,10 +259,10 @@ They can be watched with `npm run watch` and built with `npm run build`.
 
 ### Templates
 
-A library called [templ](https://templ.guide) is used for the templates. To generate the `.go` files from the templates, it has to be installed. You can install `templ` with:
+A library called [templ](https://templ.guide) is used for the templates. To generate the `.go` files from the templates, it has to be installed. `templ` is installed using go tools and can be invoked with:
 
 ```sh
-go install github.com/a-h/templ/cmd/templ@v0.3.960
+go tool templ
 ```
 
 Afterwards you can generate the compiled templates with `templ generate`.
@@ -270,11 +270,10 @@ Afterwards you can generate the compiled templates with `templ generate`.
 ### Live Reload
 
 Live reloading is possible by installing [air](https://github.com/cosmtrek/air) and calling `air`.
-
-You can install `air` with:
+`air` is installed using go tools and can be invoked with:
 
 ```sh
-go install github.com/air-verse/air@latest
+go tool air
 ```
 
 ## See Also

@@ -18,7 +18,7 @@
     "@alpinejs/persist": "^3.15.9",
     "alpinejs": "^3.15.8",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.27.4",
     "htmx.org": "^2.0.8",
     "husky": "^9.1.7",
     "tailwindcss": "^4.1.15",

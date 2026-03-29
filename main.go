@@ -70,9 +70,7 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 		}()
 	}
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		<-ctx.Done()
 		// make a new context for the Shutdown (thanks Alessandro Rosetti)
 		shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -85,7 +83,7 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 				fmt.Fprintf(os.Stderr, "error shutting down metrics server: %s\n", err)
 			}
 		}
-	}()
+	})
 	wg.Wait()
 	return nil
 }

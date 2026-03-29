@@ -127,7 +127,7 @@ logJson: false
 # Set the host where the application should bind to.
 host: localhost
 # Set the port where the application should bind to.
-port: 1414
+port: 3000
 # Set the context path (aka base-url) portkey is hosted under. Must not be specified unless you're using a reverse proxy and are hosting portkey under a directory. If that's the case then you can set this value to e.g. /portkey or whatever the directory is called. Note that the forward slash (/) in the beginning is required!
 contextPath: ""
 # Enables the HTTP server that serves metrics that can be scraped by e.g. Prometheus.
@@ -135,7 +135,7 @@ enableMetrics: false
 # Set the host where the metrics server should bind to.
 metricsHost: localhost
 # Set the port where the metrics server should bind to.
-metricsPort: 1515
+metricsPort: 3030
 ```
 
 ### Styling
@@ -207,7 +207,7 @@ pages:
 
 ## Metrics
 
-Metrics can be enabled with the `enableMetrics` configuration key and are served on a dedicated HTTP server. By default they are served on `http://localhost:1515/metrics`. Use this address to configure your tool of choice (e.g. [Prometheus](https://prometheus.io/)) to scrape the exported metrics.
+Metrics can be enabled with the `enableMetrics` configuration key and are served on a dedicated HTTP server. By default they are served on `http://localhost:3030/metrics`. Use this address to configure your tool of choice (e.g. [Prometheus](https://prometheus.io/)) to scrape the exported metrics.
 
 Besides the default metrics provided by the [Prometheus instrumentation library for Go applications ](https://github.com/prometheus/client_golang), the following additional metrics are provided:
 

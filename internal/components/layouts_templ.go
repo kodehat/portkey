@@ -243,7 +243,7 @@ func Base(pageTitle string, pageSubtitle string, config config.Config, buildDeta
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button @click=\"darkMode = !darkMode\" type=\"button\" class=\"relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 focus:ring-offset-2\" role=\"switch\" aria-checked=\"false\"><span class=\"sr-only\">Use setting</span> <span class=\"relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0\"><span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-sun h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\"></path> <path d=\"M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7\"></path></svg></span> <span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100 dark:duration-200 dark:ease-in\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-moon h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\"></path></svg></span></span></button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button @click=\"darkMode = !darkMode\" type=\"button\" class=\"relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-200 focus:ring-offset-2\" role=\"switch\" :aria-checked=\"darkMode.toString()\"><span class=\"sr-only\">Use setting</span> <span class=\"relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0\"><span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-sun h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\"></path> <path d=\"M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7\"></path></svg></span> <span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100 dark:duration-200 dark:ease-in\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-moon h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\"></path></svg></span></span></button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -280,14 +280,14 @@ func Base(pageTitle string, pageSubtitle string, config config.Config, buildDeta
 			}
 		}
 		if pageSubtitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<h3 class=\"my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-[2.25rem] tracking-normal leading-none opacity-85\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<h3 class=\"my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-4xl tracking-normal leading-tight opacity-85\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(pageSubtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 76, Col: 161}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 76, Col: 156}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -406,20 +406,20 @@ func ContentLayout(pageTitle string, pageSubtitle string, config config.Config, 
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<header class=\"flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-4 lg:pt-6 pr-4 pb-4\"><h1 class=\"text-3xl md:text-4xl mb-2 opacity-65\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<header class=\"flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-4 lg:pt-6 pr-4 pb-4\"><h2 class=\"text-3xl md:text-4xl mb-2 opacity-65\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 97, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 97, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</h1></header><main class=\"m-auto w-[90%] md:w-[45%] max-w-[64em]\"><article class=\"flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</h2></header><main class=\"m-auto w-[90%] md:w-[45%] max-w-[64em]\"><article class=\"flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

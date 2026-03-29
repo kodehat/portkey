@@ -3,7 +3,7 @@ package components
 import "github.com/kodehat/portkey/internal/build"
 
 templ Version(buildDetails build.BuildDetails) {
-	<dl class="grid grid-cols-[repeat(2,auto)] gap-x-8">
+	<dl class="grid grid-cols-2 gap-x-8">
 		<dt>Build Time</dt>
 		<dd class="text-left">{ buildDetails.BuildTime }</dd>
 		if buildDetails.CommitHash != "" {

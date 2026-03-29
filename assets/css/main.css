@@ -6,7 +6,6 @@
 
 @theme {
   --animate-progress: progress 1s infinite linear;
-  --transform-origin-left-right: 0% 50%;
   @keyframes progress {
     0% {
       transform: translateX(0) scaleX(0);
@@ -33,18 +32,7 @@
 }
 
 .left-right {
-    transform-origin: 0% 50%;
-}
-    @keyframes progress {
-    0% {
-        transform:  translateX(0) scaleX(0);
-    }
-    40% {
-        transform:  translateX(0) scaleX(0.4);
-    }
-    100% {
-        transform:  translateX(100%) scaleX(0.5);
-    }
+  transform-origin: 0% 50%;
 }
 
 /* htmx */
@@ -55,11 +43,11 @@
 }
 
 .htmx-request .htmx-indicator {
-  opacity: 1
+  opacity: 1;
 }
 
 .htmx-request.htmx-indicator {
-  opacity: 1
+  opacity: 1;
 }
 
 .htmx-request #search-results {

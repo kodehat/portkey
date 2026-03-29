@@ -50,7 +50,7 @@ templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDet
 						<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
 					</div>
 				}
-				<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 focus:ring-offset-2" role="switch" aria-checked="false">
+				<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-200 focus:ring-offset-2" role="switch" :aria-checked="darkMode.toString()">
 					<span class="sr-only">Use setting</span>
 					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">
 						<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out" aria-hidden="true">
@@ -73,7 +73,7 @@ templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDet
 				<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
 			}
 			if pageSubtitle != "" {
-				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-[2.25rem] tracking-normal leading-none opacity-85">{ pageSubtitle }</h3>
+				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-4xl tracking-normal leading-tight opacity-85">{ pageSubtitle }</h3>
 			}
 			{ children... }
 		</body>
@@ -94,7 +94,7 @@ templ HomeLayout(pageTitle string, config config.Config, buildDetails build.Buil
 templ ContentLayout(pageTitle string, pageSubtitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
 	@Base(pageTitle, pageSubtitle, config, buildDetails) {
 		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-4 lg:pt-6 pr-4 pb-4">
-			<h1 class="text-3xl md:text-4xl mb-2 opacity-65 ">{ pageTitle }</h1>
+			<h2 class="text-3xl md:text-4xl mb-2 opacity-65">{ pageTitle }</h2>
 		</header>
 		<main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">
 			<article class="flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]">

@@ -25,18 +25,13 @@ templ HomePage() {
 				type="text"
 				class="bg-slate-50 border-2 border-slate-300 text-slate-900 text-base lg:text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5 dark:bg-slate-600 dark:border-slate-800 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500"
 				placeholder="Search..."
-				required
 			/>
 			<div class="absolute inset-y-0 inset-e-0 flex items-center pe-3 pointer-events-none leading-6 space-x-1 text-slate-500 dark:text-slate-400">
 				<kbd>⌘</kbd>
 				<kbd>K</kbd>
 			</div>
 		</div>
-		<div class="htmx-indicator mt-4 max-w-xs md:max-w-sm w-full">
-			<div class="h-2 w-full border-slate-700 dark:border-slate-300 rounded-md bg-slate-500 dark:bg-slate-100 overflow-hidden">
-				<div class="progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right"></div>
-			</div>
-		</div>
+		@loadingBar(true)
 	} else {
 		<div
 			class="hidden"
@@ -45,13 +40,17 @@ templ HomePage() {
 			hx-target="#search-results"
 			hx-indicator=".htmx-indicator,#search-results"
 		></div>
-		<div class="htmx-indicator mt-2 max-w-xs md:max-w-sm w-full">
-			<div class="h-2 w-full border-slate-700 dark:border-slate-300 rounded-md bg-slate-500 dark:bg-slate-100 overflow-hidden">
-				<div class="progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right"></div>
-			</div>
-		</div>
+		@loadingBar(false)
 	}
-	<div id="search-results" class="flex flex-col items-start justify-center space-y-10 md:space-y-14 mt-2"></div>
+	<div id="search-results" class="flex flex-col items-start space-y-10 md:space-y-14 mt-2"></div>
+}
+
+templ loadingBar(largeTopMargin bool) {
+	<div class={ "htmx-indicator", templ.KV("mt-4", largeTopMargin), templ.KV("mt-2", !largeTopMargin), "max-w-xs", "md:max-w-sm", "w-full" }>
+		<div class="h-2 w-full border-slate-700 dark:border-slate-300 rounded-md bg-slate-500 dark:bg-slate-100 overflow-hidden">
+			<div class="progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right"></div>
+		</div>
+	</div>
 }
 
 templ ContentPage(content string) {

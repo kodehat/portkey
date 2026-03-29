@@ -11,6 +11,10 @@ templ HomePage() {
 				</svg>
 			</div>
 			<input
+				x-data="{
+					query: new URLSearchParams(window.location.search).get('q') || '',
+				}"
+				:value="query"
 				name="search"
 				hx-get={ config.C.ContextPath + "/_/portals" }
 				hx-trigger="load, input changed delay:500ms, search"

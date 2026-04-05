@@ -51,7 +51,7 @@
   <a href="https://www.codehat.de">CodeHat</a> and
   <a href="https://github.com/kodehat/portkey/graphs/contributors">
     contributors
-  </a>
+  </a></sub>
 </div>
 
 ## Table of Contents
@@ -69,7 +69,7 @@
 
 ## Features
 
-- 🔗 Shows a collection of links acting as startup page or similiar.
+- 🔗 Shows a collection of links acting as startup page or similar.
 - 🔎 Includes a search box with configurable keyword support.
 - 📄 Can be configured easily by modifying only one file.
 - 🗒️ Also supports adding smaller custom pages.
@@ -107,7 +107,7 @@ Download the `portkey` file for your OS. Probably to a location that is in your 
 1. Create a `config.yml` or use the [example configuration](https://github.com/kodehat/portkey/blob/main/config.yml) from this repository and configure it as you want.
 > You can find a detailed explanation of all configuration options [here](#configuration).
 2. Start the application with `portkey --config-path=<dir_to_config_yml>`. Providing the path to the configuration file is optional if it's in the working directory.
-3. Open browser at defined host and port. Default is <http://localhost:3000>
+3. Open your browser at the defined host and port. Default is <http://localhost:3000>
 
 ## Configuration
 
@@ -120,7 +120,7 @@ The `config.yml` contains the following configuration options:
 ### Server
 
 ```yaml
-# Can be changed to reduce or increase logs. Values could be "ERROR", "WARN", "INFO" (default) or "DEBUG.
+# Can be changed to reduce or increase logs. Values could be "ERROR", "WARN", "INFO" (default) or "DEBUG".
 logLevel: INFO
 # If enabled logs are in JSON format.
 logJson: false
@@ -194,14 +194,14 @@ portals:
 pages:
   # Heading for the custom page. Shown in browser tab and as heading on the page.
 - heading: Custom
-  # If true, shows the (optionally configured subtitle also on this page.
+  # If true, shows the (optionally configured) subtitle also on this page.
   showSubtitle: true
   # Path where the custom page will be available.
   path: /custom
   # Content of the custom page and it supports using HTML.
   # The same CSS rules apply as for the footer!
   content: |-
-    This is a <em>custom page</em></br>
+    This is a <em>custom page</em><br>
     It also supports using <strong>HTML</strong>!
 ```
 
@@ -235,11 +235,11 @@ portkey_version_info{buildTime="2024.10.09_17:29:19",commitHash="4fd1a0f",goVers
 
 ## Docker
 
-There are also Docker images available at Docker hub that you can use. You can start a container for instance with:
+There are also Docker images available at Docker hub that you can use. You can start a container with the following command:
 
 ```sh
 # Assumes that there is a config.yml in the current directory.
-# It is porbably better to use a specific version than 'latest'.
+# It is probably better to use a specific version than 'latest'.
 docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 codehat/portkey:latest
 ```
 

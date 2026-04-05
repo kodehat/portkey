@@ -30,7 +30,7 @@ func (p searchHandler) handle() http.HandlerFunc {
 			return
 		}
 		homePortals := p.queryHomePortals(query)
-		if config.C.EnableMetrics {
+		if query != "" && config.C.EnableMetrics {
 			p.increaseMetrics(len(homePortals) > 0)
 		}
 		components.PortalPartial(homePortals).Render(r.Context(), w)

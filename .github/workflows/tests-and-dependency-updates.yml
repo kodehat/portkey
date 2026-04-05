@@ -1,4 +1,4 @@
-name: Run tests
+name: Run tests and update dependencies
 
 on:
   pull_request:
@@ -46,6 +46,26 @@ jobs:
         node-version: 25
         cache: 'npm'
     - if: startsWith(matrix.os, 'ubuntu') == true
-      run: npm install
+      run: npm install --ignore-scripts
     - if: startsWith(matrix.os, 'ubuntu') == true
       run: npm run build
+
+  dependabot:
+    name: Auto-approve and merge Dependabot PRs
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
+    steps:
+      - id: metadata
+        uses: dependabot/fetch-metadata@ffa630c65fa7e0ecfa0625b5ceda64399aea1b36 # v3.0.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --merge --auto "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

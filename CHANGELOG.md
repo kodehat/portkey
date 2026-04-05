@@ -5,6 +5,127 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-04-05
+
+### Added
+
+- Add optional grouping of portals
+- Add / as focus key and ESC to clear filter plus lower search delay
+- Add dependency cooldown
+- Add AGENTS.md with project details
+
+### Changed
+
+- Update transitive dependencies
+- Track compiled CSS and JS files
+- Update tools
+- Merge pull request #276 from kodehat/dependabot/github_actions/docker/login-action-4.1.0
+- Bump docker/login-action from 4.0.0 to 4.1.0
+- Merge pull request #277 from kodehat/dependabot/docker/node-25.9.0-alpine3.23
+- Bump node from 25.8.2-alpine3.23 to 25.9.0-alpine3.23
+- Merge pull request #278 from kodehat/dependabot/npm_and_yarn/esbuild-0.28.0
+- Bump esbuild from 0.27.4 to 0.28.0
+- Merge pull request #280 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.11
+- Bump @alpinejs/persist from 3.15.10 to 3.15.11
+- Approve dependabot pull requests if possible
+- Minor code clean-ups and optimizations
+- Optimize styling
+- Apply 'go fix'
+- Merge pull request #273 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.10
+- Bump @alpinejs/persist from 3.15.9 to 3.15.10
+- Merge pull request #274 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.10
+- Bump alpinejs from 3.15.9 to 3.15.10
+- Merge pull request #270 from kodehat/dependabot/github_actions/actions/setup-go-6.4.0
+- Bump actions/setup-go from 6.3.0 to 6.4.0
+- Merge pull request #272 from kodehat/dependabot/github_actions/actions/cache-5.0.4
+- Bump actions/cache from 5.0.3 to 5.0.4
+- Merge pull request #271 from kodehat/dependabot/github_actions/ncipollo/release-action-1.21.0
+- Bump ncipollo/release-action from 1.20.0 to 1.21.0
+- Default port changed from 1414 to 3000 and from 1515 to 3030 for metrics
+- Update dependencies
+- Allow pre-filling search with query parameter 'q'
+- Optimize two css classes
+- Npm audit fix
+- Update templates
+- Update tools
+- Merge pull request #268 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.9
+- Bump alpinejs from 3.15.8 to 3.15.9
+- Merge pull request #266 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.2.2
+- Bump @tailwindcss/cli from 4.2.1 to 4.2.2
+- Merge pull request #265 from kodehat/dependabot/npm_and_yarn/esbuild-0.27.4
+- Bump esbuild from 0.27.3 to 0.27.4
+- Merge pull request #259 from kodehat/dependabot/github_actions/docker/setup-qemu-action-4.0.0
+- Bump docker/setup-qemu-action from 3.7.0 to 4.0.0
+- Merge pull request #258 from kodehat/dependabot/go_modules/github.com/a-h/templ-0.3.1001
+- Bump github.com/a-h/templ from 0.3.977 to 0.3.1001
+- Merge pull request #260 from kodehat/dependabot/github_actions/actions/setup-node-6.3.0
+- Bump actions/setup-node from 6.2.0 to 6.3.0
+- Merge pull request #261 from kodehat/dependabot/github_actions/docker/login-action-4.0.0
+- Bump docker/login-action from 3.7.0 to 4.0.0
+- Merge pull request #262 from kodehat/dependabot/github_actions/docker/setup-buildx-action-4.0.0
+- Bump docker/setup-buildx-action from 3.12.0 to 4.0.0
+- Merge pull request #263 from kodehat/dependabot/github_actions/docker/build-push-action-7.0.0
+- Bump docker/build-push-action from 6.19.2 to 7.0.0
+- Merge pull request #269 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.9
+- Bump @alpinejs/persist from 3.15.8 to 3.15.9
+- Merge pull request #254 from kodehat/dependabot/github_actions/orhun/git-cliff-action-4.7.1
+- Bump orhun/git-cliff-action from 4.7.0 to 4.7.1
+- Merge pull request #256 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.2.1
+- Bump @tailwindcss/cli from 4.2.0 to 4.2.1
+- Merge pull request #257 from kodehat/dependabot/github_actions/actions/setup-go-6.3.0
+- Bump actions/setup-go from 6.2.0 to 6.3.0
+- Merge pull request #253 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.2.0
+- Bump @tailwindcss/cli from 4.1.18 to 4.2.0
+- Merge pull request #251 from kodehat/dependabot/github_actions/docker/build-push-action-6.19.2
+- Bump docker/build-push-action from 6.18.0 to 6.19.2
+- Merge pull request #249 from kodehat/dependabot/npm_and_yarn/esbuild-0.27.3
+- Bump esbuild from 0.27.2 to 0.27.3
+- Merge pull request #247 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.8
+- Bump @alpinejs/persist from 3.15.5 to 3.15.8
+- Merge pull request #248 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.8
+- Bump alpinejs from 3.15.5 to 3.15.8
+- Merge pull request #244 from kodehat/dependabot/github_actions/actions/cache-5.0.3
+- Bump actions/cache from 5.0.2 to 5.0.3
+- Merge pull request #243 from kodehat/dependabot/docker/alpine-3.23.3
+- Bump alpine from 3.23.2 to 3.23.3
+- Merge pull request #242 from kodehat/dependabot/github_actions/docker/login-action-3.7.0
+- Bump docker/login-action from 3.6.0 to 3.7.0
+- Merge pull request #241 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.5
+- Bump alpinejs from 3.15.4 to 3.15.5
+- Merge pull request #240 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.5
+- Bump @alpinejs/persist from 3.15.4 to 3.15.5
+- Merge pull request #239 from kodehat/dependabot/github_actions/actions/checkout-6.0.2
+- Bump actions/checkout from 6.0.1 to 6.0.2
+- Merge pull request #238 from kodehat/dependabot/github_actions/actions/cache-5.0.2
+- Bump actions/cache from 5.0.1 to 5.0.2
+- Use go tools for templ and air and add compiled templates to git
+- Exclude .air.toml in TOML configuration file
+- Update tools
+- Merge pull request #233 from kodehat/dependabot/go_modules/github.com/a-h/templ-0.3.977
+- Bump github.com/a-h/templ from 0.3.960 to 0.3.977
+- Merge pull request #236 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.4
+- Bump @alpinejs/persist from 3.15.3 to 3.15.4
+- Merge pull request #237 from kodehat/dependabot/github_actions/actions/setup-node-6.2.0
+- Bump actions/setup-node from 6.1.0 to 6.2.0
+- Merge pull request #235 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.4
+- Bump alpinejs from 3.15.3 to 3.15.4
+- Merge pull request #234 from kodehat/dependabot/github_actions/actions/setup-go-6.2.0
+- Bump actions/setup-go from 6.1.0 to 6.2.0
+
+### Fixed
+
+- Search metric for portals upon search
+- Hide ungrouped group when groups are not used
+- Make search case insensitive
+- 404 handler order
+- Fix grammar/typos in README.md
+- Resolve Sonar issues
+- Changelog workflow should use ssh key
+
+### Removed
+
+- Remove old field mentioned in README.md
+
 ## [2.0.2] - 2025-12-27
 
 ### Added
@@ -555,6 +676,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files
 - Remove generated files
 
+[3.0.0]: https://github.com/kodehat/portkey/compare/v2.0.2..v3.0.0
 [2.0.2]: https://github.com/kodehat/portkey/compare/v2.0.1..v2.0.2
 [2.0.1]: https://github.com/kodehat/portkey/compare/v2.0.0..v2.0.1
 [2.0.0]: https://github.com/kodehat/portkey/compare/v1.2.0..v2.0.0

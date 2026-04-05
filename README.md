@@ -70,7 +70,8 @@
 ## Features
 
 - 🔗 Shows a collection of links acting as startup page or similar.
-- 🔎 Includes a search box with configurable keyword support.
+- 🔎 Includes a search box with configurable keyword support and fuzzy matching.
+- 📂 Portals can be organised into named groups/sections on the home page.
 - 📄 Can be configured easily by modifying only one file.
 - 🗒️ Also supports adding smaller custom pages.
 - 🌓 Dark and light mode available.
@@ -183,7 +184,14 @@ portals:
   keywords:
   - url
   - example
+  # (Optional) Group name for organising portals into sections on the home page.
+  # Portals sharing the same group value are rendered together under a labelled heading.
+  # Portals without a group are shown ungrouped at the bottom. Groups appear in the
+  # order the first portal of each group is defined.
+  group: My Group
 ```
+
+> **Tip:** When a search query is active, portals are shown as a flat list regardless of their group. Groups are only visible on the default (empty-query) home view.
 
 ### Custom pages
 

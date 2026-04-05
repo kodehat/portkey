@@ -20,6 +20,18 @@ type Portal struct {
 	// Keywords allows defining additional keywords used by the search.
 	// This can make getting reasonable search results a lot easier.
 	Keywords []string `json:"keywords"`
+
+	// Group optionally assigns this portal to a named section on the home page.
+	// Portals with the same Group value are rendered together under a shared heading.
+	// Portals with an empty Group are shown without a heading.
+	Group string `json:"group"`
+}
+
+// PortalGroup is a named collection of portals used for grouped rendering on the home page.
+type PortalGroup struct {
+	// Name of the group. Empty string means "ungrouped" (no heading rendered).
+	Name    string
+	Portals []Portal
 }
 
 // IsExternal decides if a destination link opens an external page or a custom page.

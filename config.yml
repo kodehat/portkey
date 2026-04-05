@@ -21,6 +21,7 @@ portals:
 - title: 1password
   emoji: 🔑
   link: https://my.1password.eu/
+  group: Work
   keywords:
   - passwords
   - vault
@@ -29,14 +30,17 @@ portals:
 - title: gmail
   emoji: ✉️
   link: https://mail.google.com
+  group: Work
   keywords:
   - emails
 - title: x (twitter)
   emoji: 🐦
   link: https://twitter.com
+  group: Social
 - title: github
   emoji: 💻
   link: https://github.com/
+  group: Development
   keywords:
   - code
   - collaboration

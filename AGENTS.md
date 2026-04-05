@@ -141,8 +141,8 @@ config.C.EnableMetrics   // bool
 
 | Route | Method | Description |
 |-------|--------|-------------|
-| `/` | GET | Home page — renders all portals |
-| `/_/portals?search=<q>` | GET | HTMX partial — search results HTML |
+| `/` | GET | Home page — renders portals grouped by their `group` field |
+| `/_/portals?search=<q>` | GET | HTMX partial — grouped view when query is empty; flat search results when query is non-empty |
 | `/api/portals` | GET | JSON list of all portals |
 | `/api/pages` | GET | JSON list of all pages |
 | `/static/*` | GET | Embedded static assets (CSS, JS) |
@@ -165,10 +165,17 @@ type Portal struct {
     Title    string
     Emoji    string
     Keywords []string // Used in search
+    Group    string   // Optional section heading on the home page (empty = ungrouped)
 }
 
 // Portal.IsExternal() bool        — true if Link starts with http
 // Portal.TitleForUrl() string     — URL-safe version of Title
+
+// PortalGroup groups portals under a shared name for home-page rendering.
+type PortalGroup struct {
+    Name    string
+    Portals []Portal
+}
 
 type Page struct {
     Heading  string
@@ -214,6 +221,7 @@ portals:
     emoji: 💻
     link: https://github.com/
     keywords: [code, git]
+    group: Development   # optional — organises portal under a named section heading
 
 # Custom pages
 pages:
@@ -261,3 +269,4 @@ All metrics are registered under the `portkey_` namespace.
 - The server uses the standard library `net/http` mux — no third-party router.
 - All binaries are statically linked (`CGO_ENABLED=0`); avoid importing packages that require CGO.
 - Conventional Commits are used; `cliff.toml` drives changelog generation.
+- **Portal grouping:** `internal/utils/portal.go` provides `GroupPortals(portals []models.Portal) []models.PortalGroup`. Named groups appear in definition order; portals with an empty `Group` field are collected into an unnamed group placed last. The search handler (`/_/portals`) returns the grouped view when the query is empty and a flat list when a query is present.

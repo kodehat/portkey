@@ -45,7 +45,7 @@ func HomePage() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"load, input changed delay:500ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator,#search-results\" @keydown.window.prevent.ctrl.k=\"$nextTick(() => { $el.focus(); });\" @keydown.window.prevent.cmd.k=\"$nextTick(() => { $el.focus(); });\" type=\"text\" class=\"bg-slate-50 border-2 border-slate-300 text-slate-900 text-base lg:text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5 dark:bg-slate-600 dark:border-slate-800 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500\" placeholder=\"Search...\"><div class=\"absolute inset-y-0 inset-e-0 flex items-center pe-3 pointer-events-none leading-6 space-x-1 text-slate-500 dark:text-slate-400\"><kbd>⌘</kbd> <kbd>K</kbd></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"load, input changed delay:200ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator,#search-results\" @keydown.window.prevent.ctrl.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.cmd.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.slash=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.escape=\"if (document.activeElement === $el) { $el.value = ''; $el.dispatchEvent(new Event('input')); $el.blur(); }\" type=\"text\" class=\"bg-slate-50 border-2 border-slate-300 text-slate-900 text-base lg:text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5 dark:bg-slate-600 dark:border-slate-800 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500\" placeholder=\"Search...\"><div class=\"absolute inset-y-0 inset-e-0 flex items-center pe-3 pointer-events-none leading-6 space-x-1 text-slate-500 dark:text-slate-400\"><kbd>⌘</kbd> <kbd>K</kbd></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,7 +61,7 @@ func HomePage() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(config.C.ContextPath + "/_/portals")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 38, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 40, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

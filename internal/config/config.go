@@ -43,8 +43,13 @@ type Flags struct {
 	ConfigPath string
 }
 
+type RuntimeConfig struct {
+	WithGroups bool
+}
+
 var C Config
 var F Flags
+var R RuntimeConfig
 
 func Load() {
 	LoadFlags()
@@ -111,6 +116,13 @@ func postConfigHook() {
 
 		for i := range C.Pages {
 			C.Pages[i].Path = C.ContextPath + C.Pages[i].Path
+		}
+	}
+
+	for _, portal := range C.Portals {
+		if portal.Group != "" {
+			R.WithGroups = true
+			break
 		}
 	}
 }

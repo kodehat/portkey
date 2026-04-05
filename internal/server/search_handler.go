@@ -23,7 +23,7 @@ type searchHandler struct {
 func (p searchHandler) handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query().Get(searchQueryParam)
-		if query == "" {
+		if query == "" && config.R.WithGroups {
 			// No search query — render portals grouped by their Group field.
 			groups := utils.GroupPortals(config.C.Portals)
 			components.GroupedPortalPartial(groups).Render(r.Context(), w)

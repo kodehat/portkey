@@ -23,7 +23,7 @@ jobs:
         node-version: 25
         cache: 'npm'
     - run: echo "Building assets for ${{ github.ref_name }}"
-    - run: npm install
+    - run: npm install --ignore-scripts
     - run: npm run build
 
     - name: Compile templates

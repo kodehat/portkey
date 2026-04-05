@@ -11,7 +11,7 @@ htmx.config.selfRequestsOnly = true;
 htmx.config.allowScriptTags = false;
 htmx.config.allowEval = false;
 
-window.Alpine = Alpine;
+globalThis.Alpine = Alpine;
 
 Alpine.plugin(persist);
 Alpine.start();

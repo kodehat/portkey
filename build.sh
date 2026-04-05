@@ -20,6 +20,10 @@ while getopts 'o:v:' OPTION; do
       echo "script usage: $(basename "$0") [-o output] [-v version]" >&2
       exit 1
       ;;
+    *)
+      echo "unexpected error: OPTION='$OPTION'" >&2
+      exit 2
+      ;;
   esac
 done
 shift "$((OPTIND -1))"

@@ -23,7 +23,7 @@ type Portal struct {
 }
 
 // IsExternal decides if a destination link opens an external page or a custom page.
-func (p *Portal) IsExternal() bool {
+func (p Portal) IsExternal() bool {
 	return strings.HasPrefix(p.Link, "http")
 }
 

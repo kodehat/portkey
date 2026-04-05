@@ -57,13 +57,11 @@ func Load() {
 
 func LoadFlags() {
 	var configPath string
-	var envPrefix string
 	workDir, err := os.Getwd()
 	if err != nil {
 		workDir = "."
 	}
 	flag.StringVar(&configPath, "config-path", workDir, "path where config.yml can be found")
-	flag.StringVar(&envPrefix, "env-prefix", "", "prefix for environment variables")
 	flag.Parse()
 	F = Flags{
 		ConfigPath: configPath,

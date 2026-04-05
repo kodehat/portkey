@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/adrg/strutil/metrics"
 	"github.com/kodehat/portkey/internal/config"
 )
 
@@ -19,9 +20,9 @@ func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	mux.HandleFunc(config.C.ContextPath+"/", homeHandler())
 
 	// Dynamic portals
-	portalHandler := portalHandler{logger}
-	for _, portalHandler := range portalHandler.handle() {
-		mux.HandleFunc(config.C.ContextPath+portalHandler.portalPath, portalHandler.handlerFunc)
+	ph := portalHandler{logger}
+	for _, info := range ph.handle() {
+		mux.HandleFunc(config.C.ContextPath+info.portalPath, info.handlerFunc)
 	}
 
 	// Dynamic pages
@@ -37,7 +38,7 @@ func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	mux.HandleFunc(config.C.ContextPath+"/static/", staticHandler(static))
 
 	// htmx
-	mux.HandleFunc(config.C.ContextPath+"/_/portals", searchHandler{logger}.handle())
+	mux.HandleFunc(config.C.ContextPath+"/_/portals", searchHandler{logger: logger, levenshtein: metrics.NewLevenshtein()}.handle())
 
 	// REST
 	mux.HandleFunc(config.C.ContextPath+"/api/portals", portalsRestHandler())

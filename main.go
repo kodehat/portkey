@@ -42,7 +42,6 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 	slog.SetDefault(logger)
 	srv := server.NewServer(
 		logger,
-		&config,
 		static,
 	)
 	httpServer := &http.Server{
@@ -72,8 +71,8 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 	var wg sync.WaitGroup
 	wg.Go(func() {
 		<-ctx.Done()
-		// make a new context for the Shutdown (thanks Alessandro Rosetti)
-		shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+		// Use a fresh context for shutdown — the parent ctx is already cancelled.
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := httpServer.Shutdown(shutdownCtx); err != nil {
 			fmt.Fprintf(os.Stderr, "error shutting down http server: %s\n", err)
@@ -89,9 +88,12 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 }
 
 func getCssResourceHash() string {
-	cssFile, _ := static.ReadFile("static/css/main.css")
+	cssFile, err := static.ReadFile("static/css/main.css")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "warning: could not read CSS for hash: %s\n", err)
+		return "unknown"
+	}
 	hasher := sha256.New()
 	hasher.Write(cssFile)
-	sha := hex.EncodeToString(hasher.Sum(nil))
-	return sha[:8]
+	return hex.EncodeToString(hasher.Sum(nil))[:8]
 }

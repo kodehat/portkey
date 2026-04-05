@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/adrg/strutil"
-	"github.com/adrg/strutil/metrics"
 	"github.com/kodehat/portkey/internal/components"
 	"github.com/kodehat/portkey/internal/config"
 	imetrics "github.com/kodehat/portkey/internal/metrics"
@@ -17,7 +16,8 @@ import (
 const searchQueryParam = "search"
 
 type searchHandler struct {
-	logger *slog.Logger
+	logger      *slog.Logger
+	levenshtein strutil.StringMetric
 }
 
 func (p searchHandler) handle() http.HandlerFunc {
@@ -32,14 +32,13 @@ func (p searchHandler) handle() http.HandlerFunc {
 }
 
 func (p searchHandler) queryHomePortals(query string) []models.Portal {
-	var homePortals = make([]models.Portal, 0)
-	for _, configPortal := range config.C.Portals {
-		if query != "" {
-			if p.isSearchResult(query, configPortal) {
-				homePortals = append(homePortals, configPortal)
-			}
-		} else {
-			homePortals = append(homePortals, configPortal)
+	if query == "" {
+		return config.C.Portals
+	}
+	homePortals := make([]models.Portal, 0)
+	for _, portal := range config.C.Portals {
+		if p.isSearchResult(query, portal) {
+			homePortals = append(homePortals, portal)
 		}
 	}
 	return homePortals
@@ -64,13 +63,12 @@ func (p searchHandler) isSearchResult(query string, portal models.Portal) bool {
 	}
 	p.logger.Debug("searching with string similarity", "query", query)
 
-	levenshteinMetric := metrics.NewLevenshtein()
-	similar := p.isSimilar(query, portal.Title, levenshteinMetric, config.C.MinimumStringSimilarity)
+	similar := p.isSimilar(query, portal.Title, p.levenshtein, config.C.MinimumStringSimilarity)
 	if similar {
 		return similar
 	}
 	for _, keyword := range portal.Keywords {
-		similar = p.isSimilar(query, keyword, levenshteinMetric, config.C.MinimumStringSimilarity)
+		similar = p.isSimilar(query, keyword, p.levenshtein, config.C.MinimumStringSimilarity)
 		if similar {
 			return similar
 		}

@@ -28,8 +28,14 @@ func (d devModeHandler) handle() http.HandlerFunc {
 
 		socketCtx := conn.CloseRead(ctx)
 		for {
-			_ = conn.Ping(socketCtx)
-			time.Sleep(2 * time.Second)
+			select {
+			case <-socketCtx.Done():
+				return
+			case <-time.After(2 * time.Second):
+				if err := conn.Ping(socketCtx); err != nil {
+					return
+				}
+			}
 		}
 	}
 }

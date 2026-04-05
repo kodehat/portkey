@@ -53,7 +53,8 @@ func (p searchHandler) increaseMetrics(hasSearchResults bool) {
 }
 
 func (p searchHandler) isSearchResult(query string, portal models.Portal) bool {
-	if strings.Contains(portal.Title, query) || utils.ArrSubStr(portal.Keywords, query) {
+	lowerQuery := strings.ToLower(query)
+	if strings.Contains(strings.ToLower(portal.Title), lowerQuery) || utils.ArrSubStr(portal.Keywords, lowerQuery) {
 		p.logger.Debug("direct match for search found", "query", query, "portal", portal.Title)
 		return true
 	}

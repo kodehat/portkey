@@ -135,7 +135,7 @@ func NotFound() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<strong>404</strong> nothing found here...")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"flex flex-col items-start gap-4\"><p class=\"text-xl\"><strong>404</strong> — nothing found here.</p><a href=\"/\" class=\"no-underline border-b border-solid border-slate-700 dark:border-slate-300 hover:text-slate-800 dark:hover:text-slate-300\">← Back to home</a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

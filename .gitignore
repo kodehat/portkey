@@ -261,7 +261,4 @@ $RECYCLE.BIN/
 
 # Custom
 portkey
-static/**/*.css
-static/**/*.js
-static/**/*.js.map
 tmp/

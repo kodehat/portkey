@@ -32,7 +32,7 @@ func HomePage() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if !config.C.HideSearchBar {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mt-4 lg:mt-2 relative max-w-xs md:max-w-sm w-full\"><div class=\"absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"w-6 h-6 text-slate-500 dark:text-slate-400\"><path fill-rule=\"evenodd\" d=\"M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z\" clip-rule=\"evenodd\"></path></svg></div><input x-data=\"{\n\t\t\t\t\tquery: new URLSearchParams(window.location.search).get('q') || '',\n\t\t\t\t}\" :value=\"query\" name=\"search\" hx-get=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mt-4 lg:mt-2 relative max-w-xs md:max-w-sm w-full\"><div class=\"absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"w-6 h-6 text-slate-500 dark:text-slate-400\"><path fill-rule=\"evenodd\" d=\"M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z\" clip-rule=\"evenodd\"></path></svg></div><input x-data=\"{\n\t\t\t\t\tquery: new URLSearchParams(window.location.search).get('q') || '',\n\t\t\t\t}\" x-model=\"query\" name=\"search\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -45,7 +45,7 @@ func HomePage() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"load, input changed delay:200ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator,#search-results\" @keydown.window.prevent.ctrl.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.cmd.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.slash=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.escape=\"if (document.activeElement === $el) { $el.value = ''; $el.dispatchEvent(new Event('input')); $el.blur(); }\" type=\"text\" class=\"bg-slate-50 border-2 border-slate-300 text-slate-900 text-base lg:text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5 dark:bg-slate-600 dark:border-slate-800 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500\" placeholder=\"Search...\"><div class=\"absolute inset-y-0 inset-e-0 flex items-center pe-3 pointer-events-none leading-6 space-x-1 text-slate-500 dark:text-slate-400\"><kbd>⌘</kbd> <kbd>K</kbd></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"load, input changed delay:200ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator,#search-results\" @htmx:after-request=\"\n\t\t\t\t\t\t\tif ($event.detail.successful) {\n\t\t\t\t\t\t\t\tconst url = new URL(window.location);\n\t\t\t\t\t\t\t\tquery ? url.searchParams.set('q', query) : url.searchParams.delete('q');\n\t\t\t\t\t\t\t\thistory.replaceState({}, '', url);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\" @keydown.window.prevent.ctrl.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.cmd.k=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.prevent.slash=\"if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });\" @keydown.window.escape=\"if (document.activeElement === $el) { $el.value = ''; $el.dispatchEvent(new Event('input')); $el.blur(); }\" type=\"text\" class=\"bg-slate-50 border-2 border-slate-300 text-slate-900 text-base lg:text-lg rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full ps-10 p-2.5 dark:bg-slate-600 dark:border-slate-800 dark:placeholder-slate-400 dark:text-white dark:focus:ring-slate-500 dark:focus:border-slate-500\" placeholder=\"Search...\"><div class=\"absolute inset-y-0 inset-e-0 flex items-center pe-3 pointer-events-none leading-6 space-x-1 text-slate-500 dark:text-slate-400\"><kbd>⌘</kbd> <kbd>K</kbd></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,7 +61,7 @@ func HomePage() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(config.C.ContextPath + "/_/portals")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 40, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 47, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

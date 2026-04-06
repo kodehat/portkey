@@ -14,12 +14,19 @@ templ HomePage() {
 				x-data="{
 					query: new URLSearchParams(window.location.search).get('q') || '',
 				}"
-				:value="query"
+				x-model="query"
 				name="search"
 				hx-get={ config.C.ContextPath + "/_/portals" }
 				hx-trigger="load, input changed delay:200ms, search"
 				hx-target="#search-results"
 				hx-indicator=".htmx-indicator,#search-results"
+				@htmx:after-request="
+							if ($event.detail.successful) {
+								const url = new URL(window.location);
+								query ? url.searchParams.set('q', query) : url.searchParams.delete('q');
+								history.replaceState({}, '', url);
+							}
+						"
 				@keydown.window.prevent.ctrl.k="if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });"
 				@keydown.window.prevent.cmd.k="if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });"
 				@keydown.window.prevent.slash="if (document.activeElement !== $el) $nextTick(() => { $el.focus(); });"

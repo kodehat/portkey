@@ -85,10 +85,14 @@
 
   <summary>Click to view screenshots</summary>
 
-  #### Link collection
+  #### Link collection (no groups)
 
-  ![LinkCollection](docs/images/screenshot_full.png "Link collection")
+  ![LinkCollectionNoGroups](docs/images/screenshot_no_groups_full.png "Link collection (no groups)")
   
+#### Link collection (with groups)
+
+  ![LinkCollectionWithGroups](docs/images/screenshot_with_groups_full.png "Link collection (with groups)")
+
   #### Search for a link
 
   ![SearchForLink](docs/images/screenshot_search.png "Search for a link")

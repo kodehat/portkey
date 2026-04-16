@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-04-16
+
+### Changed
+
+- Merge pull request #283 from kodehat/dependabot/github_actions/actions/cache-5.0.5
+- Bump actions/cache from 5.0.4 to 5.0.5
+- Merge pull request #282 from kodehat/dependabot/github_actions/docker/build-push-action-7.1.0
+- Bump docker/build-push-action from 7.0.0 to 7.1.0
+- Merge pull request #281 from kodehat/dependabot/github_actions/superfly/flyctl-actions-ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+- Bump superfly/flyctl-actions
+- Set search query parameter 'q' upon search
+- Update screenshots
+
+### Fixed
+
+- Fix automatic dependency updates
+- Tooltips open after search
+
 ## [3.0.0] - 2026-04-05
 
 ### Added
@@ -676,6 +694,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files
 - Remove generated files
 
+[3.0.1]: https://github.com/kodehat/portkey/compare/v3.0.0..v3.0.1
 [3.0.0]: https://github.com/kodehat/portkey/compare/v2.0.2..v3.0.0
 [2.0.2]: https://github.com/kodehat/portkey/compare/v2.0.1..v2.0.2
 [2.0.1]: https://github.com/kodehat/portkey/compare/v2.0.0..v2.0.1

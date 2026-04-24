@@ -56,6 +56,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
+      actions: write
     if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
     steps:
       - id: metadata

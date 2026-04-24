@@ -8,7 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/kodehat/portkey/internal/build"
+import (
+	"github.com/kodehat/livereload"
+	"github.com/kodehat/portkey/internal/build"
+)
 
 func Version(buildDetails build.BuildDetails) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -38,7 +41,7 @@ func Version(buildDetails build.BuildDetails) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.BuildTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 8, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 11, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -56,7 +59,7 @@ func Version(buildDetails build.BuildDetails) templ.Component {
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("https://github.com/kodehat/portkey/commit/" + buildDetails.CommitHash))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 11, Col: 276}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 14, Col: 276}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -69,7 +72,7 @@ func Version(buildDetails build.BuildDetails) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.CommitHash)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 11, Col: 304}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 14, Col: 304}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +90,7 @@ func Version(buildDetails build.BuildDetails) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.Version)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 14, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 17, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -100,7 +103,7 @@ func Version(buildDetails build.BuildDetails) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(buildDetails.GoVersion)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 16, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `utils.templ`, Line: 19, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -164,11 +167,7 @@ func DevModeSnippet(contextPath string) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.JSONScript("contextPath", contextPath).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n\t\tconst contextPath = JSON.parse(document.getElementById('contextPath').textContent);\n\t\tconst maxReconnectCount = 5;\n\t\tconst reconnectTimeout = 1;\n\t\t\n\t\tvar reconnectCount = 0;\n\t\tvar isReloading = false;\n\n\t\tfunction connect() {\n\t\t\tconsole.log(\"[🤖] Connecting to WebSocket.\");\n\t\t\tvar ws = new WebSocket(\"ws://\" + document.location.host + contextPath + \"/reload\");\n\n\t\t\tws.onopen = function() {\n\t\t\t\tif (reconnectCount > 0) {\n\t\t\t\t\tconsole.log(\"[🤖] Socket reconnected. Forcing browser reload.\");\n\t\t\t\t\tisReloading = true;\n\t\t\t\t\tws.close();\n\t\t\t\t\tlocation.reload();\n\t\t\t\t} else {\n\t\t\t\t\tconsole.log(\"[🤖] Socket connected.\");\n\t\t\t\t}\n\t\t\t};\n\t\t\tws.onclose = function (e) {\n\t\t\t\tif (isReloading) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tif (reconnectCount >= maxReconnectCount) {\n\t\t\t\t\tconsole.error(\"[🤖] Maximum reconnect count reached. Please refresh the page manually.\");\n\t\t\t\t\tws.close();\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\treconnectRetry = reconnectCount++ + reconnectTimeout;\n\t\t\t\tconsole.log(\"[🤖] Socket was closed. Reconnect #\" + reconnectCount + \" will be attempted in \" + reconnectRetry + \" seconds.\");\n\t\t\t\tsetTimeout(connect, reconnectRetry * 1000);\n\t\t\t};\n\t\t}\n\t\t\n\t\t// When page is manually refreshed, listen to the event and prevent reloading behavior by setting flag.\n\t\twindow.addEventListener('beforeunload', function (e) {\n\t\t\tisReloading = true;\n\t\t\treturn;\n\t\t});\n\n\t\tconnect();\n\t</script>")
+		templ_7745c5c3_Err = templ.Raw(string(livereload.Script(livereload.NewParams(livereload.WithContextPath(contextPath))))).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

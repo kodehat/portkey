@@ -7,7 +7,7 @@ toolchain go1.26.2
 require (
 	github.com/a-h/templ v0.3.1001
 	github.com/adrg/strutil v0.3.1
-	github.com/coder/websocket v1.8.14
+	github.com/kodehat/livereload v0.1.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/spf13/viper v1.21.0
 )
@@ -24,6 +24,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cli/browser v1.3.0 // indirect
+	github.com/coder/websocket v1.8.14 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect

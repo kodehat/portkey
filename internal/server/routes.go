@@ -6,14 +6,23 @@ import (
 	"net/http"
 
 	"github.com/adrg/strutil/metrics"
+	"github.com/kodehat/livereload"
 	"github.com/kodehat/portkey/internal/config"
+)
+
+const (
+	devModeReloadPath = "/reload"
 )
 
 func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	// Dev Mode browser reload
 	if config.C.DevMode {
 		logger.Info("registering dev mode", "devMode", true)
-		mux.HandleFunc(config.C.ContextPath+"/reload", devModeHandler{logger}.handle())
+		devModeParams := livereload.NewParams(
+			livereload.WithContextPath(config.C.ContextPath),
+			livereload.WithReloadPath(devModeReloadPath),
+		)
+		mux.HandleFunc(config.C.ContextPath+devModeReloadPath, livereload.Handler(devModeParams))
 	}
 
 	// Home

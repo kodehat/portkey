@@ -12,7 +12,7 @@ COPY static static/
 
 RUN npm run build
 
-FROM golang:1.26.1-alpine3.23 AS backend
+FROM golang:1.26.2-alpine3.23 AS backend
 
 ARG VERSION=dev
 
@@ -29,7 +29,7 @@ COPY internal internal/
 RUN apk add --no-cache bash curl git && \
   ./build.sh -v "$VERSION"
 
-FROM alpine:3.23.3
+FROM alpine:3.23.4
 
 LABEL org.opencontainers.image.authors='dev@codehat.de' \
       org.opencontainers.image.url='https://www.portkey.page' \

@@ -313,3 +313,104 @@ func TestStaticServing(t *testing.T) {
 func testLogger() *slog.Logger {
 	return slog.New(slog.NewTextHandler(io.Discard, nil))
 }
+
+func TestGetCssResourceHash(t *testing.T) {
+	hash := getCssResourceHash()
+	if len(hash) != 8 {
+		t.Fatalf("expected 8-char hash, got %d chars: %q", len(hash), hash)
+	}
+	for _, c := range hash {
+		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+			t.Fatalf("expected hex char, got %q", c)
+		}
+	}
+}
+
+func TestHomePage_WithPortals(t *testing.T) {
+	initGlobals(config.Config{
+		LogLevel: "INFO",
+		Host:     "localhost",
+		Port:     "3000",
+		Title:    "test",
+		Portals: []models.Portal{
+			{Title: "GitHub", Link: "https://github.com"},
+			{Title: "GitLab", Link: "https://gitlab.com"},
+		},
+		Pages: []models.Page{},
+	})
+	srv := server.NewServer(testLogger(), static)
+	svr := httptest.NewServer(srv)
+	defer svr.Close()
+
+	res, err := http.Get(svr.URL + "/")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+
+	res2, err := http.Get(svr.URL + "/_/portals")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res2.Body.Close()
+	body, _ := io.ReadAll(res2.Body)
+	if !strings.Contains(string(body), "GitHub") {
+		t.Fatal("expected GitHub in search results")
+	}
+}
+
+func TestHomePage_WithGroupedPortals(t *testing.T) {
+	initGlobals(config.Config{
+		LogLevel: "INFO",
+		Host:     "localhost",
+		Port:     "3000",
+		Title:    "test",
+		Portals: []models.Portal{
+			{Title: "GitHub", Link: "https://github.com", Group: "Dev"},
+			{Title: "GitLab", Link: "https://gitlab.com", Group: "Dev"},
+		},
+		Pages: []models.Page{},
+	})
+	config.R.WithGroups = true
+	srv := server.NewServer(testLogger(), static)
+	svr := httptest.NewServer(srv)
+	defer svr.Close()
+
+	res, err := http.Get(svr.URL + "/_/portals")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+	body, _ := io.ReadAll(res.Body)
+	if !strings.Contains(string(body), "Dev") {
+		t.Fatalf("expected 'Dev' group in search results, got %q", string(body))
+	}
+}
+
+func TestMetricsServer(t *testing.T) {
+	initGlobals(config.Config{
+		LogLevel: "INFO",
+		Host:     "localhost",
+		Port:     "3000",
+		Portals:  []models.Portal{},
+		Pages:    []models.Page{},
+	})
+	srv := server.NewMetricsServer(testLogger())
+	svr := httptest.NewServer(srv)
+	defer svr.Close()
+
+	res, err := http.Get(svr.URL + "/metrics")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+}

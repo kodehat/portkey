@@ -3,6 +3,9 @@ package config
 import (
 	"io"
 	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/kodehat/portkey/internal/models"
@@ -74,6 +77,118 @@ func TestGetLogHandlerJSON(t *testing.T) {
 	if handler == nil {
 		t.Fatal("expected non-nil handler")
 	}
+}
+
+func TestLoadFlags_SetsConfigPath(t *testing.T) {
+	LoadFlags()
+	if F.ConfigPath == "" {
+		t.Fatal("expected ConfigPath to be set")
+	}
+}
+
+func TestLoadConfig_FromTempFile(t *testing.T) {
+	dir := t.TempDir()
+	yaml := `logLevel: DEBUG
+host: 0.0.0.0
+port: "8080"
+title: "Test Portal"
+portals: []
+pages: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	C = Config{}
+	loadConfig(dir)
+
+	if strings.ToLower(C.LogLevel) != "debug" {
+		t.Fatalf("expected LogLevel DEBUG (case-insensitive), got %q", C.LogLevel)
+	}
+	if C.Host != "0.0.0.0" {
+		t.Fatalf("expected Host 0.0.0.0, got %q", C.Host)
+	}
+	if C.Port != "8080" {
+		t.Fatalf("expected Port 8080, got %q", C.Port)
+	}
+	if C.Title != "Test Portal" {
+		t.Fatalf("expected Title 'Test Portal', got %q", C.Title)
+	}
+}
+
+func TestLoadConfig_WithPortalsAndPages(t *testing.T) {
+	dir := t.TempDir()
+	yaml := `title: "My Portal"
+portals:
+  - title: "GitHub"
+    link: "https://github.com"
+    keywords: ["code"]
+    group: "Dev"
+pages:
+  - heading: "About"
+    path: /about
+    content: "<p>info</p>"
+`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	C = Config{}
+	loadConfig(dir)
+
+	if len(C.Portals) != 1 || C.Portals[0].Title != "GitHub" {
+		t.Fatalf("expected 1 portal 'GitHub', got %+v", C.Portals)
+	}
+	if len(C.Pages) != 1 || C.Pages[0].Heading != "About" {
+		t.Fatalf("expected 1 page 'About', got %+v", C.Pages)
+	}
+}
+
+func TestLoadConfig_EnvOverride(t *testing.T) {
+	os.Setenv("PORTKEY_PORT", "9999")
+	defer os.Unsetenv("PORTKEY_PORT")
+
+	dir := t.TempDir()
+	yaml := `title: "Test"
+portals: []
+pages: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	C = Config{}
+	loadConfig(dir)
+
+	if C.Port != "9999" {
+		t.Fatalf("expected Port 9999 from env, got %q", C.Port)
+	}
+}
+
+func TestLoadConfig_MissingFile(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected panic for missing config file")
+		}
+	}()
+	C = Config{}
+	loadConfig("/nonexistent/path")
+}
+
+func TestLoadConfig_InvalidYAML(t *testing.T) {
+	dir := t.TempDir()
+	yaml := `:invalid yaml content {{`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected panic for invalid YAML")
+		}
+	}()
+	C = Config{}
+	loadConfig(dir)
 }
 
 func TestPostConfigHook_SortAlphabetically(t *testing.T) {
@@ -153,5 +268,48 @@ func TestPostConfigHook_NoGroups(t *testing.T) {
 
 	if R.WithGroups {
 		t.Fatal("expected WithGroups to be false")
+	}
+}
+
+func TestGetLogHandler_InvalidLogLevelPanics(t *testing.T) {
+	c := Config{LogLevel: "INVALID", LogJson: false}
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected panic for invalid log level")
+		}
+	}()
+	c.GetLogHandler(io.Discard)
+}
+
+func TestGetLogLevelEmpty(t *testing.T) {
+	c := Config{LogLevel: ""}
+	_, err := c.GetLogLevel()
+	if err == nil {
+		t.Fatal("expected error for empty log level")
+	}
+}
+
+func TestPostConfigHook_EmptyConfig(t *testing.T) {
+	c := Config{}
+	C = c
+	R = RuntimeConfig{}
+	postConfigHook()
+
+	if R.WithGroups {
+		t.Fatal("expected WithGroups to be false with empty config")
+	}
+}
+
+func TestPostConfigHook_WithContextPathEmptyPages(t *testing.T) {
+	c := Config{
+		ContextPath: "/app",
+		Portals:     []models.Portal{},
+		Pages:       []models.Page{},
+	}
+	C = c
+	postConfigHook()
+
+	if len(C.Portals) != 0 {
+		t.Fatalf("expected no portals, got %d", len(C.Portals))
 	}
 }

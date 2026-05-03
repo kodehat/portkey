@@ -88,3 +88,39 @@ func TestFooterPortal(t *testing.T) {
 		t.Fatal("expected title in output")
 	}
 }
+
+func TestFooterPortal_Internal(t *testing.T) {
+	portal := models.Portal{Title: "About", Link: "/about"}
+	rec := httptest.NewRecorder()
+	FooterPortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "About") {
+		t.Fatal("expected title in output")
+	}
+	if strings.Contains(body, "target=\"_blank\"") {
+		t.Fatal("expected no target=_blank for internal link")
+	}
+}
+
+func TestHomePortalWithToolTip_NoKeywords(t *testing.T) {
+	portal := models.Portal{Title: "GitHub", Link: "https://github.com"}
+	rec := httptest.NewRecorder()
+	HomePortalWithToolTip(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected title in output")
+	}
+}
+
+func TestHomePortal_WithSpecialCharacters(t *testing.T) {
+	portal := models.Portal{Title: "My <cool> Site", Link: "https://example.com"}
+	rec := httptest.NewRecorder()
+	HomePortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "My") {
+		t.Fatal("expected title in output")
+	}
+}

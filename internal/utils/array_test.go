@@ -21,3 +21,16 @@ func TestArrSubStrEmpty(t *testing.T) {
 		t.Fatalf(`ArrSubStr([], "first") == true`)
 	}
 }
+
+func TestArrSubStr_CaseInsensitive(t *testing.T) {
+	strings := []string{"GitHub", "GitLab"}
+	if !ArrSubStr(strings, "hub") {
+		t.Fatal("expected case-insensitive match")
+	}
+	if !ArrSubStr(strings, "HUB") {
+		t.Fatal("expected case-insensitive match with uppercase query")
+	}
+	if ArrSubStr(strings, "bitbucket") {
+		t.Fatal("expected no match for unrelated string")
+	}
+}

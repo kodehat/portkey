@@ -56,3 +56,14 @@ func TestDevModeSnippet(t *testing.T) {
 		t.Fatal("expected script tag in dev mode snippet")
 	}
 }
+
+func TestVersionComponent_EmptyFields(t *testing.T) {
+	details := build.BuildDetails{}
+	rec := httptest.NewRecorder()
+	Version(details).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if body == "" {
+		t.Fatal("expected non-empty output")
+	}
+}

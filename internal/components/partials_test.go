@@ -80,3 +80,53 @@ func TestGroupedPortalPartial_Grouped(t *testing.T) {
 		t.Fatal("expected portal title 'Blog' in output")
 	}
 }
+
+func TestPortalPartial_WithKeywordsTooltips(t *testing.T) {
+	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	portals := []models.Portal{
+		{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code", "git"}},
+	}
+	rec := httptest.NewRecorder()
+	PortalPartial(portals).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "code") {
+		t.Fatal("expected keyword 'code' in tooltip output")
+	}
+}
+
+func TestGroupedPortalPartial_SingleGroup(t *testing.T) {
+	config.C = config.Config{}
+	groups := []models.PortalGroup{
+		{
+			Name:    "Tools",
+			Portals: []models.Portal{{Title: "GitHub", Link: "https://github.com"}},
+		},
+	}
+	rec := httptest.NewRecorder()
+	GroupedPortalPartial(groups).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "Tools") {
+		t.Fatal("expected group name 'Tools' in output")
+	}
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected portal title 'GitHub' in output")
+	}
+}
+
+func TestPortalPartial_MultiplePortals(t *testing.T) {
+	config.C = config.Config{}
+	portals := []models.Portal{
+		{Title: "A", Link: "/a"},
+		{Title: "B", Link: "/b"},
+		{Title: "C", Link: "/c"},
+	}
+	rec := httptest.NewRecorder()
+	PortalPartial(portals).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "A") || !strings.Contains(body, "B") || !strings.Contains(body, "C") {
+		t.Fatal("expected all portal titles in output")
+	}
+}

@@ -72,3 +72,42 @@ func TestContentPage(t *testing.T) {
 		t.Fatal("expected content in output")
 	}
 }
+
+func TestHomePage_WithSubtitle(t *testing.T) {
+	config.C = config.Config{
+		Title:     "portkey",
+		Subtitle:  "Where do you want to go?",
+		ContextPath: "",
+	}
+	rec := httptest.NewRecorder()
+	HomePage().Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "hx-get") {
+		t.Fatal("expected hx-get attribute in output")
+	}
+}
+
+func TestLoadingBar_NoMargin(t *testing.T) {
+	rec := httptest.NewRecorder()
+	loadingBar(false).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "htmx-indicator") {
+		t.Fatal("expected htmx-indicator class in output")
+	}
+}
+
+func TestHomePage_WithContextPath(t *testing.T) {
+	config.C = config.Config{
+		Title:       "portkey",
+		ContextPath: "/app",
+	}
+	rec := httptest.NewRecorder()
+	HomePage().Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "/app") {
+		t.Fatal("expected context path in output")
+	}
+}

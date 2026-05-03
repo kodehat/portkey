@@ -58,6 +58,13 @@ func TestIpRangesFromString(t *testing.T) {
 	}
 }
 
+func TestIpRangesFromString_Empty(t *testing.T) {
+	prefixes := ipRangesFromString([]string{})
+	if len(prefixes) != 0 {
+		t.Fatalf("expected 0 prefixes, got %d", len(prefixes))
+	}
+}
+
 func TestIpCheckAllowed(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

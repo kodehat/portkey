@@ -167,7 +167,7 @@ pages: []
 
 func TestLoadConfig_MissingFile(t *testing.T) {
 	defer func() {
-		if r := recover(); r == nil {
+		if recover() == nil {
 			t.Fatal("expected panic for missing config file")
 		}
 	}()
@@ -183,7 +183,7 @@ func TestLoadConfig_InvalidYAML(t *testing.T) {
 	}
 
 	defer func() {
-		if r := recover(); r == nil {
+		if recover() == nil {
 			t.Fatal("expected panic for invalid YAML")
 		}
 	}()
@@ -274,7 +274,7 @@ func TestPostConfigHook_NoGroups(t *testing.T) {
 func TestGetLogHandler_InvalidLogLevelPanics(t *testing.T) {
 	c := Config{LogLevel: "INVALID", LogJson: false}
 	defer func() {
-		if r := recover(); r == nil {
+		if recover() == nil {
 			t.Fatal("expected panic for invalid log level")
 		}
 	}()

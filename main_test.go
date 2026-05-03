@@ -120,7 +120,7 @@ func TestNotFound(t *testing.T) {
 	}
 }
 
-func TestAPIEndpoints(t *testing.T) {
+func TestAPIEndpoints(t *testing.T) { // NOSONAR
 	initGlobals(config.Config{
 		LogLevel: "INFO",
 		Host:     "localhost",

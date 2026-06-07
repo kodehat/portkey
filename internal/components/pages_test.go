@@ -75,8 +75,8 @@ func TestContentPage(t *testing.T) {
 
 func TestHomePage_WithSubtitle(t *testing.T) {
 	config.C = config.Config{
-		Title:     "portkey",
-		Subtitle:  "Where do you want to go?",
+		Title:       "portkey",
+		Subtitle:    "Where do you want to go?",
 		ContextPath: "",
 	}
 	rec := httptest.NewRecorder()

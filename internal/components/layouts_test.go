@@ -17,10 +17,10 @@ func TestBase_Render(t *testing.T) {
 		ContextPath: "",
 	}
 	details := build.BuildDetails{
-		Version:    "1.0.0",
-		BuildTime:  "2024-01-01",
-		GoVersion:  "go1.21",
-		CssHash:    "abc123",
+		Version:   "1.0.0",
+		BuildTime: "2024-01-01",
+		GoVersion: "go1.21",
+		CssHash:   "abc123",
 	}
 	build.LoadBuildDetails("abc123")
 	rec := httptest.NewRecorder()

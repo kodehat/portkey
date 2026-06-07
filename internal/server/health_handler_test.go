@@ -20,12 +20,12 @@ func setupServer() {
 	setupOnce.Do(func() {
 		build.LoadBuildDetails("testhash")
 		config.C = config.Config{
-			LogLevel:     "INFO",
-			Host:         "localhost",
-			Port:         "3000",
-			Title:        "portkey",
-			Portals:      []models.Portal{},
-			Pages:        []models.Page{},
+			LogLevel:      "INFO",
+			Host:          "localhost",
+			Port:          "3000",
+			Title:         "portkey",
+			Portals:       []models.Portal{},
+			Pages:         []models.Page{},
 			EnableMetrics: false,
 		}
 		metrics.Load()

@@ -51,7 +51,11 @@ templ HomePage() {
 		></div>
 		@loadingBar(false)
 	}
-	<div id="search-results" class="flex flex-col items-start space-y-10 md:space-y-14 mt-2"></div>
+	if config.C.LayoutColumns > 0 {
+		<div id="search-results" class="max-md:flex max-md:flex-col max-md:items-start max-md:space-y-10 md:px-3 md:mx-auto md:max-w-7xl mt-2"></div>
+	} else {
+		<div id="search-results" class="flex flex-col items-start space-y-10 md:space-y-14 mt-2"></div>
+	}
 }
 
 templ loadingBar(largeTopMargin bool) {

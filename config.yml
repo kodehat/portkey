@@ -17,6 +17,7 @@ showKeywordsAsTooltips: true
 sortAlphabetically: false
 searchWithStringSimilarity: true
 minimumStringSimilarity: 0.5
+layoutColumns: 2  # distribute portals/groups across N columns (0 = disabled, vertical layout)
 portals:
 - title: 1password
   emoji: 🔑

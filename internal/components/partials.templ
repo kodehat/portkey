@@ -5,49 +5,96 @@ import (
 	"github.com/kodehat/portkey/internal/models"
 )
 
-templ PortalPartial(portals []models.Portal) {
+templ PortalPartial(portals []models.Portal, columns int) {
 	if len(portals) == 0 {
-		<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
-			❌
-			<span class="ml-4 whitespace-nowrap">no results</span>
-		</span>
-	} else {
-		for _, portal := range portals {
-			if config.C.ShowKeywordsAsTooltips {
-				@HomePortalWithToolTip(portal)
-			} else {
-				@HomePortal(portal)
+		<div class="flex justify-center w-full">
+			<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
+				❌
+				<span class="ml-4 whitespace-nowrap">no results</span>
+			</span>
+		</div>
+	} else if columns > 0 {
+		<div class={ GridClass(columns) }>
+			for _, portal := range portals {
+				if config.C.ShowKeywordsAsTooltips {
+					@HomePortalWithToolTip(portal)
+				} else {
+					@HomePortal(portal)
+				}
 			}
-		}
+		</div>
+	} else {
+		<div class="flex flex-col items-start space-y-6 md:space-y-8 w-full">
+			for _, portal := range portals {
+				if config.C.ShowKeywordsAsTooltips {
+					@HomePortalWithToolTip(portal)
+				} else {
+					@HomePortal(portal)
+				}
+			}
+		</div>
 	}
 }
 
-templ GroupedPortalPartial(groups []models.PortalGroup) {
+templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 	if len(groups) == 0 {
-		<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
-			❌
-			<span class="ml-4 whitespace-nowrap">no results</span>
-		</span>
+		<div class="flex justify-center w-full">
+			<span class="text-3xl md:text-4xl lg:text-5xl font-normal md:font-light tracking-wide inline-flex items-center">
+				❌
+				<span class="ml-4 whitespace-nowrap">no results</span>
+			</span>
+		</div>
 	} else {
-		for _, group := range groups {
-			<div class="flex flex-col items-start w-full space-y-6 md:space-y-10">
-				<h2 class="border-l-8 pl-4 border-solid border-slate-300 dark:border-slate-800 text-xl md:text-2xl font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase w-full pb-1">
-					if group.Name != "" {
-						{ group.Name }
-					} else {
-						ungrouped
+		if columns > 0 {
+			<div class={ GridClass(columns) }>
+				for _, group := range groups {
+					if len(group.Portals) == 0 {
+						continue
 					}
-				</h2>
-				<div class="flex flex-col items-start space-y-6 md:space-y-8 w-full">
-					for _, portal := range group.Portals {
-						if config.C.ShowKeywordsAsTooltips {
-							@HomePortalWithToolTip(portal)
-						} else {
-							@HomePortal(portal)
-						}
-					}
-				</div>
+					<div class="flex flex-col items-start space-y-6 md:space-y-10">
+						<h2 class="border-l-8 pl-4 border-solid border-slate-300 dark:border-slate-800 text-xl md:text-2xl font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase w-full pb-1">
+							if group.Name != "" {
+								{ group.Name }
+							} else {
+								ungrouped
+							}
+						</h2>
+						<div class="flex flex-col items-start space-y-6 md:space-y-8 w-full">
+							for _, portal := range group.Portals {
+								if config.C.ShowKeywordsAsTooltips {
+									@HomePortalWithToolTip(portal)
+								} else {
+									@HomePortal(portal)
+								}
+							}
+						</div>
+					</div>
+				}
 			</div>
+		} else {
+			for _, group := range groups {
+				if len(group.Portals) == 0 {
+					continue
+				}
+				<div class="flex flex-col items-start space-y-6 md:space-y-10">
+					<h2 class="border-l-8 pl-4 border-solid border-slate-300 dark:border-slate-800 text-xl md:text-2xl font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase w-full pb-1">
+						if group.Name != "" {
+							{ group.Name }
+						} else {
+							ungrouped
+						}
+					</h2>
+					<div class="flex flex-col items-start space-y-6 md:space-y-8 w-full">
+						for _, portal := range group.Portals {
+							if config.C.ShowKeywordsAsTooltips {
+								@HomePortalWithToolTip(portal)
+							} else {
+								@HomePortal(portal)
+							}
+						}
+					</div>
+				</div>
+			}
 		}
 	}
 }

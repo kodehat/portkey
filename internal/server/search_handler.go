@@ -23,17 +23,22 @@ type searchHandler struct {
 func (p searchHandler) handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query().Get(searchQueryParam)
+		cols := config.C.LayoutColumns
 		if query == "" && config.R.WithGroups {
-			// No search query — render portals grouped by their Group field.
 			groups := utils.GroupPortals(config.C.Portals)
-			components.GroupedPortalPartial(groups).Render(r.Context(), w)
+			components.GroupedPortalPartial(groups, cols).Render(r.Context(), w)
 			return
 		}
 		homePortals := p.queryHomePortals(query)
 		if query != "" && config.C.EnableMetrics {
 			p.increaseMetrics(len(homePortals) > 0)
 		}
-		components.PortalPartial(homePortals).Render(r.Context(), w)
+		if config.R.WithGroups {
+			groups := utils.GroupPortals(homePortals)
+			components.GroupedPortalPartial(groups, cols).Render(r.Context(), w)
+			return
+		}
+		components.PortalPartial(homePortals, cols).Render(r.Context(), w)
 	}
 }
 

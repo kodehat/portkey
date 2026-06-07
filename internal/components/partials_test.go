@@ -13,7 +13,7 @@ import (
 func TestPortalPartial_Empty(t *testing.T) {
 	config.C = config.Config{}
 	rec := httptest.NewRecorder()
-	PortalPartial([]models.Portal{}).Render(context.Background(), rec)
+	PortalPartial([]models.Portal{}, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "no results") {
@@ -28,7 +28,7 @@ func TestPortalPartial_Populated(t *testing.T) {
 		{Title: "Google", Link: "https://google.com"},
 	}
 	rec := httptest.NewRecorder()
-	PortalPartial(portals).Render(context.Background(), rec)
+	PortalPartial(portals, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "GitHub") {
@@ -42,7 +42,7 @@ func TestPortalPartial_Populated(t *testing.T) {
 func TestGroupedPortalPartial_Empty(t *testing.T) {
 	config.C = config.Config{}
 	rec := httptest.NewRecorder()
-	GroupedPortalPartial([]models.PortalGroup{}).Render(context.Background(), rec)
+	GroupedPortalPartial([]models.PortalGroup{}, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "no results") {
@@ -67,7 +67,7 @@ func TestGroupedPortalPartial_Grouped(t *testing.T) {
 		},
 	}
 	rec := httptest.NewRecorder()
-	GroupedPortalPartial(groups).Render(context.Background(), rec)
+	GroupedPortalPartial(groups, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "Dev") {
@@ -87,7 +87,7 @@ func TestPortalPartial_WithKeywordsTooltips(t *testing.T) {
 		{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code", "git"}},
 	}
 	rec := httptest.NewRecorder()
-	PortalPartial(portals).Render(context.Background(), rec)
+	PortalPartial(portals, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "code") {
@@ -104,7 +104,7 @@ func TestGroupedPortalPartial_SingleGroup(t *testing.T) {
 		},
 	}
 	rec := httptest.NewRecorder()
-	GroupedPortalPartial(groups).Render(context.Background(), rec)
+	GroupedPortalPartial(groups, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "Tools") {
@@ -123,7 +123,7 @@ func TestPortalPartial_MultiplePortals(t *testing.T) {
 		{Title: "C", Link: "/c"},
 	}
 	rec := httptest.NewRecorder()
-	PortalPartial(portals).Render(context.Background(), rec)
+	PortalPartial(portals, 0).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "A") || !strings.Contains(body, "B") || !strings.Contains(body, "C") {

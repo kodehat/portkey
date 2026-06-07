@@ -72,6 +72,7 @@
 - 🔗 Shows a collection of links acting as startup page or similar.
 - 🔎 Includes a search box with configurable keyword support and fuzzy matching.
 - 📂 Portals can be organised into named groups/sections on the home page.
+- 📐 Optional multi-column grid layout for portals and groups (configurable column count, mobile-responsive).
 - 📄 Can be configured easily by modifying only one file.
 - 🗒️ Also supports adding smaller custom pages.
 - 🌓 Dark and light mode available.
@@ -171,6 +172,11 @@ searchWithStringSimilarity: false
 minimumStringSimilarity: 0.5
 # If true, search bar is hidden. Can be useful with a low amount of portals making the search unnecessary.
 hideSearchBar: false
+# Number of columns for the grid layout (0 = disabled/vertical).
+# On mobile (<768px) the layout always falls back to vertical stacking.
+# When groups exist, each group occupies one grid cell.
+# When no groups, portals are distributed across N columns.
+layoutColumns: 0
 ```
 
 ### Portals (Links)

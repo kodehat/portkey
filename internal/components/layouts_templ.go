@@ -255,7 +255,7 @@ func Base(pageTitle string, pageSubtitle string, config config.Config, buildDeta
 			var templ_7745c5c3_Var14 templ.SafeURL
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(config.ContextPath + "/"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 73, Col: 174}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 74, Col: 174}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -268,7 +268,7 @@ func Base(pageTitle string, pageSubtitle string, config config.Config, buildDeta
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(config.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 73, Col: 191}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 74, Col: 191}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -287,7 +287,7 @@ func Base(pageTitle string, pageSubtitle string, config config.Config, buildDeta
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(pageSubtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 76, Col: 156}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 77, Col: 156}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -413,7 +413,7 @@ func ContentLayout(pageTitle string, pageSubtitle string, config config.Config, 
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 97, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 98, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {

@@ -76,9 +76,16 @@ func HomePage() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"search-results\" class=\"flex flex-col items-start space-y-10 md:space-y-14 mt-2\"></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if config.C.LayoutColumns > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"search-results\" class=\"max-md:flex max-md:flex-col max-md:items-start max-md:space-y-10 md:px-3 md:mx-auto md:max-w-7xl mt-2\"></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"search-results\" class=\"flex flex-col items-start space-y-10 md:space-y-14 mt-2\"></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})
@@ -110,7 +117,7 @@ func loadingBar(largeTopMargin bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -123,7 +130,7 @@ func loadingBar(largeTopMargin bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><div class=\"h-2 w-full border-slate-700 dark:border-slate-300 rounded-md bg-slate-500 dark:bg-slate-100 overflow-hidden\"><div class=\"progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right\"></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><div class=\"h-2 w-full border-slate-700 dark:border-slate-300 rounded-md bg-slate-500 dark:bg-slate-100 overflow-hidden\"><div class=\"progress w-full h-full bg-slate-100 dark:bg-slate-500 left-right\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +159,7 @@ func ContentPage(content string) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"block text-base md:text-lg mb-4 leading-[1.6] tracking-[1.5px]\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p class=\"block text-base md:text-lg mb-4 leading-[1.6] tracking-[1.5px]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -160,7 +167,7 @@ func ContentPage(content string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

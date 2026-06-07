@@ -37,6 +37,7 @@ type Config struct {
 	Pages                      []models.Page
 	HeaderAddition             string
 	HideSearchBar              bool
+	LayoutColumns              int
 }
 
 type Flags struct {

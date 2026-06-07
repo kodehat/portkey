@@ -133,6 +133,7 @@ config.C.Title           // UI title
 config.C.Portals         // []models.Portal
 config.C.Pages           // []models.Page
 config.C.EnableMetrics   // bool
+config.C.LayoutColumns   // int (0 = vertical, 2-12 = column grid)
 ```
 
 ---
@@ -215,6 +216,9 @@ footer: ""             # Injected into page footer
 searchWithStringSimilarity: true
 minimumStringSimilarity: 0.5   # 0.0–1.0; Levenshtein threshold
 
+# Layout
+layoutColumns: 0             # 0 = vertical (default), 2-12 = multi-column grid. On mobile (<768px) always vertical.
+
 # Portals
 portals:
   - title: "GitHub"
@@ -266,7 +270,9 @@ All metrics are registered under the `portkey_` namespace.
 - **Do not edit `static/css/main.css` or `static/js/main.js` directly.** Edit sources in `assets/` and run `npm run build`.
 - The CSS file hash in `internal/build/` is computed from the content of `static/css/main.css` for cache-busting — it updates automatically at build time.
 - `config.C`, `metrics.M`, and `build.B` are globals initialized at startup; access them directly from handlers rather than passing through the call stack.
+
+- **Multi-column layout:** Set `config.C.LayoutColumns` to 0 (vertical, default) or 2-12 (CSS grid). The `components.GridClass(columns int)` helper returns responsive Tailwind classes: mobile uses `max-md:flex flex-col items-start` (vertical stack), desktop uses `md:grid md:grid-cols-N`. Class strings are stored in a `[...]string` array with literal entries so Tailwind v4 detects them during CSS build; always add new column values as literal strings in `internal/components/component.go`.
 - The server uses the standard library `net/http` mux — no third-party router.
 - All binaries are statically linked (`CGO_ENABLED=0`); avoid importing packages that require CGO.
 - Conventional Commits are used; `cliff.toml` drives changelog generation.
-- **Portal grouping:** `internal/utils/portal.go` provides `GroupPortals(portals []models.Portal) []models.PortalGroup`. Named groups appear in definition order; portals with an empty `Group` field are collected into an unnamed group placed last. The search handler (`/_/portals`) returns the grouped view when the query is empty and a flat list when a query is present.
+- **Portal grouping:** `internal/utils/portal.go` provides `GroupPortals(portals []models.Portal) []models.PortalGroup`. Named groups appear in definition order; portals with an empty `Group` field are collected into an unnamed group placed last. The search handler (`/_/portals`) returns groups even when a search query is active (filtered portals are grouped). `GroupedPortalPartial(groups, columns int)` renders groups in a grid when `columns > 0`. `PortalPartial(portals, columns int)` handles the non-grouped case.

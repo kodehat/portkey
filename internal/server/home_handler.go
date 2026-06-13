@@ -10,12 +10,11 @@ import (
 )
 
 func homeHandler() http.HandlerFunc {
-	home := components.HomePage()
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != config.C.ContextPath+"/" {
-			templ.Handler(components.ContentLayout("Oh no", "", config.C, build.B, components.NotFound()), templ.WithStatus(http.StatusNotFound)).ServeHTTP(w, r)
+			templ.Handler(components.ContentLayout("Page not found", config.C, build.B, components.NotFound()), templ.WithStatus(http.StatusNotFound)).ServeHTTP(w, r)
 			return
 		}
-		templ.Handler(components.HomeLayout("Home", config.C, build.B, home)).ServeHTTP(w, r)
+		templ.Handler(components.HomeLayout("Home", config.C, build.B, components.SearchBar(), components.ResultsContainer())).ServeHTTP(w, r)
 	}
 }

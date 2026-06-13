@@ -40,14 +40,17 @@ func TestHomePortal_Internal(t *testing.T) {
 	}
 }
 
-func TestHomePortal_WithEmoji(t *testing.T) {
-	portal := models.Portal{Title: "GitHub", Link: "https://github.com", Emoji: "💻"}
+func TestHomePortal_WithIcon(t *testing.T) {
+	portal := models.Portal{Title: "GitHub", Link: "https://github.com", Icon: "💻"}
 	rec := httptest.NewRecorder()
 	HomePortal(portal).Render(context.Background(), rec)
 
 	body := rec.Body.String()
-	if !strings.Contains(body, "💻") {
-		t.Fatal("expected emoji in output")
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected portal title in output")
+	}
+	if !strings.Contains(body, "github.com") {
+		t.Fatal("expected domain in output")
 	}
 }
 

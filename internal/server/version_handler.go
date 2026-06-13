@@ -12,5 +12,5 @@ import (
 const title string = "Version"
 
 func versionHandler() http.HandlerFunc {
-	return templ.Handler(components.ContentLayout(title, "", config.C, build.B, components.Version(build.B))).ServeHTTP
+	return templ.Handler(components.ContentLayout(title, config.C, build.B, components.Version(build.B))).ServeHTTP
 }

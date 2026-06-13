@@ -38,6 +38,10 @@ type Config struct {
 	HeaderAddition             string
 	HideSearchBar              bool
 	LayoutColumns              int
+	FaviconServiceURL         string
+	FaviconCacheDir           string
+	FaviconCacheDisabled      bool
+	CustomIconsDir            string
 }
 
 type Flags struct {
@@ -89,6 +93,8 @@ func loadConfig(configPath string) {
 	viper.SetDefault("footerText", "Works like a portal.")
 	viper.SetDefault("minimumStringSimilarity", 0.75)
 	viper.SetDefault("headerAddition", "")
+	viper.SetDefault("faviconServiceURL", "https://favicon.vemetric.com")
+	viper.SetDefault("faviconCacheDir", "./favicon-cache")
 	viper.SetEnvPrefix("portkey")
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()

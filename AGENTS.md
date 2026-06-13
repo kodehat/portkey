@@ -41,6 +41,7 @@ portkey/
     ├── build/                # Compile-time metadata (Version, CommitHash, BuildTime, GoVersion)
     ├── components/           # Templ HTML templates (*_templ.go are auto-generated)
     ├── config/               # Configuration loading (Viper + flags)
+    ├── favicon/              # Disk-backed favicon cache (fetch, persist, serve)
     ├── metrics/              # Prometheus metrics definitions
     ├── models/               # Core data structures (Portal, Page)
     ├── server/               # HTTP mux, routes, and all handlers
@@ -111,12 +112,11 @@ func (s searchHandler) handle() http.HandlerFunc {
 ```
 
 ### Global Singletons (loaded at startup)
-| Variable | Package | Purpose |
-|----------|---------|---------|
 | `config.C` | `internal/config` | Parsed application config |
 | `config.F` | `internal/config` | CLI flags |
 | `metrics.M` | `internal/metrics` | Prometheus metric counters |
 | `build.B` | `internal/build` | Binary build metadata |
+| `favicon.C` | `internal/favicon` | Favicon cache instance |
 
 ### Templ Templates
 HTML is rendered using type-safe Templ components. **Never edit `*_templ.go` files directly** — they are auto-generated from `*.templ` sources.
@@ -134,6 +134,8 @@ config.C.Portals         // []models.Portal
 config.C.Pages           // []models.Page
 config.C.EnableMetrics   // bool
 config.C.LayoutColumns   // int (0 = vertical, 2-12 = column grid)
+config.C.FaviconCacheDir // string (on-disk favicon cache path)
+config.C.FaviconCacheDisabled // bool (bypass local cache)
 ```
 
 ---
@@ -143,7 +145,8 @@ config.C.LayoutColumns   // int (0 = vertical, 2-12 = column grid)
 | Route | Method | Description |
 |-------|--------|-------------|
 | `/` | GET | Home page — renders portals grouped by their `group` field |
-| `/_/portals?search=<q>` | GET | HTMX partial — grouped view when query is empty; flat search results when query is non-empty |
+| `/_/favicon?domain=<hostname>` | GET | Serves cached favicon or fetches on miss |
+| `/_/portals?search=<q>` | GET | HTMX partial — grouped view with optional search filtering |
 | `/api/portals` | GET | JSON list of all portals |
 | `/api/pages` | GET | JSON list of all pages |
 | `/static/*` | GET | Embedded static assets (CSS, JS) |
@@ -219,6 +222,11 @@ minimumStringSimilarity: 0.5   # 0.0–1.0; Levenshtein threshold
 # Layout
 layoutColumns: 0             # 0 = vertical (default), 2-12 = multi-column grid. On mobile (<768px) always vertical.
 
+# Favicon
+faviconServiceURL: https://favicon.vemetric.com  # Self-hostable favicon fetch service
+faviconCacheDir: ./favicon-cache                # On-disk favicon cache (Docker volume mountable)
+faviconCacheDisabled: false                     # Bypass local cache, fetch directly from remote
+
 # Portals
 portals:
   - title: "GitHub"
@@ -271,6 +279,7 @@ All metrics are registered under the `portkey_` namespace.
 - The CSS file hash in `internal/build/` is computed from the content of `static/css/main.css` for cache-busting — it updates automatically at build time.
 - `config.C`, `metrics.M`, and `build.B` are globals initialized at startup; access them directly from handlers rather than passing through the call stack.
 
+- **Favicon caching:** `internal/favicon/cache.go` provides a disk-backed favicon cache. Favicons are fetched from a configurable remote service (`faviconServiceURL`, default `https://favicon.vemetric.com`), stored by normalized hostname in `faviconCacheDir` (default `./favicon-cache`), and served via `GET /_/favicon?domain=<hostname>`. Cache TTL is 7 days; stale entries are refreshed in the background. Failed fetches are backed off for 1 hour. Set `faviconCacheDisabled: true` to bypass local caching entirely.
 - **Multi-column layout:** Set `config.C.LayoutColumns` to 0 (vertical, default) or 2-12 (CSS grid). The `components.GridClass(columns int)` helper returns responsive Tailwind classes: mobile uses `max-md:flex flex-col items-start` (vertical stack), desktop uses `md:grid md:grid-cols-N`. Class strings are stored in a `[...]string` array with literal entries so Tailwind v4 detects them during CSS build; always add new column values as literal strings in `internal/components/component.go`.
 - The server uses the standard library `net/http` mux — no third-party router.
 - All binaries are statically linked (`CGO_ENABLED=0`); avoid importing packages that require CGO.

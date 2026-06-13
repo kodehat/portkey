@@ -46,6 +46,15 @@ func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
 	// Static
 	mux.HandleFunc(config.C.ContextPath+"/static/", staticHandler(static))
 
+	// Custom icons directory (served from disk, Docker-mountable)
+	if config.C.CustomIconsDir != "" {
+		fs := http.FileServer(http.Dir(config.C.CustomIconsDir))
+		mux.Handle(config.C.ContextPath+"/_/icons/", http.StripPrefix(config.C.ContextPath+"/_/icons/", fs))
+	}
+
+	// Favicon cache
+	mux.HandleFunc(config.C.ContextPath+"/_/favicon", faviconHandler{}.handle())
+
 	// htmx
 	mux.HandleFunc(config.C.ContextPath+"/_/portals", searchHandler{logger: logger, levenshtein: metrics.NewLevenshtein()}.handle())
 

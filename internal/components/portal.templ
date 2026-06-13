@@ -6,9 +6,9 @@ templ HomePortalWithToolTip(portal models.Portal) {
 	if len(portal.Keywords) == 0 {
 		@HomePortal(portal)
 	} else {
-		<div class="relative group" aria-describedby={ "tooltip-" + portal.TitleForUrl() }>
+		<div class="relative group">
 			@HomePortal(portal)
-			<div id={ "tooltip-" + portal.TitleForUrl() } role="tooltip" class="hidden group-hover:flex mt-2.5 w-full absolute flex-wrap justify-center z-10 top-full text-center px-2 py-1 gap-x-2 gap-y-2 rounded-md bg-slate-300 dark:bg-slate-800">
+			<div class="hidden group-hover:flex absolute z-10 top-full left-0 mt-1 flex-wrap gap-1.5 px-2 py-1.5 rounded-md bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700">
 				for _, keyword := range portal.Keywords {
 					@tooltip(keyword)
 				}
@@ -18,39 +18,86 @@ templ HomePortalWithToolTip(portal models.Portal) {
 }
 
 templ tooltip(keyword string) {
-	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-100 px-2 py-1 text-xs lg:text-base font-normal ring-1 ring-inset ring-slate-500/10 dark:ring-slate-300/10">
+	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 text-xs font-normal">
 		{ keyword }
 	</span>
 }
 
 templ HomePortal(portal models.Portal) {
-	<span class="no-underline border-b-[3px] pb-2 border-solid border-slate-300 dark:border-slate-800 text-[2rem] md:text-4xl lg:text-5xl font-normal tracking-wide inline-flex items-center">
-		if portal.Emoji != "" {
-			{ portal.Emoji }
+	<a
+		if portal.IsExternal() {
+			target="_blank"
+			rel="nofollow"
 		}
-		<a
-			if portal.IsExternal() {
-				target="_blank"
-				rel="nofollow"
-			}
+		if portal.IsExternal() {
 			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
-			class="ml-8 md:ml-6 lg:ml-4 whitespace-nowrap hover:text-slate-800 dark:hover:text-slate-300 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
-		>{ portal.Title }</a>
-	</span>
+		} else {
+			href={ templ.SafeURL(portal.Link) }
+		}
+		class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-transparent dark:border-transparent bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:focus-visible:ring-sky-400"
+	>
+		<span class="shrink-0 w-5 h-5 flex items-center justify-center">
+			if portal.Icon != "" && isIconImage(portal.Icon) {
+				<img src={ templ.SafeURL(portal.Icon) } alt="" class="w-5 h-5 rounded" />
+			} else if portal.Icon != "" {
+				<span class="text-sm">{ portal.Icon }</span>
+			} else if portal.IsExternal() {
+				<img src={ templ.SafeURL(faviconURL(portal.Link)) } alt="" class="w-5 h-5 rounded"
+					onerror="this.style.display='none';var fb=this.parentNode.querySelector('.fav-fb');if(fb)fb.classList.remove('hidden');"
+				/>
+				<svg class="fav-fb hidden w-4 h-4 text-slate-400 dark:text-slate-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+					<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+					<path d="M12 2a15.3 15.3 0 0 1 4 10a15.3 15.3 0 0 1 -4 10a15.3 15.3 0 0 1 -4 -10a15.3 15.3 0 0 1 4 -10z"/>
+				</svg>
+			} else {
+				<svg class="w-4 h-4 text-slate-400 dark:text-slate-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+					<path d="M14 3v4a1 1 0 0 0 1 1h4"/>
+					<path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/>
+					<path d="M9 9l1 0"/>
+					<path d="M9 13l6 0"/>
+					<path d="M9 17l6 0"/>
+				</svg>
+			}
+		</span>
+		<span class="flex-1 min-w-0">
+			<span class="truncate block">{ portal.Title }</span>
+		</span>
+		if portal.IsExternal() {
+			<span class="shrink-0 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-300 truncate max-w-[120px] text-right">
+				<svg class="shrink-0 w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+					<path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/>
+					<path d="M11 13l9 -9"/>
+					<path d="M15 4h5v5"/>
+				</svg>
+				<span class="truncate">{ domainFromURL(portal.Link) }</span>
+			</span>
+		}
+	</a>
 }
 
 templ FooterPortal(portal models.Portal) {
-	<span class="no-underline border-b border-solid border-slate-300 dark:border-slate-800 mx-2 inline-flex items-center">
-		if portal.Emoji != "" {
-			{ portal.Emoji }
+	<span class="inline-flex items-center gap-1 mx-2 text-sm">
+		if portal.Icon != "" {
+			if isIconImage(portal.Icon) {
+				<img src={ templ.SafeURL(portal.Icon) } alt="" class="w-4 h-4" />
+			} else {
+				{ portal.Icon }
+			}
 		}
 		<a
 			if portal.IsExternal() {
 				target="_blank"
 				rel="nofollow"
 			}
-			href={ templ.SafeURL("/" + portal.TitleForUrl()) }
-			class="ml-1 hover:text-slate-800 dark:hover:text-slate-300 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
+			if portal.IsExternal() {
+				href={ templ.SafeURL("/" + portal.TitleForUrl()) }
+			} else {
+				href={ templ.SafeURL(portal.Link) }
+			}
+			class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 rounded-sm"
 		>{ portal.Title }</a>
 	</span>
 }

@@ -12,7 +12,7 @@ import (
 func TestPortalHandlerReturnsRedirect(t *testing.T) {
 	setupServer()
 	config.C.Portals = []models.Portal{
-		{Title: "GitHub", Link: "https://github.com", Emoji: "💻"},
+		{Title: "GitHub", Link: "https://github.com", Icon: "💻"},
 	}
 
 	ph := portalHandler{logger: testLogger()}

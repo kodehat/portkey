@@ -24,7 +24,7 @@ func TestBase_Render(t *testing.T) {
 	}
 	build.LoadBuildDetails("abc123")
 	rec := httptest.NewRecorder()
-	Base("Test", "subtitle", cfg, details).Render(context.Background(), rec)
+	Base("Test", cfg, details).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "portkey") {
@@ -53,7 +53,7 @@ func TestHomeLayout(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	HomeLayout("Home", cfg, details, ContentPage("home content")).Render(context.Background(), rec)
+	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "portkey") {
@@ -65,8 +65,8 @@ func TestHomeLayout(t *testing.T) {
 	if !strings.Contains(body, "test footer") {
 		t.Fatal("expected footer in output")
 	}
-	if !strings.Contains(body, "home content") {
-		t.Fatal("expected content in output")
+	if !strings.Contains(body, "search-results") {
+		t.Fatal("expected search-results container in output")
 	}
 }
 
@@ -79,14 +79,11 @@ func TestContentLayout(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	ContentLayout("About", "Info", cfg, details, ContentPage("about content")).Render(context.Background(), rec)
+	ContentLayout("About", cfg, details, ContentPage("about content")).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "About") {
 		t.Fatal("expected page title in output")
-	}
-	if !strings.Contains(body, "Info") {
-		t.Fatal("expected page subtitle in output")
 	}
 	if !strings.Contains(body, "about content") {
 		t.Fatal("expected content in output")
@@ -105,7 +102,7 @@ func TestBase_WithHeaderAddition(t *testing.T) {
 	details := build.BuildDetails{CssHash: "test"}
 	build.LoadBuildDetails("test")
 	rec := httptest.NewRecorder()
-	Base("Test", "", cfg, details).Render(context.Background(), rec)
+	Base("Test", cfg, details).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, `content="test"`) {
@@ -121,7 +118,7 @@ func TestBase_DevMode(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	Base("Test", "", cfg, details).Render(context.Background(), rec)
+	Base("Test", cfg, details).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "<script") {
@@ -141,7 +138,7 @@ func TestBase_WithCommitHash(t *testing.T) {
 	build.Version = "1.0.0"
 	build.GoVersion = "go1.21"
 	rec := httptest.NewRecorder()
-	Base("Test", "", cfg, details).Render(context.Background(), rec)
+	Base("Test", cfg, details).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "abc123def") {
@@ -166,7 +163,7 @@ func TestContentLayout_WithPortals(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	ContentLayout("About", "", cfg, details, ContentPage("content")).Render(context.Background(), rec)
+	ContentLayout("About", cfg, details, ContentPage("content")).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "GitHub") {
@@ -182,7 +179,7 @@ func TestHomeLayout_HideTitle(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	HomeLayout("Home", cfg, details, ContentPage("home content")).Render(context.Background(), rec)
+	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "hidden") {
@@ -198,7 +195,7 @@ func TestHomeLayout_NoTopIcon(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	HomeLayout("Home", cfg, details, ContentPage("home content")).Render(context.Background(), rec)
+	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "hidden") {
@@ -216,7 +213,7 @@ func TestContentLayout_HideTitle(t *testing.T) {
 	}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
-	ContentLayout("About", "subtitle", cfg, details, ContentPage("content")).Render(context.Background(), rec)
+	ContentLayout("About", cfg, details, ContentPage("content")).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "hidden") {

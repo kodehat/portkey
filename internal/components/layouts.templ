@@ -6,7 +6,7 @@ import (
 	"github.com/kodehat/portkey/internal/config"
 )
 
-templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDetails build.BuildDetails) {
+templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetails) {
 	<!DOCTYPE html>
 	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
 		<!-- === portkey === -->
@@ -43,77 +43,92 @@ templ Base(pageTitle string, pageSubtitle string, config config.Config, buildDet
 				@templ.Raw(config.HeaderAddition)
 			}
 		</head>
-		<body class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-base m-0 p-0 leading-8 tracking-wide shadow-none">
-			<div class={ "flex", templ.KV("justify-between", config.ShowTopIcon), templ.KV("justify-end", !config.ShowTopIcon), "items-center", "mt-6", "lg:mt-10", "ml-6", "mr-3", "lg:ml-12", "lg:mr-6" }>
-				if config.ShowTopIcon {
-					<div class="inline-flex">
-						<img class="shadow-md h-10 md:h-12 lg:h-14 w-10 md:w-12 lg:w-14 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
-					</div>
-				}
- 
-				<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-6 md:h-7 lg:h-8 w-11 md:w-14 lg:w-16 mr-5 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-200 focus:ring-offset-2" role="switch" :aria-checked="darkMode.toString()">
-					<span class="sr-only">Use setting</span>
-					<span class="relative inline-block h-5 md:h-6 lg:h-7 w-5 md:w-6 lg:w-7 transition duration-500 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-5 md:dark:translate-x-7 lg:dark:translate-x-8 ring-0">
-						<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-500 ease-in opacity-100 dark:opacity-0 dark:duration-100 dark:ease-out" aria-hidden="true">
-							<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
-								<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
-							</svg>
+		<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col">
+			<!-- Top bar -->
+			<div class="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 bg-slate-200/60 dark:bg-slate-950/40">
+				<div class="flex items-center gap-2.5">
+					if config.ShowTopIcon {
+						<a href={ templ.SafeURL(config.ContextPath + "/") } class="flex items-center gap-2.5 no-underline">
+							<img class="w-7 h-7 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
+							if !config.HideTitle {
+								<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{ config.Title }</span>
+							}
+						</a>
+					} else if !config.HideTitle {
+						<a href={ templ.SafeURL(config.ContextPath + "/") } class="text-sm font-semibold text-slate-700 dark:text-slate-300 no-underline">{ config.Title }</a>
+					}
+				</div>
+				<div class="flex items-center gap-2">
+					<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-5 w-9 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:ring-offset-2" role="switch" :aria-checked="darkMode.toString()">
+						<span class="sr-only">Toggle theme</span>
+						<span class="relative inline-block h-4 w-4 transition duration-300 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-4 ring-0">
+							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-300 ease-in opacity-100 dark:opacity-0" aria-hidden="true">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-600" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+									<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/>
+									<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/>
+								</svg>
+							</span>
+							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100" aria-hidden="true">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-300" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+									<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>
+								</svg>
+							</span>
 						</span>
-						<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100 dark:duration-200 dark:ease-in" aria-hidden="true">
-							<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon h-4 md:h-5 lg:h-6 w-4 md:w-5 lg:w-6 text-slate-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
-							</svg>
-						</span>
-					</span>
-				</button>
+					</button>
+				</div>
 			</div>
-			if !config.HideTitle {
-				<h1 class="my-8 md:my-6 lg:my-4 text-center font-extrabold text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none"><a href={ templ.SafeURL(config.ContextPath + "/") }>{ config.Title }</a></h1>
-			}
-			if pageSubtitle != "" {
-				<h3 class="my-4 md:my-6 lg:my-8 mx-4 text-center font-semibold text-3xl md:text-4xl lg:text-4xl tracking-normal leading-tight opacity-85">{ pageSubtitle }</h3>
-			}
 			{ children... }
 		</body>
 	</html>
 }
 
-templ HomeLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
-	@Base(pageTitle, config.Subtitle, config, buildDetails) {
-		<nav class="mb-4 lg:mb-8 mx-auto flex flex-col justify-center items-center">
-			@contents
+templ HomeLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, searchBar templ.Component, results templ.Component) {
+	@Base(pageTitle, config, buildDetails) {
+		<nav class="flex-1 flex flex-col items-center px-4 max-w-6xl mx-auto w-full">
+			<div class="flex flex-col items-center w-full mt-12 md:mt-24">
+				@searchBar
+			</div>
+			<div class="flex flex-col items-center w-full">
+				@results
+			</div>
+			<div class="flex-1 min-h-4"></div>
 		</nav>
-		<footer class="w-full flex justify-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
+		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
 			@templ.Raw(config.Footer)
 		</footer>
 	}
 }
 
-templ ContentLayout(pageTitle string, pageSubtitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
-	@Base(pageTitle, pageSubtitle, config, buildDetails) {
-		<header class="flex flex-col justify-center items-start m-auto w-[90%] md:w-[45%] max-w-[64em] pt-4 lg:pt-6 pr-4 pb-4">
-			<h2 class="text-3xl md:text-4xl mb-2 opacity-65">{ pageTitle }</h2>
-		</header>
-		<main class="m-auto w-[90%] md:w-[45%] max-w-[64em]">
-			<article class="flex flex-col justify-center items-start w-full leading-[2em] tracking-[2px]">
-				@contents
-			</article>
-			<nav class="flex flex-col justify-center items-center text-center my-[1em] mx-auto">
-				<hr class="my-4 bg-transparent w-1/2 border-slate-700 dark:border-slate-300 border-solid opacity-30"/>
-				<p class="inline space-x-2">
-					for i, portal := range config.Portals {
-						@FooterPortal(portal)
-						if i != len(config.Portals) - 1 {
-							&#183;
+templ ContentLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, contents templ.Component) {
+	@Base(pageTitle, config, buildDetails) {
+		<div class="flex-1 flex flex-col max-w-2xl mx-auto px-4 w-full">
+			<div class="flex flex-col mt-12 md:mt-24 pb-12">
+				<header class="mb-5">
+					<a href={ templ.SafeURL(config.ContextPath + "/") } class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" title="Back to home">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+							<path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/>
+						</svg>
+						<span>Back</span>
+					</a>
+					<h2 class="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100">{ pageTitle }</h2>
+				</header>
+				<article class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 p-4 md:p-6 leading-relaxed text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+					@contents
+				</article>
+				<div class="mt-8 pt-5 border-t border-slate-200/40 dark:border-slate-700/20">
+					<p class="text-xs font-medium tracking-wider uppercase text-slate-500 dark:text-slate-500 mb-3">Links</p>
+					<nav class="flex flex-col gap-1.5 w-full opacity-80">
+						for _, portal := range config.Portals {
+							@HomePortal(portal)
 						}
-					}
-				</p>
-			</nav>
-		</main>
-		<footer class="w-full flex justify-center items-center text-center bg-transparent relative bottom-0 p-4 text-base opacity-80">
+					</nav>
+				</div>
+			</div>
+		</div>
+		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
 			@templ.Raw(config.Footer)
 		</footer>
 	}

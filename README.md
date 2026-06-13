@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> This branch reflects **version 4.0.0**, which is in active development with a complete redesign of the UI.
+> The live demo at [demo.portkey.page](https://demo.portkey.page) shows this in-development version, **not** the latest stable release.
+> The screenshots later in this document still show the previous stable version and have not yet been updated to reflect the 4.0.0 redesign.
+
 <p align="center"><img src="docs/images/logo.png" alt="portkey logo"></p>
 
 <h1 align="center">portkey</h1>
@@ -10,8 +15,6 @@
 <div align="center">
   A simple web portal that can act as startup page and shows a collection of links/urls. It also supports adding small custom pages.
 </div>
-
-<br />
 
 <div align="center">
   <!-- Sonar quality gate -->
@@ -151,8 +154,6 @@ metricsPort: 3030
 title: "portkey"
 # Allows to hide the title.
 hideTitle: false
-# If set, a subtitle is shown below the title.
-subtitle: "Where do you want to go?"
 # Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications.
 headerAddition: |-
   <script async src="https://analytics.example.com"></script>
@@ -177,6 +178,15 @@ hideSearchBar: false
 # When groups exist, each group occupies one grid cell.
 # When no groups, portals are distributed across N columns.
 layoutColumns: 0
+# Self-hostable favicon fetch service URL.
+faviconServiceURL: https://favicon.vemetric.com
+# On-disk favicon cache directory. Mountable as a Docker volume for persistence across restarts.
+faviconCacheDir: ./favicon-cache
+# Set to true to bypass local favicon caching and fetch directly from the remote service.
+faviconCacheDisabled: false
+# Directory for custom icon files (SVG, PNG). Files are served at /_/icons/<filename>.
+# Mountable as a Docker volume. Requires creating the directory and placing icon files.
+customIconsDir: ./icons
 ```
 
 ### Portals (Links)
@@ -186,8 +196,13 @@ layoutColumns: 0
 portals:
   # Name of the link
 - title: example
-  # (Optional) An emoji shown in front of the title.
-  emoji: 🔗
+  # (Optional) Icon shown in front of the title. Supports multiple formats:
+  #   - Emoji:           icon: "🔗"
+  #   - Custom SVG/PNG:  icon: /_/icons/github.svg  (place file in customIconsDir)
+  #   - Absolute URL:    icon: https://example.com/icon.png
+  #   - Data URI:        icon: data:image/svg+xml,%3Csvg...
+  #   If empty, the global favicon is used for external links (cached automatically)
+  #   and a file icon is shown for internal pages.
   # Link where the portal will lead to (can be relative for custom pages or absolute otherwise)
   link: https://example.com/
   # Additional keywords used by the search feature.
@@ -201,7 +216,7 @@ portals:
   group: My Group
 ```
 
-> **Tip:** When a search query is active, portals are shown as a flat list regardless of their group. Groups are only visible on the default (empty-query) home view.
+> **Tip:** When a search query is active, portals are still grouped by their group field. Groups with no matching portals are hidden.
 
 ### Custom pages
 
@@ -258,7 +273,14 @@ There are also Docker images available at Docker hub that you can use. You can s
 ```sh
 # Assumes that there is a config.yml in the current directory.
 # It is probably better to use a specific version than 'latest'.
-docker run --rm -it -v $(PWD)/config.yml:/opt/config.yml -p 3000:3000 codehat/portkey:latest
+docker run --rm -it \
+  -v $(PWD)/config.yml:/opt/config.yml \
+  -v $(PWD)/favicon-cache:/opt/favicon-cache \
+  -v $(PWD)/icons:/opt/icons \
+  -e PORTKEY_FAVICONCACHEDIR=/opt/favicon-cache \
+  -e PORTKEY_CUSTOMICONSDIR=/opt/icons \
+  -p 3000:3000 \
+  codehat/portkey:latest
 ```
 
 ## Development
@@ -291,10 +313,6 @@ Live reloading is possible by installing [air](https://github.com/cosmtrek/air) 
 ```sh
 go tool air
 ```
-
-## See Also
-
-The whole application is heavily inspired by a theme for the static site generator Hugo. You can find the theme at [victoriadrake/hugo-theme-sam](https://github.com/victoriadrake/hugo-theme-sam). I wanted something more dynamic while also trying out Go and improving in the language.
 
 ## License
 

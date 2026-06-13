@@ -13,7 +13,7 @@ import (
 func TestPortalsRestHandler(t *testing.T) {
 	setupServer()
 	config.C.Portals = []models.Portal{
-		{Title: "GitHub", Link: "https://github.com", Emoji: "💻", Keywords: []string{"code"}},
+		{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/portals", nil)

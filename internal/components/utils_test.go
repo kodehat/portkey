@@ -39,11 +39,11 @@ func TestNotFoundComponent(t *testing.T) {
 	NotFound().Render(context.Background(), rec)
 
 	body := rec.Body.String()
-	if !strings.Contains(body, "404") {
-		t.Fatal("expected 404 in output")
+	if !strings.Contains(body, "not be found") {
+		t.Fatal("expected 'not be found' in output")
 	}
-	if !strings.Contains(body, "Back to home") {
-		t.Fatal("expected 'Back to home' link in output")
+	if !strings.Contains(body, "links below") {
+		t.Fatal("expected 'links below' in output")
 	}
 }
 

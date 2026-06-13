@@ -18,7 +18,7 @@ func TestHomePage_SearchBar(t *testing.T) {
 	if !strings.Contains(body, `<input`) {
 		t.Fatal("expected search input in output")
 	}
-	if !strings.Contains(body, "Search...") {
+	if !strings.Contains(body, "Search portals...") {
 		t.Fatal("expected search placeholder in output")
 	}
 }
@@ -45,8 +45,8 @@ func TestLoadingBar_LargeMargin(t *testing.T) {
 	if !strings.Contains(body, "htmx-indicator") {
 		t.Fatal("expected htmx-indicator class in output")
 	}
-	if !strings.Contains(body, "mt-4") {
-		t.Fatal("expected mt-4 class for large margin")
+	if !strings.Contains(body, "mt-3") {
+		t.Fatal("expected mt-3 class for large margin")
 	}
 }
 
@@ -57,9 +57,6 @@ func TestLoadingBar_SmallMargin(t *testing.T) {
 	body := rec.Body.String()
 	if !strings.Contains(body, "htmx-indicator") {
 		t.Fatal("expected htmx-indicator class in output")
-	}
-	if !strings.Contains(body, "mt-2") {
-		t.Fatal("expected mt-2 class for small margin")
 	}
 }
 

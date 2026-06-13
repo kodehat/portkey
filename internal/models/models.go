@@ -14,8 +14,10 @@ type Portal struct {
 	// Title of a destination link.
 	Title string `json:"title"`
 
-	// Emoji used as a prefix of the title.
-	Emoji string `json:"emoji"`
+	// Icon can be an emoji, a relative path (e.g., "/static/icon.svg"),
+	// or an absolute URL to an icon image. If empty, the global favicon
+	// is used for external links and a file icon for internal pages.
+	Icon string `json:"icon"`
 
 	// Keywords allows defining additional keywords used by the search.
 	// This can make getting reasonable search results a lot easier.

@@ -6,7 +6,6 @@ metricsHost: localhost
 metricsPort: 3030
 title: "portkey"
 hideTitle: false
-subtitle: "Where do you want to go?"
 hideSearchBar: false
 headerAddition: |-
   <script defer src="https://analytics.thisismy.cloud/script.js" data-website-id="72fa7b3a-10fa-4273-ae81-d3218b879e06" data-domains="demo.portkey.page"></script>
@@ -17,10 +16,14 @@ showKeywordsAsTooltips: true
 sortAlphabetically: false
 searchWithStringSimilarity: true
 minimumStringSimilarity: 0.5
-layoutColumns: 2  # distribute portals/groups across N columns (0 = disabled, vertical layout)
+layoutColumns: 3
+# faviconServiceURL: https://favicon.vemetric.com  # self-hostable favicon fetch service
+# faviconCacheDir: ./favicon-cache  # on-disk favicon cache directory (Docker volume mountable)
+# faviconCacheDisabled: true  # bypass local favicon cache, fetch directly from remote service
+# customIconsDir: ./icons  # directory for custom icon files, served at /_/icons/<filename> (Docker volume mountable)
 portals:
-- title: 1password
-  emoji: 🔑
+- title: 1Password
+  icon: 🔑
   link: https://my.1password.eu/
   group: Work
   keywords:
@@ -28,30 +31,30 @@ portals:
   - vault
   - 2fa
   - totp
-- title: gmail
-  emoji: ✉️
+- title: Gmail
+  icon: ✉️
   link: https://mail.google.com
   group: Work
   keywords:
   - emails
-- title: x (twitter)
-  emoji: 🐦
+- title: X
+  icon: 🐦
   link: https://twitter.com
   group: Social
-- title: github
-  emoji: 💻
+- title: GitHub
+  icon: 💻
   link: https://github.com/
   group: Development
   keywords:
   - code
   - collaboration
-- title: about
-  emoji: ❓
+- title: About
+  icon: ❓
   link: /about
   keywords:
   - info
-- title: version
-  emoji: 🔢
+- title: Version
+  icon: 🔢
   link: /version
 pages:
 - heading: "About"

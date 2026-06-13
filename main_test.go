@@ -126,7 +126,7 @@ func TestAPIEndpoints(t *testing.T) { // NOSONAR
 		Host:     "localhost",
 		Port:     "3000",
 		Portals: []models.Portal{
-			{Title: "GitHub", Link: "https://github.com", Emoji: "💻", Keywords: []string{"code"}},
+			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
 		Pages: []models.Page{
 			{Heading: "About", Path: "/about", Content: "<p>hello</p>"},
@@ -185,7 +185,7 @@ func TestPortalRedirect(t *testing.T) {
 		Host:     "localhost",
 		Port:     "3000",
 		Portals: []models.Portal{
-			{Title: "GitHub", Link: "https://github.com", Emoji: "💻", Keywords: []string{"code"}},
+			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
 		Pages: []models.Page{},
 	})
@@ -246,7 +246,7 @@ func TestSearchEndpoint(t *testing.T) {
 		Host:     "localhost",
 		Port:     "3000",
 		Portals: []models.Portal{
-			{Title: "GitHub", Link: "https://github.com", Emoji: "💻", Keywords: []string{"code"}},
+			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
 		Pages: []models.Page{},
 	})

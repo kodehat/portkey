@@ -9,6 +9,7 @@ primary_region = 'ams'
 [env]
   PORTKEY_HOST = '0.0.0.0'
   PORTKEY_METRICSHOST = '0.0.0.0'
+  PORTKEY_FAVICONCACHEDIR='/tmp/portkey-favicon-cache'
 
 [[services]]
   internal_port = 3000

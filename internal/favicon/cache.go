@@ -61,6 +61,22 @@ func NormalizeHostname(domain string) string {
 	return domain
 }
 
+// isValidHostname returns true when domain consists only of characters that are
+// legal in a DNS hostname (ASCII letters, digits, dots, and hyphens). This
+// rejects path-traversal sequences such as "../" before the value is used as
+// part of a file-system path or URL.
+func isValidHostname(domain string) bool {
+	if domain == "" {
+		return false
+	}
+	for _, r := range domain {
+		if !((r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '.' || r == '-') {
+			return false
+		}
+	}
+	return true
+}
+
 func (c *Cache) cachePath(domain string) string {
 	return filepath.Join(c.dir, domain+".png")
 }
@@ -70,7 +86,7 @@ func (c *Cache) cachePath(domain string) string {
 // fallback icon on failure.
 func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	domain := NormalizeHostname(r.URL.Query().Get("domain"))
-	if domain == "" {
+	if domain == "" || !isValidHostname(domain) {
 		http.NotFound(w, r)
 		return
 	}
@@ -119,15 +135,15 @@ func (c *Cache) refresh(domain, path string) {
 // fetchAndSave downloads a favicon from the remote service and writes it
 // to the cache file atomically (write to .tmp, then rename).
 func (c *Cache) fetchAndSave(domain, path string) error {
-	url := fmt.Sprintf("%s/%s?size=64&format=png", RemoteServiceURL, domain)
-	resp, err := c.client.Get(url)
+	fetchURL := fmt.Sprintf("%s/%s?size=64&format=png", RemoteServiceURL, domain)
+	resp, err := c.client.Get(fetchURL)
 	if err != nil {
-		return fmt.Errorf("fetch %s: %w", url, err)
+		return fmt.Errorf("fetch %s: %w", fetchURL, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("fetch %s: unexpected status %d", url, resp.StatusCode)
+		return fmt.Errorf("fetch %s: unexpected status %d", fetchURL, resp.StatusCode)
 	}
 
 	tmpPath := path + ".tmp"

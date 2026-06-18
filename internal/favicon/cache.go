@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -136,7 +135,7 @@ func (c *Cache) refresh(domain, path string) {
 // fetchAndSave downloads a favicon from the remote service and writes it
 // to the cache file atomically (write to .tmp, then rename).
 func (c *Cache) fetchAndSave(domain, path string) error {
-	fetchURL := fmt.Sprintf("%s/%s?size=64&format=png", RemoteServiceURL, url.PathEscape(domain))
+	fetchURL := fmt.Sprintf("%s/%s?size=64&format=png", RemoteServiceURL, domain)
 	resp, err := c.client.Get(fetchURL)
 	if err != nil {
 		return fmt.Errorf("fetch %s: %w", fetchURL, err)

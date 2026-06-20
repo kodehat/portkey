@@ -2,7 +2,7 @@ FROM node:26.3.1-alpine3.23 AS frontend
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 RUN npm ci --ignore-scripts --include=dev
 

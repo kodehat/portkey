@@ -56,6 +56,24 @@ func New(cacheDir string) *Cache {
 	}
 }
 
+// DomainFromURL extracts the hostname from an absolute URL.
+// Returns empty string for non-HTTP URLs.
+func DomainFromURL(rawURL string) string {
+	if !strings.HasPrefix(rawURL, "http") {
+		return ""
+	}
+	// net/url is not imported; use a simple string-based approach.
+	raw := strings.TrimPrefix(rawURL, "https://")
+	raw = strings.TrimPrefix(raw, "http://")
+	if idx := strings.IndexByte(raw, '/'); idx >= 0 {
+		raw = raw[:idx]
+	}
+	if idx := strings.IndexByte(raw, ':'); idx >= 0 {
+		raw = raw[:idx]
+	}
+	return raw
+}
+
 // NormalizeHostname lowercases a domain and strips the www. prefix.
 func NormalizeHostname(domain string) string {
 	domain = strings.ToLower(strings.TrimSpace(domain))

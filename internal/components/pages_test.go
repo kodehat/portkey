@@ -52,11 +52,14 @@ func TestLoadingBar_LargeMargin(t *testing.T) {
 
 func TestLoadingBar_SmallMargin(t *testing.T) {
 	rec := httptest.NewRecorder()
-	loadingBar(false).Render(context.Background(), rec)
+	loadingBar(true).Render(context.Background(), rec)
 
 	body := rec.Body.String()
 	if !strings.Contains(body, "htmx-indicator") {
 		t.Fatal("expected htmx-indicator class in output")
+	}
+	if !strings.Contains(body, "mt-3") {
+		t.Fatal("expected mt-3 class when largeTopMargin is true")
 	}
 }
 
@@ -92,6 +95,9 @@ func TestLoadingBar_NoMargin(t *testing.T) {
 	body := rec.Body.String()
 	if !strings.Contains(body, "htmx-indicator") {
 		t.Fatal("expected htmx-indicator class in output")
+	}
+	if strings.Contains(body, "mt-3") {
+		t.Fatal("did not expect mt-3 class when largeTopMargin is false")
 	}
 }
 

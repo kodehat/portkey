@@ -2,6 +2,7 @@ name: Run tests and update dependencies
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
   push:
     branches: [ main, 'feature/**' ]
     paths-ignore:
@@ -35,7 +36,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-    - run: go test -v ./...
+    - run: go test -v ./... -coverprofile=coverage.out
     
     - name: Build assets
       if: startsWith(matrix.os, 'ubuntu') == true
@@ -44,13 +45,27 @@ jobs:
         node-version: 26
         cache: 'npm'
     - if: startsWith(matrix.os, 'ubuntu') == true
-      run: npm install --ignore-scripts
+      run: npm ci --ignore-scripts
     - if: startsWith(matrix.os, 'ubuntu') == true
       run: npm run build
 
+  sonarqube:
+    name: SonarQube
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   dependabot:
     name: Auto-approve and merge Dependabot PRs
-    needs: [ test ]
+    needs: [ test, sonarqube ]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write

@@ -245,21 +245,74 @@ Metrics can be enabled with the `enableMetrics` configuration key and are served
 Besides the default metrics provided by the [Prometheus instrumentation library for Go applications ](https://github.com/prometheus/client_golang), the following additional metrics are provided:
 
 ```plain
+# HELP portkey_portal_handler_requests_total Total number of HTTP requests by portal.
+# TYPE portkey_portal_handler_requests_total counter
+portkey_portal_handler_requests_total{portal="<portal_title>"} 0
+
 # HELP portkey_page_handler_requests_total Total number of HTTP requests by page.
 # TYPE portkey_page_handler_requests_total counter
 portkey_page_handler_requests_total{path="<page_path>"} 0
 
-# HELP portkey_portal_handler_requests_total Total number of HTTP requests by portal.
-# TYPE portkey_portal_handler_requests_total counter
-portkey_portal_handler_requests_total{portal="<portal_title>"} 0
+# HELP portkey_search_requests_with_results_total Total number of HTTP requests for search with at least one result.
+# TYPE portkey_search_requests_with_results_total counter
+portkey_search_requests_with_results_total 0
 
 # HELP portkey_search_requests_no_results_total Total number of HTTP requests for search with no results.
 # TYPE portkey_search_requests_no_results_total counter
 portkey_search_requests_no_results_total 0
 
-# HELP portkey_search_requests_with_results_total Total number of HTTP requests for search with at least one result.
-# TYPE portkey_search_requests_with_results_total counter
-portkey_search_requests_with_results_total 0
+# HELP portkey_search_duration_seconds Search query duration in seconds.
+# TYPE portkey_search_duration_seconds histogram
+portkey_search_duration_seconds_bucket{le="0.001"} 0
+portkey_search_duration_seconds_bucket{le="0.005"} 0
+portkey_search_duration_seconds_bucket{le="0.01"} 0
+portkey_search_duration_seconds_bucket{le="0.025"} 0
+portkey_search_duration_seconds_bucket{le="0.05"} 0
+portkey_search_duration_seconds_bucket{le="0.1"} 0
+portkey_search_duration_seconds_bucket{le="+Inf"} 0
+portkey_search_duration_seconds_sum 0
+portkey_search_duration_seconds_count 0
+
+# HELP portkey_http_request_duration_seconds HTTP request duration by handler pattern.
+# TYPE portkey_http_request_duration_seconds histogram
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.005"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.01"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.025"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.05"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.1"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.25"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="0.5"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="1"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="2.5"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="5"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="10"} 0
+portkey_http_request_duration_seconds_bucket{handler="/",le="+Inf"} 0
+portkey_http_request_duration_seconds_sum{handler="/"} 0
+portkey_http_request_duration_seconds_count{handler="/"} 0
+
+# HELP portkey_favicon_cache_hits_total Total number of favicon cache hits.
+# TYPE portkey_favicon_cache_hits_total counter
+portkey_favicon_cache_hits_total 0
+
+# HELP portkey_favicon_cache_misses_total Total number of favicon cache misses.
+# TYPE portkey_favicon_cache_misses_total counter
+portkey_favicon_cache_misses_total 0
+
+# HELP portkey_favicon_fetch_failures_total Total number of failed favicon fetches.
+# TYPE portkey_favicon_fetch_failures_total counter
+portkey_favicon_fetch_failures_total 0
+
+# HELP portkey_favicon_cache_size Current number of favicons in the on-disk cache.
+# TYPE portkey_favicon_cache_size gauge
+portkey_favicon_cache_size 0
+
+# HELP portkey_portals_total Total number of configured portals.
+# TYPE portkey_portals_total gauge
+portkey_portals_total 0
+
+# HELP portkey_groups_total Total number of portal groups.
+# TYPE portkey_groups_total gauge
+portkey_groups_total 0
 
 # HELP portkey_version_info Version information about portkey.
 # TYPE portkey_version_info gauge

@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/adrg/strutil"
 	"github.com/kodehat/portkey/internal/components"
@@ -22,6 +23,11 @@ type searchHandler struct {
 
 func (p searchHandler) handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		defer func() {
+			imetrics.M.SearchDuration.Observe(time.Since(start).Seconds())
+		}()
+
 		query := r.URL.Query().Get(searchQueryParam)
 		cols := config.C.LayoutColumns
 		if query == "" && config.R.WithGroups {

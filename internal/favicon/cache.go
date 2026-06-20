@@ -12,6 +12,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/kodehat/portkey/internal/metrics"
 )
 
 const (
@@ -110,6 +112,7 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Cache hit.
 	if info, err := os.Stat(path); err == nil {
+		metrics.M.FaviconCacheHits.Inc()
 		http.ServeFile(w, r, path)
 		// Stale — refresh in background, but don't block the response.
 		if time.Since(info.ModTime()) > CacheTTL {
@@ -119,13 +122,16 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Cache miss — fetch synchronously.
+	metrics.M.FaviconCacheMisses.Inc()
 	if err := c.fetchAndSave(domain, path); err != nil {
 		c.mu.Lock()
 		c.failures[domain] = time.Now()
 		c.mu.Unlock()
+		metrics.M.FaviconFetchFailures.Inc()
 		c.serveDefault(w)
 		return
 	}
+	metrics.M.FaviconCacheSize.Inc()
 	http.ServeFile(w, r, path)
 }
 
@@ -135,6 +141,7 @@ func (c *Cache) refresh(domain, path string) {
 		c.mu.Lock()
 		c.failures[domain] = time.Now()
 		c.mu.Unlock()
+		metrics.M.FaviconFetchFailures.Inc()
 	}
 }
 

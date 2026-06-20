@@ -8,7 +8,16 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/kodehat/portkey/internal/build"
+	"github.com/kodehat/portkey/internal/metrics"
 )
+
+func TestMain(m *testing.M) {
+	build.LoadBuildDetails("test")
+	metrics.Load()
+	os.Exit(m.Run())
+}
 
 func TestNormalizeHostname(t *testing.T) {
 	tests := []struct {

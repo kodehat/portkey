@@ -255,6 +255,14 @@ All metrics are registered under the `portkey_` namespace.
 | `portkey_page_handler_requests_total` | Counter | `path` |
 | `portkey_search_requests_with_results_total` | Counter | — |
 | `portkey_search_requests_no_results_total` | Counter | — |
+| `portkey_search_duration_seconds` | Histogram | — |
+| `portkey_http_request_duration_seconds` | Histogram | `handler` |
+| `portkey_favicon_cache_hits_total` | Counter | — |
+| `portkey_favicon_cache_misses_total` | Counter | — |
+| `portkey_favicon_fetch_failures_total` | Counter | — |
+| `portkey_favicon_cache_size` | Gauge | — |
+| `portkey_portals_total` | Gauge | — |
+| `portkey_groups_total` | Gauge | — |
 | `portkey_version_info` | Gauge | `version`, `buildTime`, `commitHash`, `goVersion` |
 
 ---

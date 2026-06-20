@@ -6,7 +6,7 @@ templ SearchBar() {
 	if !config.C.HideSearchBar {
 		<div class="flex flex-col items-center w-full">
 			<p class="text-center text-xs text-slate-500 dark:text-slate-400 mb-2">Serving { len(config.C.Portals) } portals</p>
-			<div class="relative w-4/5 md:w-full max-w-sm md:max-w-lg">
+			<div class="relative w-full max-w-lg">
 				<div class="absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -64,14 +64,14 @@ templ HomePage() {
 
 templ ResultsContainer() {
 	if config.C.LayoutColumns > 0 {
-		<div id="search-results" class="md:mx-auto md:max-w-7xl mt-4"></div>
+		<div id="search-results" class="w-full md:mx-auto md:max-w-7xl mt-4"></div>
 	} else {
-		<div id="search-results" class="mt-4"></div>
+		<div id="search-results" class="w-full mt-4"></div>
 	}
 }
 
 templ loadingBar(largeTopMargin bool) {
-	<div class={ "htmx-indicator", templ.KV("mt-3", largeTopMargin), "w-full", "max-w-sm", "md:max-w-lg" }>
+	<div class={ "htmx-indicator", templ.KV("mt-3", largeTopMargin), "w-full", "max-w-lg" }>
 		<div class="h-1 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
 			<div class="progress w-full h-full bg-sky-500 dark:bg-sky-400 left-right rounded-full"></div>
 		</div>

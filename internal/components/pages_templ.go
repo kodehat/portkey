@@ -45,7 +45,7 @@ func SearchBar() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " portals</p><div class=\"relative w-4/5 md:w-full max-w-sm md:max-w-lg\"><div class=\"absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4 text-slate-400\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\"></path> <path d=\"M21 21l-6 -6\"></path></svg></div><input x-data=\"{\n\t\t\t\t\t\tquery: new URLSearchParams(window.location.search).get('q') || '',\n\t\t\t\t\t}\" x-model=\"query\" name=\"search\" hx-get=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " portals</p><div class=\"relative w-full max-w-lg\"><div class=\"absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4 text-slate-400\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\"></path> <path d=\"M21 21l-6 -6\"></path></svg></div><input x-data=\"{\n\t\t\t\t\t\tquery: new URLSearchParams(window.location.search).get('q') || '',\n\t\t\t\t\t}\" x-model=\"query\" name=\"search\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -152,12 +152,12 @@ func ResultsContainer() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if config.C.LayoutColumns > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"search-results\" class=\"md:mx-auto md:max-w-7xl mt-4\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"search-results\" class=\"w-full md:mx-auto md:max-w-7xl mt-4\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"search-results\" class=\"mt-4\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"search-results\" class=\"w-full mt-4\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -187,7 +187,7 @@ func loadingBar(largeTopMargin bool) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var8 = []any{"htmx-indicator", templ.KV("mt-3", largeTopMargin), "w-full", "max-w-sm", "md:max-w-lg"}
+		var templ_7745c5c3_Var8 = []any{"htmx-indicator", templ.KV("mt-3", largeTopMargin), "w-full", "max-w-lg"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

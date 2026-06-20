@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/kodehat/portkey/internal/build"
+	"github.com/kodehat/portkey/internal/config"
+	"github.com/kodehat/portkey/internal/models"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -152,5 +154,129 @@ func TestMetricsCreateNew(t *testing.T) {
 func TestNamespace(t *testing.T) {
 	if NAMESPACE != "portkey" {
 		t.Fatalf("expected namespace 'portkey', got %q", NAMESPACE)
+	}
+}
+
+func TestLoad(t *testing.T) {
+	config.C = config.Config{ContextPath: ""}
+
+	oldRegistry := prometheus.DefaultRegisterer
+	reg := prometheus.NewRegistry()
+	prometheus.DefaultRegisterer = reg
+	defer func() { prometheus.DefaultRegisterer = oldRegistry }()
+
+	Load()
+
+	checks := []struct {
+		name string
+		ok   bool
+	}{
+		{"PortalHitCounter", M.PortalHitCounter != nil},
+		{"PageHitCounter", M.PageHitCounter != nil},
+		{"SearchWithResultsCounter", M.SearchWithResultsCounter != nil},
+		{"SearchNoResultsCounter", M.SearchNoResultsCounter != nil},
+		{"SearchDuration", M.SearchDuration != nil},
+		{"HTTPRequestDuration", M.HTTPRequestDuration != nil},
+		{"FaviconCacheHits", M.FaviconCacheHits != nil},
+		{"FaviconCacheMisses", M.FaviconCacheMisses != nil},
+		{"FaviconFetchFailures", M.FaviconFetchFailures != nil},
+		{"FaviconCacheSize", M.FaviconCacheSize != nil},
+		{"PortalCount", M.PortalCount != nil},
+		{"GroupCount", M.GroupCount != nil},
+		{"buildInfo", M.buildInfo != nil},
+	}
+	for _, c := range checks {
+		if !c.ok {
+			t.Errorf("%s not initialized by Load()", c.name)
+		}
+	}
+
+	// Verify metric operations work after Load().
+	M.PortalHitCounter.WithLabelValues("test-p").Inc()
+	M.PageHitCounter.WithLabelValues("/test").Inc()
+	M.SearchWithResultsCounter.Inc()
+	M.SearchNoResultsCounter.Inc()
+	M.SearchDuration.Observe(0.005)
+	M.HTTPRequestDuration.WithLabelValues("/test").Observe(0.01)
+	M.FaviconCacheHits.Inc()
+	M.FaviconCacheMisses.Inc()
+	M.FaviconFetchFailures.Inc()
+	M.FaviconCacheSize.Inc()
+	M.PortalCount.Inc()
+	M.GroupCount.Inc()
+}
+
+func TestPortalAndGroupCount(t *testing.T) {
+	oldRegistry := prometheus.DefaultRegisterer
+	reg := prometheus.NewRegistry()
+	prometheus.DefaultRegisterer = reg
+	defer func() { prometheus.DefaultRegisterer = oldRegistry }()
+
+	config.C = config.Config{
+		ContextPath: "",
+		Portals: []models.Portal{
+			{Title: "A", Group: "Work"},
+			{Title: "B", Group: "Work"},
+			{Title: "C", Group: "Social"},
+			{Title: "D", Group: "Social"},
+			{Title: "E", Group: "Dev"},
+			{Title: "F", Group: ""},
+		},
+	}
+
+	Load()
+
+	if M.PortalCount == nil {
+		t.Fatal("PortalCount not initialized")
+	}
+	if M.GroupCount == nil {
+		t.Fatal("GroupCount not initialized")
+	}
+}
+
+func TestBuildInfoLabels(t *testing.T) {
+	oldRegistry := prometheus.DefaultRegisterer
+	reg := prometheus.NewRegistry()
+	prometheus.DefaultRegisterer = reg
+	defer func() { prometheus.DefaultRegisterer = oldRegistry }()
+
+	config.C = config.Config{ContextPath: ""}
+	build.LoadBuildDetails("abc123")
+	build.BuildTime = "2024-01-01"
+	build.CommitHash = "deadbeef"
+	build.Version = "2.0.0"
+	build.GoVersion = "go1.26"
+	// Re-load build.B from the package-level vars.
+	build.LoadBuildDetails("test")
+
+	Load()
+
+	family, err := reg.Gather()
+	if err != nil {
+		t.Fatalf("gather failed: %v", err)
+	}
+
+	found := false
+	for _, f := range family {
+		if f.GetName() == "portkey_version_info" {
+			found = true
+			m := f.GetMetric()[0]
+			labels := make(map[string]string)
+			for _, l := range m.GetLabel() {
+				labels[l.GetName()] = l.GetValue()
+			}
+			if labels["version"] != "2.0.0" {
+				t.Errorf("expected version=2.0.0, got %q", labels["version"])
+			}
+			if labels["commitHash"] != "deadbeef" {
+				t.Errorf("expected commitHash=deadbeef, got %q", labels["commitHash"])
+			}
+			if labels["goVersion"] != "go1.26" {
+				t.Errorf("expected goVersion=go1.26, got %q", labels["goVersion"])
+			}
+		}
+	}
+	if !found {
+		t.Error("portkey_version_info metric not found in gathered output")
 	}
 }

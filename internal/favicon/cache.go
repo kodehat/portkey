@@ -78,7 +78,13 @@ func isValidHostname(domain string) bool {
 }
 
 func (c *Cache) cachePath(domain string) string {
-	return filepath.Join(c.dir, domain+".png")
+	// filepath.Join cleans the path, but we must ensure the result stays within
+	// the cache directory to prevent path traversal.
+	p := filepath.Join(c.dir, domain+".png")
+	if !strings.HasPrefix(p, filepath.Clean(c.dir)+string(filepath.Separator)) && p != filepath.Clean(c.dir) {
+		return filepath.Join(c.dir, "invalid.png")
+	}
+	return p
 }
 
 // ServeHTTP handles a favicon request. It serves from cache if available,
@@ -135,6 +141,7 @@ func (c *Cache) refresh(domain, path string) {
 // fetchAndSave downloads a favicon from the remote service and writes it
 // to the cache file atomically (write to .tmp, then rename).
 func (c *Cache) fetchAndSave(domain, path string) error {
+	// domain has already been validated by isValidHostname (alphanumeric, dots, hyphens only).
 	fetchURL := fmt.Sprintf("%s/%s?size=64&format=png", RemoteServiceURL, domain)
 	resp, err := c.client.Get(fetchURL)
 	if err != nil {

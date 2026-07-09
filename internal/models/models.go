@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"hash/fnv"
 	"regexp"
 	"strings"
 )
@@ -44,8 +46,17 @@ func (p Portal) IsExternal() bool {
 var /* const */ alphaNumDashOnlyRegex = regexp.MustCompile("[^a-zA-Z0-9-]")
 
 // TitleForUrl returns the portal's title with alpha-numerical (and dash) characters only.
+// If the cleaned result is empty (e.g., pure CJK characters), a deterministic
+// hash-based fallback is returned to ensure a valid and unique URL segment.
 func (portal Portal) TitleForUrl() string {
-	return alphaNumDashOnlyRegex.ReplaceAllString(portal.Title, "")
+	cleaned := alphaNumDashOnlyRegex.ReplaceAllString(portal.Title, "")
+	if cleaned != "" {
+		return cleaned
+	}
+	// FNV-64a hash produces a deterministic short string for non-Latin titles.
+	h := fnv.New64a()
+	_, _ = h.Write([]byte(portal.Title))
+	return fmt.Sprintf("p-%x", h.Sum64())
 }
 
 // Page struct defines a custom page that consists of a heading, content and a path,

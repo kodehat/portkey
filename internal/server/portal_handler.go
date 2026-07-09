@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -19,11 +20,17 @@ type portalHandlerInfo struct {
 
 func (p portalHandler) handle() []portalHandlerInfo {
 	portalHandlerInfos := make([]portalHandlerInfo, 0)
+	seen := make(map[string]int)
 	for _, portal := range config.C.Portals {
 		if portal.IsExternal() {
 			fixedTitleUrl := portal.TitleForUrl()
 			if fixedTitleUrl != portal.Title {
 				slog.Debug("fixed title", "old", portal.Title, "new", fixedTitleUrl)
+			}
+			// Ensure unique route paths by deduplicating
+			seen[fixedTitleUrl]++
+			if seen[fixedTitleUrl] > 1 {
+				fixedTitleUrl = fmt.Sprintf("%s-%d", fixedTitleUrl, seen[fixedTitleUrl])
 			}
 			if config.C.EnableMetrics {
 				// Required to initialize all portal metrics to "0".

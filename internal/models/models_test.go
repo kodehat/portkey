@@ -61,3 +61,43 @@ func TestTitleForUrl_PreservesDashes(t *testing.T) {
 		t.Fatalf("TitleForUrl() == %q, want %q", got, "my-cool-site")
 	}
 }
+
+func TestTitleForUrl_ChineseCharacters(t *testing.T) {
+	p := Portal{Title: "中国国家地理"}
+	got := p.TitleForUrl()
+	if got == "" {
+		t.Fatal("TitleForUrl() returned empty string for Chinese title")
+	}
+}
+
+func TestTitleForUrl_ChineseWithColon(t *testing.T) {
+	p := Portal{Title: "导航: 首页"}
+	got := p.TitleForUrl()
+	if got == "" {
+		t.Fatal("TitleForUrl() returned empty string for Chinese title with colon")
+	}
+}
+
+func TestTitleForUrl_EmojiOnly(t *testing.T) {
+	p := Portal{Title: "🍳🍕"}
+	got := p.TitleForUrl()
+	if got == "" {
+		t.Fatal("TitleForUrl() returned empty string for emoji-only title")
+	}
+}
+
+func TestTitleForUrl_FallbackIsDeterministic(t *testing.T) {
+	p1 := Portal{Title: "中国国家地理"}
+	p2 := Portal{Title: "中国国家地理"}
+	if p1.TitleForUrl() != p2.TitleForUrl() {
+		t.Fatal("TitleForUrl() should be deterministic for the same input")
+	}
+}
+
+func TestTitleForUrl_HashDiffersForDifferentInputs(t *testing.T) {
+	p1 := Portal{Title: "中国国家地理"}
+	p2 := Portal{Title: "故宫博物院"}
+	if p1.TitleForUrl() == p2.TitleForUrl() {
+		t.Fatal("TitleForUrl() should produce different output for different Chinese titles")
+	}
+}

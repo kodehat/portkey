@@ -1,4 +1,4 @@
-FROM node:26.4.0-alpine3.23 AS frontend
+FROM node:26.5.0-alpine3.23 AS frontend
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY static static/
 
 RUN npm run build
 
-FROM golang:1.27rc2-alpine3.23 AS backend
+FROM golang:1.26.5-alpine3.23 AS backend
 
 ARG VERSION=dev
 

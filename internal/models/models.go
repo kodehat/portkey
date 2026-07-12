@@ -1,6 +1,7 @@
 package models
 
 import (
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -41,11 +42,17 @@ func (p Portal) IsExternal() bool {
 	return strings.HasPrefix(p.Link, "http")
 }
 
-var /* const */ alphaNumDashOnlyRegex = regexp.MustCompile("[^a-zA-Z0-9-]")
+var /* const */ nonSlugCharRegex = regexp.MustCompile("[^\\p{L}\\p{N}-]")
 
-// TitleForUrl returns the portal's title with alpha-numerical (and dash) characters only.
+// TitleForUrl returns the portal's title as a URL-safe slug.
+// Strips non-letter/number/dash characters. Falls back to percent-encoding
+// the original title when nothing remains (e.g. pure emoji titles).
 func (portal Portal) TitleForUrl() string {
-	return alphaNumDashOnlyRegex.ReplaceAllString(portal.Title, "")
+	slug := nonSlugCharRegex.ReplaceAllString(portal.Title, "")
+	if slug == "" {
+		return url.PathEscape(portal.Title)
+	}
+	return slug
 }
 
 // Page struct defines a custom page that consists of a heading, content and a path,

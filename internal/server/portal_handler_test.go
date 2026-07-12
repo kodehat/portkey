@@ -82,3 +82,62 @@ func TestPortalHandler_TitleModified(t *testing.T) {
 		t.Fatalf("expected portalPath /MyPortal, got %q", infos[0].portalPath)
 	}
 }
+
+func TestPortalHandler_CJKTitle(t *testing.T) {
+	setupServer()
+	config.C.Portals = []models.Portal{
+		{Title: "中国国家地理", Link: "https://example.com"},
+	}
+
+	ph := portalHandler{logger: testLogger()}
+	infos := ph.handle()
+
+	if len(infos) != 1 {
+		t.Fatalf("expected 1 handler info, got %d", len(infos))
+	}
+	if infos[0].portalPath != "/中国国家地理" {
+		t.Fatalf("expected portalPath /中国国家地理, got %q", infos[0].portalPath)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/中国国家地理", nil)
+	rec := httptest.NewRecorder()
+	infos[0].handlerFunc(rec, req)
+
+	if rec.Code != http.StatusTemporaryRedirect {
+		t.Fatalf("expected 307, got %d", rec.Code)
+	}
+	loc := rec.Header().Get("Location")
+	if loc != "https://example.com" {
+		t.Fatalf("expected Location https://example.com, got %q", loc)
+	}
+}
+
+func TestPortalHandler_EmojiOnlyTitleFallback(t *testing.T) {
+	setupServer()
+	config.C.Portals = []models.Portal{
+		{Title: "💰", Link: "https://example.com"},
+	}
+
+	ph := portalHandler{logger: testLogger()}
+	infos := ph.handle()
+
+	if len(infos) != 1 {
+		t.Fatalf("expected 1 handler info for emoji-only title, got %d", len(infos))
+	}
+	// TitleForUrl falls back to percent-encoding.
+	if infos[0].portalPath != "/%F0%9F%92%B0" {
+		t.Fatalf("expected portalPath /%%F0%%9F%%92%%B0, got %q", infos[0].portalPath)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/%F0%9F%92%B0", nil)
+	rec := httptest.NewRecorder()
+	infos[0].handlerFunc(rec, req)
+
+	if rec.Code != http.StatusTemporaryRedirect {
+		t.Fatalf("expected 307, got %d", rec.Code)
+	}
+	loc := rec.Header().Get("Location")
+	if loc != "https://example.com" {
+		t.Fatalf("expected Location https://example.com, got %q", loc)
+	}
+}

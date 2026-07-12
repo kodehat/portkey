@@ -61,3 +61,29 @@ func TestTitleForUrl_PreservesDashes(t *testing.T) {
 		t.Fatalf("TitleForUrl() == %q, want %q", got, "my-cool-site")
 	}
 }
+
+func TestTitleForUrl_CJKPure(t *testing.T) {
+	p := Portal{Title: "中国国家地理"}
+	got := p.TitleForUrl()
+	if got != "中国国家地理" {
+		t.Fatalf("TitleForUrl() == %q, want %q", got, "中国国家地理")
+	}
+}
+
+func TestTitleForUrl_CJKMixed(t *testing.T) {
+	p := Portal{Title: "東京 Tokyo!"}
+	got := p.TitleForUrl()
+	if got != "東京Tokyo" {
+		t.Fatalf("TitleForUrl() == %q, want %q", got, "東京Tokyo")
+	}
+}
+
+func TestTitleForUrl_OnlySymbols(t *testing.T) {
+	p := Portal{Title: "★★★"}
+	got := p.TitleForUrl()
+	// All-symbol titles fall back to percent-encoding.
+	want := "%E2%98%85%E2%98%85%E2%98%85"
+	if got != want {
+		t.Fatalf("TitleForUrl() == %q, want %q", got, want)
+	}
+}

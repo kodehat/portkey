@@ -115,6 +115,43 @@ func TestGridClass_MobileFallback(t *testing.T) {
 	}
 }
 
+func TestDomainFromURL_ParseFails(t *testing.T) {
+	// Malformed IPv6 bracket — starts with "http" but url.Parse returns an error.
+	got := domainFromURL("http://[")
+	if got != "" {
+		t.Errorf("expected empty for malformed URL, got %q", got)
+	}
+}
+
+func TestFaviconURL_CacheDisabled(t *testing.T) {
+	config.C = config.Config{
+		FaviconCacheDisabled: true,
+		FaviconServiceURL:    "https://favicon.example.com",
+	}
+	got := faviconURL("https://github.com")
+	if got == "" {
+		t.Fatal("expected non-empty favicon URL")
+	}
+	if !contains(got, "github.com") {
+		t.Errorf("expected domain in favicon URL, got %q", got)
+	}
+	if !contains(got, "favicon.example.com") {
+		t.Errorf("expected service URL in result, got %q", got)
+	}
+}
+
+func TestFaviconURL_CacheDisabled_TrailingSlash(t *testing.T) {
+	config.C = config.Config{
+		FaviconCacheDisabled: true,
+		FaviconServiceURL:    "https://favicon.example.com/",
+	}
+	got := faviconURL("https://github.com")
+	// TrimRight should strip the trailing slash before joining.
+	if contains(got, "//github.com") {
+		t.Errorf("unexpected double slash in URL: %q", got)
+	}
+}
+
 // contains is a small helper since strings.Contains isn't imported.
 func contains(s, substr string) bool {
 	return len(s) >= len(substr) && containsSub(s, substr)

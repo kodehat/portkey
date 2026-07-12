@@ -114,3 +114,46 @@ func TestHomePage_WithContextPath(t *testing.T) {
 		t.Fatal("expected context path in output")
 	}
 }
+
+func TestResultsContainer_Columns(t *testing.T) {
+	config.C = config.Config{LayoutColumns: 3}
+	rec := httptest.NewRecorder()
+	ResultsContainer().Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "max-w-7xl") {
+		t.Fatal("expected wide column container class")
+	}
+}
+
+func TestResultsContainer_NoColumns(t *testing.T) {
+	config.C = config.Config{LayoutColumns: 0}
+	rec := httptest.NewRecorder()
+	ResultsContainer().Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "search-results") {
+		t.Fatal("expected search-results container")
+	}
+	if strings.Contains(body, "max-w-7xl") {
+		t.Fatal("did not expect wide column container")
+	}
+}
+
+func TestHomePage_WithColumns(t *testing.T) {
+	config.C = config.Config{
+		HideSearchBar: false,
+		ContextPath:   "",
+		LayoutColumns: 3,
+	}
+	rec := httptest.NewRecorder()
+	HomePage().Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "max-w-7xl") {
+		t.Fatal("expected wide column container in home page")
+	}
+	if !strings.Contains(body, `Search portals`) {
+		t.Fatal("expected search bar in home page")
+	}
+}

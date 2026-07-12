@@ -130,3 +130,104 @@ func TestPortalPartial_MultiplePortals(t *testing.T) {
 		t.Fatal("expected all portal titles in output")
 	}
 }
+
+func TestPortalPartial_WithColumns(t *testing.T) {
+	config.C = config.Config{}
+	portals := []models.Portal{
+		{Title: "GitHub", Link: "https://github.com"},
+		{Title: "Google", Link: "https://google.com"},
+	}
+	rec := httptest.NewRecorder()
+	PortalPartial(portals, 3).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in columned output")
+	}
+	if !strings.Contains(body, "grid-cols-3") {
+		t.Fatal("expected grid-cols-3 class in columned output")
+	}
+}
+
+func TestPortalPartial_WithColumnsAndTooltips(t *testing.T) {
+	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	portals := []models.Portal{
+		{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code"}},
+	}
+	rec := httptest.NewRecorder()
+	PortalPartial(portals, 2).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in output")
+	}
+}
+
+func TestGroupedPortalPartial_WithColumns(t *testing.T) {
+	config.C = config.Config{}
+	groups := []models.PortalGroup{
+		{
+			Name:    "Dev",
+			Portals: []models.Portal{{Title: "GitHub", Link: "https://github.com"}},
+		},
+	}
+	rec := httptest.NewRecorder()
+	GroupedPortalPartial(groups, 3).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in columned grouped output")
+	}
+	if !strings.Contains(body, "Dev") {
+		t.Fatal("expected group name 'Dev' in output")
+	}
+}
+
+func TestGroupedPortalPartial_WithColumnsAndTooltips(t *testing.T) {
+	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	groups := []models.PortalGroup{
+		{
+			Name: "Tools",
+			Portals: []models.Portal{
+				{Title: "GitHub", Link: "https://github.com", Keywords: []string{"git"}},
+			},
+		},
+	}
+	rec := httptest.NewRecorder()
+	GroupedPortalPartial(groups, 2).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in output")
+	}
+}
+
+func TestGroupedPortalPartial_EmptyPortalsInGroup(t *testing.T) {
+	config.C = config.Config{}
+	groups := []models.PortalGroup{
+		{Name: "Empty", Portals: []models.Portal{}},
+		{Name: "Dev", Portals: []models.Portal{{Title: "GitHub", Link: "https://github.com"}}},
+	}
+	rec := httptest.NewRecorder()
+	GroupedPortalPartial(groups, 0).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in output despite empty group")
+	}
+}
+
+func TestGroupedPortalPartial_WithColumnsEmptyGroup(t *testing.T) {
+	config.C = config.Config{}
+	groups := []models.PortalGroup{
+		{Name: "Empty", Portals: []models.Portal{}},
+		{Name: "Dev", Portals: []models.Portal{{Title: "GitHub", Link: "https://github.com"}}},
+	}
+	rec := httptest.NewRecorder()
+	GroupedPortalPartial(groups, 3).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "GitHub") {
+		t.Fatal("expected 'GitHub' in columned output despite empty group")
+	}
+}

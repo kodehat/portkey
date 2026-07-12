@@ -1,8 +1,10 @@
 package server
 
 import (
+	"embed"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -10,6 +12,9 @@ import (
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/models"
 )
+
+//go:embed testdata
+var testStatic embed.FS
 
 func TestNewMetricsServer(t *testing.T) {
 	setupServer()
@@ -227,6 +232,16 @@ func TestSearchHandler_IsSimilar(t *testing.T) {
 	if !sh.isSimilar("GitHb", "GitHub", sh.levenshtein, 0.5) {
 		t.Fatal("expected 'GitHb' similar to 'GitHub'")
 	}
+
+	// Exact match is always above threshold
+	if !sh.isSimilar("git", "git", sh.levenshtein, 0.9) {
+		t.Fatal("expected exact match similar at high threshold")
+	}
+
+	// Just at the threshold boundary — similarity > minimum, not >=
+	if sh.isSimilar("a", "b", sh.levenshtein, 0.99) {
+		t.Fatal("expected single char diff below high threshold")
+	}
 }
 
 func TestSearchHandler_IsSearchResult_DirectMatch(t *testing.T) {
@@ -354,16 +369,47 @@ func TestSearchHandler_IsSearchResult_KeywordDirectMatch(t *testing.T) {
 	}
 }
 
-func TestSearchHandler_IsSearchResult_SimilarityKeyword(t *testing.T) {
+func TestIsSearchResult_SimilarityKeywordMatch(t *testing.T) {
 	setupServer()
 	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.5
-	portal := models.Portal{Title: "Tools", Link: "/tools", Keywords: []string{"programming"}}
+	config.C.MinimumStringSimilarity = 0.3
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
+	portal := models.Portal{Title: "ZZZZ", Keywords: []string{"programming", "development"}}
 
+	// Title doesn't match directly, keyword doesn't match directly, but close enough for similarity
 	if !sh.isSearchResult("programing", portal) {
 		t.Fatal("expected similarity keyword match")
+	}
+}
+
+func TestIsSearchResult_NoSimilarityWhenDisabled(t *testing.T) {
+	setupServer()
+	config.C.SearchWithStringSimilarity = false
+
+	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
+	portal := models.Portal{Title: "ZZZZ", Keywords: []string{"something_else"}}
+
+	// No direct match in title or keywords, and similarity is disabled
+	if sh.isSearchResult("completely_different", portal) {
+		t.Fatal("expected no match when similarity disabled and no direct match")
+	}
+}
+
+func TestIsSearchResult_SimilarityKeyword_LastResort(t *testing.T) {
+	setupServer()
+	config.C.SearchWithStringSimilarity = true
+	config.C.MinimumStringSimilarity = 0.3
+
+	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
+	// Title has low similarity, but second keyword is close
+	portal := models.Portal{
+		Title:    "ZZZZZZZ",
+		Keywords: []string{"aaaaaa", "github"},
+	}
+
+	if !sh.isSearchResult("githib", portal) {
+		t.Fatal("expected similarity match on second keyword")
 	}
 }
 
@@ -434,6 +480,24 @@ func TestPortalHandler_Handle_InternalLink(t *testing.T) {
 	}
 }
 
+func TestPortalHandler_TitleModifiedWithMetrics(t *testing.T) {
+	setupServer()
+	config.C.EnableMetrics = true
+	config.C.Portals = []models.Portal{
+		{Title: "My Portal!", Link: "https://example.com"},
+	}
+
+	ph := portalHandler{logger: testLogger()}
+	infos := ph.handle()
+
+	if len(infos) != 1 {
+		t.Fatalf("expected 1 handler info, got %d", len(infos))
+	}
+	if infos[0].portalPath != "/MyPortal" {
+		t.Fatalf("expected portalPath /MyPortal, got %q", infos[0].portalPath)
+	}
+}
+
 func TestPageHandler_EmptyPages(t *testing.T) {
 	setupServer()
 	config.C.Pages = []models.Page{}
@@ -484,5 +548,49 @@ func TestSearchHandler_Handle_SearchNoResults(t *testing.T) {
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+}
+
+func TestAddRoutes_WithPages(t *testing.T) {
+	setupServer()
+	config.C.Pages = []models.Page{
+		{Heading: "About", Path: "/about", Content: "<p>info</p>"},
+	}
+
+	srv := NewServer(testLogger(), testStatic)
+	if srv == nil {
+		t.Fatal("expected non-nil server")
+	}
+
+	// Verify the page route is registered
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	rec := httptest.NewRecorder()
+	srv.ServeHTTP(rec, req)
+
+	// Should return 200 since page is configured
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 for page route, got %d", rec.Code)
+	}
+}
+
+func TestAddRoutes_WithCustomIcons(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(dir+"/icon.svg", []byte("<svg/>"), 0644)
+
+	setupServer()
+	config.C.CustomIconsDir = dir
+
+	srv := NewServer(testLogger(), testStatic)
+	if srv == nil {
+		t.Fatal("expected non-nil server")
+	}
+
+	// Verify the icons route is registered
+	req := httptest.NewRequest(http.MethodGet, "/_/icons/icon.svg", nil)
+	rec := httptest.NewRecorder()
+	srv.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 for custom icon route, got %d", rec.Code)
 	}
 }

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"io"
 	"log/slog"
 	"os"
@@ -311,5 +312,61 @@ func TestPostConfigHook_WithContextPathEmptyPages(t *testing.T) {
 
 	if len(C.Portals) != 0 {
 		t.Fatalf("expected no portals, got %d", len(C.Portals))
+	}
+}
+
+func TestLoad_Success(t *testing.T) {
+	dir := t.TempDir()
+	yaml := `title: "LoadTest"
+host: localhost
+port: "9090"
+portals: []
+pages: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Save and restore the config-path flag state
+	oldConfigPath := F.ConfigPath
+	defer func() { F.ConfigPath = oldConfigPath }()
+
+	F.ConfigPath = dir
+	C = Config{}
+	loadConfig(dir)
+
+	if C.Title != "LoadTest" {
+		t.Fatalf("expected Title 'LoadTest', got %q", C.Title)
+	}
+	if C.Port != "9090" {
+		t.Fatalf("expected Port 9090, got %q", C.Port)
+	}
+}
+
+// TestLoadCall exercises the full Load() function path by temporarily
+// replacing flag.CommandLine to avoid flag re-registration conflicts.
+func TestLoadCall(t *testing.T) {
+	dir := t.TempDir()
+	yaml := "title: T\nportals: []\npages: []\n"
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Save original flag set and args.
+	oldFlag := flag.CommandLine
+	oldArgs := os.Args
+	defer func() {
+		flag.CommandLine = oldFlag
+		os.Args = oldArgs
+	}()
+
+	// Replace flag set so LoadFlags() can register "config-path" without panic.
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	os.Args = []string{os.Args[0], "-config-path=" + dir}
+
+	Load()
+
+	if C.Title != "T" {
+		t.Fatalf("expected Title T, got %q", C.Title)
 	}
 }

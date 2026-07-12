@@ -63,3 +63,22 @@ func TestPortalHandlerEmpty(t *testing.T) {
 		t.Fatalf("expected 0 handler infos, got %d", len(infos))
 	}
 }
+
+func TestPortalHandler_TitleModified(t *testing.T) {
+	setupServer()
+	// Title with spaces — TitleForUrl strips them, producing a different string.
+	config.C.Portals = []models.Portal{
+		{Title: "My Portal!", Link: "https://example.com"},
+	}
+
+	ph := portalHandler{logger: testLogger()}
+	infos := ph.handle()
+
+	if len(infos) != 1 {
+		t.Fatalf("expected 1 handler info, got %d", len(infos))
+	}
+	// TitleForUrl removes non-alphanumeric/dash chars: "My Portal!" → "MyPortal"
+	if infos[0].portalPath != "/MyPortal" {
+		t.Fatalf("expected portalPath /MyPortal, got %q", infos[0].portalPath)
+	}
+}

@@ -127,3 +127,145 @@ func TestHomePortal_WithSpecialCharacters(t *testing.T) {
 		t.Fatal("expected title in output")
 	}
 }
+
+func TestHomePortal_WithImageIcon(t *testing.T) {
+	portal := models.Portal{Title: "MyApp", Link: "https://example.com", Icon: "/static/icon.svg"}
+	rec := httptest.NewRecorder()
+	HomePortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "<img") {
+		t.Fatal("expected <img> tag for image icon")
+	}
+	if !strings.Contains(body, "/static/icon.svg") {
+		t.Fatal("expected icon src in output")
+	}
+}
+
+func TestFooterPortal_WithImageIcon(t *testing.T) {
+	portal := models.Portal{Title: "MyApp", Link: "https://example.com", Icon: "/icon.png"}
+	rec := httptest.NewRecorder()
+	FooterPortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "<img") {
+		t.Fatal("expected <img> tag for image icon in footer")
+	}
+}
+
+func TestFooterPortal_WithEmojiIcon(t *testing.T) {
+	portal := models.Portal{Title: "MyApp", Link: "https://example.com", Icon: "🚀"}
+	rec := httptest.NewRecorder()
+	FooterPortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "🚀") {
+		t.Fatal("expected emoji icon in footer output")
+	}
+}
+
+func TestFooterPortal_NoIcon(t *testing.T) {
+	portal := models.Portal{Title: "MyApp", Link: "https://example.com"}
+	rec := httptest.NewRecorder()
+	FooterPortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "MyApp") {
+		t.Fatal("expected portal title in footer output")
+	}
+	if strings.Contains(body, "<img") {
+		t.Fatal("did not expect img tag when no icon")
+	}
+}
+
+func TestFooterPortal_NoIconInternal(t *testing.T) {
+	portal := models.Portal{Title: "About", Link: "/about"}
+	rec := httptest.NewRecorder()
+	FooterPortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "About") {
+		t.Fatal("expected portal title in footer output")
+	}
+}
+
+func TestHomePortal_DataURIIcon(t *testing.T) {
+	portal := models.Portal{
+		Title: "SVG",
+		Link:  "https://example.com",
+		Icon:  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3C/svg%3E",
+	}
+	rec := httptest.NewRecorder()
+	HomePortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "<img") {
+		t.Fatal("expected img tag for data URI icon")
+	}
+	if !strings.Contains(body, "SVG") {
+		t.Fatal("expected portal title in output")
+	}
+}
+
+func TestHomePortal_AbsoluteURLIcon(t *testing.T) {
+	portal := models.Portal{
+		Title: "ExternalIcon",
+		Link:  "https://example.com",
+		Icon:  "https://cdn.example.com/icon.png",
+	}
+	rec := httptest.NewRecorder()
+	HomePortal(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "<img") {
+		t.Fatal("expected img tag for absolute URL icon")
+	}
+	if !strings.Contains(body, "cdn.example.com") {
+		t.Fatal("expected icon URL in output")
+	}
+}
+
+func TestHomePortalWithToolTip_WithImageIcon(t *testing.T) {
+	portal := models.Portal{
+		Title:    "MyApp",
+		Link:     "https://example.com",
+		Icon:     "/icon.svg",
+		Keywords: []string{"tool", "app"},
+	}
+	rec := httptest.NewRecorder()
+	HomePortalWithToolTip(portal).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "<img") {
+		t.Fatal("expected img tag for icon")
+	}
+	if !strings.Contains(body, "tool") {
+		t.Fatal("expected keyword in tooltip")
+	}
+	if !strings.Contains(body, "app") {
+		t.Fatal("expected keyword in tooltip")
+	}
+}
+
+func TestIsIconImage(t *testing.T) {
+	tests := []struct {
+		icon     string
+		expected bool
+	}{
+		{"https://example.com/icon.png", true},
+		{"http://cdn.com/icon.svg", true},
+		{"/static/icon.png", true},
+		{"/_/icons/github.svg", true},
+		{"data:image/svg+xml,...", true},
+		{"data:image/png;base64,...", true},
+		{"🚀", false},
+		{"💻", false},
+		{"🔗", false},
+		{"", false},
+	}
+	for _, tc := range tests {
+		if got := isIconImage(tc.icon); got != tc.expected {
+			t.Errorf("isIconImage(%q) = %v, want %v", tc.icon, got, tc.expected)
+		}
+	}
+}

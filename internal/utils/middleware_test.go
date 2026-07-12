@@ -110,6 +110,15 @@ func TestIpCheckParseError(t *testing.T) {
 	}
 }
 
+func TestIpRangesFromString_InvalidCIDR(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected panic for invalid CIDR")
+		}
+	}()
+	ipRangesFromString([]string{"not-a-cidr"})
+}
+
 func mustParseAddr(s string) netip.Addr {
 	addr, err := netip.ParseAddr(s)
 	if err != nil {

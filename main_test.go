@@ -1,17 +1,22 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/config"
+	"github.com/kodehat/portkey/internal/favicon"
 	"github.com/kodehat/portkey/internal/metrics"
 	"github.com/kodehat/portkey/internal/models"
 	"github.com/kodehat/portkey/internal/server"
@@ -23,8 +28,26 @@ func initGlobals(cfg config.Config) {
 	config.C = cfg
 	globalsOnce.Do(func() {
 		build.LoadBuildDetails("testhash")
-		metrics.Load()
+		// metrics.Load() may have already been called by main() in TestAAAMainDirectly.
+		// Only load if the first metric hasn't been initialized yet.
+		if metrics.M.PortalHitCounter == nil {
+			metrics.Load()
+		}
 	})
+}
+
+func TestAAAMainDirectly(t *testing.T) {
+	// This test must run before any test that calls initGlobals(),
+	// because main() calls metrics.Load() which panics if already loaded.
+
+	// Send interrupt after a brief delay so main() starts servers then shuts down.
+	go func() {
+		time.Sleep(300 * time.Millisecond)
+		p, _ := os.FindProcess(os.Getpid())
+		p.Signal(os.Interrupt)
+	}()
+
+	main()
 }
 
 func TestHealthz(t *testing.T) {
@@ -412,5 +435,166 @@ func TestMetricsServer(t *testing.T) {
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
 		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+}
+
+func TestRun_CancelImmediately(t *testing.T) {
+	cfg := config.Config{
+		LogLevel: "INFO",
+		Host:     "127.0.0.1",
+		Port:     "0",
+		Portals:  []models.Portal{},
+		Pages:    []models.Page{},
+	}
+	initGlobals(cfg)
+	favicon.Init(t.TempDir())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // pre-cancel so run shuts down immediately
+
+	if err := run(ctx, cfg, strings.NewReader(""), io.Discard, io.Discard); err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+}
+
+func TestRun_WithMetrics(t *testing.T) {
+	cfg := config.Config{
+		LogLevel:      "INFO",
+		Host:          "127.0.0.1",
+		Port:          "0",
+		MetricsHost:   "127.0.0.1",
+		MetricsPort:   "0",
+		EnableMetrics: true,
+		Portals:       []models.Portal{},
+		Pages:         []models.Page{},
+	}
+	initGlobals(cfg)
+	favicon.Init(t.TempDir())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	if err := run(ctx, cfg, strings.NewReader(""), io.Discard, io.Discard); err != nil {
+		t.Fatalf("expected nil error with metrics enabled, got %v", err)
+	}
+}
+
+func TestRun_ServerShutdown(t *testing.T) {
+	cfg := config.Config{
+		LogLevel:      "INFO",
+		Host:          "127.0.0.1",
+		Port:          "0",
+		MetricsHost:   "127.0.0.1",
+		MetricsPort:   "0",
+		EnableMetrics: true,
+		Portals:       []models.Portal{},
+		Pages:         []models.Page{},
+	}
+	initGlobals(cfg)
+	favicon.Init(t.TempDir())
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// Run server in background and cancel after a brief moment
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- run(ctx, cfg, strings.NewReader(""), io.Discard, io.Discard)
+	}()
+
+	// Give server time to start
+	time.Sleep(50 * time.Millisecond)
+	cancel()
+
+	select {
+	case err := <-errCh:
+		if err != nil {
+			t.Fatalf("expected nil error from run, got %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for server shutdown")
+	}
+}
+
+func TestRun_ServerShutdownNoMetrics(t *testing.T) {
+	cfg := config.Config{
+		LogLevel: "INFO",
+		Host:     "127.0.0.1",
+		Port:     "0",
+		Portals:  []models.Portal{},
+		Pages:    []models.Page{},
+	}
+	initGlobals(cfg)
+	favicon.Init(t.TempDir())
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- run(ctx, cfg, strings.NewReader(""), io.Discard, io.Discard)
+	}()
+
+	time.Sleep(50 * time.Millisecond)
+	cancel()
+
+	select {
+	case err := <-errCh:
+		if err != nil {
+			t.Fatalf("expected nil error from run, got %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for server shutdown")
+	}
+}
+
+func TestServer_CustomIconsDir(t *testing.T) {
+	iconsDir := t.TempDir()
+	// Create a test icon file
+	if err := os.WriteFile(filepath.Join(iconsDir, "test-icon.svg"), []byte("<svg/>"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	initGlobals(config.Config{
+		LogLevel:       "INFO",
+		Host:           "localhost",
+		Port:           "3000",
+		CustomIconsDir: iconsDir,
+		Portals:        []models.Portal{},
+		Pages:          []models.Page{},
+	})
+	srv := server.NewServer(testLogger(), static)
+	svr := httptest.NewServer(srv)
+	defer svr.Close()
+
+	res, err := http.Get(svr.URL + "/_/icons/test-icon.svg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200 for custom icon, got %d", res.StatusCode)
+	}
+}
+
+func TestServer_DevMode(t *testing.T) {
+	initGlobals(config.Config{
+		LogLevel: "INFO",
+		Host:     "localhost",
+		Port:     "3000",
+		DevMode:  true,
+		Portals:  []models.Portal{},
+		Pages:    []models.Page{},
+	})
+	// Creating the server with DevMode=true registers the /reload handler
+	srv := server.NewServer(testLogger(), static)
+
+	// Verify the /reload endpoint exists and responds
+	req := httptest.NewRequest(http.MethodGet, "/reload", nil)
+	rec := httptest.NewRecorder()
+	srv.ServeHTTP(rec, req)
+
+	// The reload handler expects a WebSocket upgrade; with a plain GET
+	// it returns 426 Upgrade Required, which confirms the route is registered.
+	if rec.Code != http.StatusUpgradeRequired {
+		t.Fatalf("expected 426 for dev mode reload, got %d", rec.Code)
 	}
 }

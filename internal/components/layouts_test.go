@@ -220,3 +220,85 @@ func TestContentLayout_HideTitle(t *testing.T) {
 		t.Fatal("expected hidden class when HideTitle is true")
 	}
 }
+
+func TestBase_HideTitleOnly(t *testing.T) {
+	cfg := config.Config{
+		Title:       "portkey",
+		HideTitle:   true,
+		ShowTopIcon: true,
+		ContextPath: "",
+	}
+	details := build.BuildDetails{CssHash: "test"}
+	build.LoadBuildDetails("test")
+	rec := httptest.NewRecorder()
+	Base("Page", cfg, details).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "android-chrome-512x512.png") {
+		t.Fatal("expected logo image when ShowTopIcon is true")
+	}
+	if strings.Contains(body, ">portkey<") {
+		t.Fatal("did not expect title text when HideTitle is true")
+	}
+}
+
+func TestBase_NoTopIconNoHideTitle(t *testing.T) {
+	cfg := config.Config{
+		Title:       "portkey",
+		HideTitle:   false,
+		ShowTopIcon: false,
+		ContextPath: "",
+	}
+	details := build.BuildDetails{CssHash: "test"}
+	build.LoadBuildDetails("test")
+	rec := httptest.NewRecorder()
+	Base("Page", cfg, details).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	// When ShowTopIcon=false but HideTitle=false, should render title-only link
+	if !strings.Contains(body, ">portkey<") {
+		t.Fatal("expected title text when HideTitle is false")
+	}
+	if strings.Contains(body, "android-chrome") {
+		t.Fatal("did not expect logo when ShowTopIcon is false")
+	}
+}
+
+func TestBase_BothHidden(t *testing.T) {
+	cfg := config.Config{
+		Title:       "portkey",
+		HideTitle:   true,
+		ShowTopIcon: false,
+		ContextPath: "",
+	}
+	details := build.BuildDetails{CssHash: "test"}
+	build.LoadBuildDetails("test")
+	rec := httptest.NewRecorder()
+	Base("Page", cfg, details).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if strings.Contains(body, ">portkey<") || strings.Contains(body, "android-chrome") {
+		t.Fatal("expected neither title nor logo when both hidden")
+	}
+}
+
+func TestHomeLayout_WithColumns(t *testing.T) {
+	cfg := config.Config{
+		Title:         "portkey",
+		LayoutColumns: 2,
+		ShowTopIcon:   true,
+		ContextPath:   "",
+		Portals: []models.Portal{
+			{Title: "GitHub", Link: "https://github.com"},
+		},
+	}
+	config.C = cfg
+	details := build.BuildDetails{CssHash: "test"}
+	rec := httptest.NewRecorder()
+	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "max-w-7xl") {
+		t.Fatal("expected wide container for columns layout")
+	}
+}

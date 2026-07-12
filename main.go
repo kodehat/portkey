@@ -29,7 +29,9 @@ func main() {
 	ctx := context.Background()
 	build.LoadBuildDetails(getCssResourceHash())
 	config.Load()
-	favicon.Init(config.C.FaviconCacheDir)
+	logger := slog.New(config.C.GetLogHandler(os.Stdout))
+	slog.SetDefault(logger)
+	favicon.Init(config.C.FaviconCacheDir, logger)
 	metrics.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)

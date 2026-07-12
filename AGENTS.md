@@ -135,7 +135,7 @@ config.C.Pages           // []models.Page
 config.C.EnableMetrics   // bool
 config.C.LayoutColumns   // int (0 = vertical, 2-12 = column grid)
 config.C.FaviconCacheDir // string (on-disk favicon cache path)
-config.C.FaviconCacheDisabled // bool (bypass local cache)
+config.C.FaviconCacheDisabled // bool (bypass local cache, always fetch fresh)
 ```
 
 ---
@@ -223,9 +223,8 @@ minimumStringSimilarity: 0.5   # 0.0–1.0; Levenshtein threshold
 layoutColumns: 0             # 0 = vertical (default), 2-12 = multi-column grid. On mobile (<768px) always vertical.
 
 # Favicon
-faviconServiceURL: https://favicon.vemetric.com  # Self-hostable favicon fetch service
 faviconCacheDir: ./favicon-cache                # On-disk favicon cache (Docker volume mountable)
-faviconCacheDisabled: false                     # Bypass local cache, fetch directly from remote
+faviconCacheDisabled: false                     # Skip local cache, always discover + download fresh
 
 # Portals
 portals:
@@ -287,7 +286,7 @@ All metrics are registered under the `portkey_` namespace.
 - The CSS file hash in `internal/build/` is computed from the content of `static/css/main.css` for cache-busting — it updates automatically at build time.
 - `config.C`, `metrics.M`, and `build.B` are globals initialized at startup; access them directly from handlers rather than passing through the call stack.
 
-- **Favicon caching:** `internal/favicon/cache.go` provides a disk-backed favicon cache. Favicons are fetched from a configurable remote service (`faviconServiceURL`, default `https://favicon.vemetric.com`), stored by normalized hostname in `faviconCacheDir` (default `./favicon-cache`), and served via `GET /_/favicon?domain=<hostname>`. Cache TTL is 7 days; stale entries are refreshed in the background. Failed fetches are backed off for 1 hour. Set `faviconCacheDisabled: true` to bypass local caching entirely.
+- **Favicon caching:** `internal/favicon/cache.go` provides a disk-backed favicon cache. Favicons are discovered directly from target websites using `go.deanishe.net/favicon` (parses HTML <link> tags, Open Graph, Twitter cards, manifest.json, and checks common paths like `/favicon.ico`). Discovered icons are downloaded, stored by normalized hostname in `faviconCacheDir` (default `./favicon-cache`), and served via `GET /_/favicon?domain=<hostname>`. Cache TTL is 7 days; stale entries are refreshed in the background. Failed fetches are backed off for 1 hour. Set `faviconCacheDisabled: true` to bypass the disk cache and always fetch fresh.
 - **Multi-column layout:** Set `config.C.LayoutColumns` to 0 (vertical, default) or 2-12 (CSS grid). The `components.GridClass(columns int)` helper returns responsive Tailwind classes: mobile uses `max-md:flex flex-col items-start` (vertical stack), desktop uses `md:grid md:grid-cols-N`. Class strings are stored in a `[...]string` array with literal entries so Tailwind v4 detects them during CSS build; always add new column values as literal strings in `internal/components/component.go`.
 - The server uses the standard library `net/http` mux — no third-party router.
 - All binaries are statically linked (`CGO_ENABLED=0`); avoid importing packages that require CGO.

@@ -2,6 +2,7 @@ package favicon
 
 import (
 	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -10,7 +11,10 @@ import (
 	"testing"
 	"time"
 
+	faviconlib "go.deanishe.net/favicon"
+
 	"github.com/kodehat/portkey/internal/build"
+	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/metrics"
 )
 
@@ -46,13 +50,12 @@ func TestNormalizeHostname(t *testing.T) {
 func TestNew(t *testing.T) {
 	dir := t.TempDir()
 	cacheDir := filepath.Join(dir, "favicons")
-	c := New(cacheDir)
+	c := New(cacheDir, nil)
 
 	if c.dir != cacheDir {
 		t.Errorf("New().dir = %q, want %q", c.dir, cacheDir)
 	}
 
-	// Verify directory was created.
 	if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
 		t.Errorf("cache directory %q was not created", cacheDir)
 	}
@@ -61,14 +64,26 @@ func TestNew(t *testing.T) {
 		t.Error("New().client is nil")
 	}
 
+	if c.finder == nil {
+		t.Error("New().finder is nil")
+	}
+
 	if c.failures == nil {
 		t.Error("New().failures is nil")
 	}
 }
 
+func TestNew_WithLogger(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	c := New(t.TempDir(), logger)
+	if c.logger != logger {
+		t.Error("expected logger to be set")
+	}
+}
+
 func TestCachePath(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir)
+	c := New(dir, nil)
 
 	path := c.cachePath("github.com")
 	expected := filepath.Join(dir, "github.com.png")
@@ -78,7 +93,7 @@ func TestCachePath(t *testing.T) {
 }
 
 func TestServeHTTP_EmptyDomain(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon", nil)
 	c.ServeHTTP(w, r)
@@ -89,7 +104,7 @@ func TestServeHTTP_EmptyDomain(t *testing.T) {
 }
 
 func TestServeHTTP_NoDomainParam(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon?domain=", nil)
 	c.ServeHTTP(w, r)
@@ -100,9 +115,8 @@ func TestServeHTTP_NoDomainParam(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitServesFile(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
-	// Write a cached favicon.
 	path := c.cachePath("github.com")
 	if err := os.WriteFile(path, []byte("fake-png-data"), 0644); err != nil {
 		t.Fatal(err)
@@ -121,15 +135,13 @@ func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
-	// Write cache under normalized name.
 	path := c.cachePath("github.com")
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
 		t.Fatal(err)
 	}
 
-	// Request with www. prefix.
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon?domain=www.github.com", nil)
 	c.ServeHTTP(w, r)
@@ -140,10 +152,14 @@ func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
 }
 
 func TestServeHTTP_CacheMissShowsFallback(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
-	// Use a client with an extremely short timeout so the fetch fails quickly.
-	c.client = &http.Client{Timeout: 1 * time.Nanosecond}
+	// Failing transport — both finder and download fail.
+	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		return nil, io.ErrUnexpectedEOF
+	})
+	c.client = &http.Client{Transport: failTransport, Timeout: 10 * time.Second}
+	c.finder = faviconlib.New(faviconlib.WithClient(c.client))
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon?domain=any-unreachable.example", nil)
@@ -171,7 +187,7 @@ func TestServeHTTP_CacheMissShowsFallback(t *testing.T) {
 }
 
 func TestServeHTTP_FailureBackoff(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
 	c.mu.Lock()
 	c.failures["bad.example.com"] = time.Now()
@@ -190,10 +206,13 @@ func TestServeHTTP_FailureBackoff(t *testing.T) {
 }
 
 func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
-	// Ensure fetch fails by using a short timeout client.
-	c.client = &http.Client{Timeout: 1 * time.Nanosecond}
+	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		return nil, io.ErrUnexpectedEOF
+	})
+	c.client = &http.Client{Transport: failTransport, Timeout: 10 * time.Second}
+	c.finder = faviconlib.New(faviconlib.WithClient(c.client))
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon?domain=any.example", nil)
@@ -205,7 +224,7 @@ func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
-	c := New(t.TempDir())
+	c := New(t.TempDir(), nil)
 
 	path := c.cachePath("example.com")
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
@@ -216,7 +235,6 @@ func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
 	r := httptest.NewRequest("GET", "/_/favicon?domain=example.com", nil)
 	c.ServeHTTP(w, r)
 
-	// http.ServeFile sets its own headers, but the handler shouldn't interfere.
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", w.Code)
 	}
@@ -224,7 +242,7 @@ func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
 
 func TestInit(t *testing.T) {
 	dir := t.TempDir()
-	Init(dir)
+	Init(dir, nil)
 
 	if C == nil {
 		t.Fatal("Init() did not set global C")
@@ -280,7 +298,7 @@ func TestIsValidHostname_Empty(t *testing.T) {
 
 func TestCachePath_PathTraversal(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir)
+	c := New(dir, nil)
 
 	malicious := "../etc/passwd"
 	got := c.cachePath(malicious)
@@ -292,7 +310,6 @@ func TestCachePath_PathTraversal(t *testing.T) {
 
 func TestNew_PanicsOnInvalidDir(t *testing.T) {
 	dir := t.TempDir()
-	// Create a file where the dir should be so MkdirAll fails.
 	filePath := filepath.Join(dir, "notadir")
 	if err := os.WriteFile(filePath, []byte("x"), 0644); err != nil {
 		t.Fatal(err)
@@ -304,7 +321,7 @@ func TestNew_PanicsOnInvalidDir(t *testing.T) {
 		}
 	}()
 
-	New(filepath.Join(filePath, "subdir"))
+	New(filepath.Join(filePath, "subdir"), nil)
 }
 
 // roundTripFunc lets tests intercept http.Client requests without a real server.
@@ -312,17 +329,49 @@ type roundTripFunc func(*http.Request) (*http.Response, error)
 
 func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
 
+// testServerWithFavicon starts a test HTTP server that responds with a homepage
+// (containing a favicon <link>) at / and PNG data at /favicon.png. Returns the
+// server, plus a client and finder that route all requests through it.
+func testServerWithFavicon(t *testing.T) (*httptest.Server, *http.Client, *faviconlib.Finder) {
+	t.Helper()
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" || r.URL.Path == "" {
+			w.Header().Set("Content-Type", "text/html")
+			w.Write([]byte(`<html><head><link rel="icon" type="image/png" href="/favicon.png"></head></html>`))
+			return
+		}
+		w.Header().Set("Content-Type", "image/png")
+		w.Write([]byte("FAVICON-DATA"))
+	}))
+
+	transport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		u := server.URL + r.URL.Path
+		if r.URL.RawQuery != "" {
+			u += "?" + r.URL.RawQuery
+		}
+		req, _ := http.NewRequest(r.Method, u, r.Body)
+		for k, vs := range r.Header {
+			for _, v := range vs {
+				req.Header.Add(k, v)
+			}
+		}
+		return server.Client().Do(req)
+	})
+
+	client := &http.Client{Transport: transport, Timeout: 10 * time.Second}
+	finder := faviconlib.New(faviconlib.WithClient(client))
+	return server, client, finder
+}
+
 func TestFetchAndSave_Success(t *testing.T) {
+	server, client, finder := testServerWithFavicon(t)
+	defer server.Close()
+
 	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{
-		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader("PNG-DATA")),
-			}, nil
-		}),
-	}
+	c := New(dir, nil)
+	c.client = client
+	c.finder = finder
 
 	path := filepath.Join(dir, "test.com.png")
 	if err := c.fetchAndSave("test.com", path); err != nil {
@@ -333,42 +382,57 @@ func TestFetchAndSave_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("file not written: %v", err)
 	}
-	if string(data) != "PNG-DATA" {
-		t.Fatalf("expected PNG-DATA, got %q", string(data))
+	if string(data) != "FAVICON-DATA" {
+		t.Fatalf("expected FAVICON-DATA, got %q", string(data))
 	}
 }
 
 func TestFetchAndSave_NonOKStatus(t *testing.T) {
-	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{
-		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusNotFound,
-				Body:       io.NopCloser(strings.NewReader("")),
-			}, nil
-		}),
-	}
+	// Server where favicon download returns 404.
+	failServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" || r.URL.Path == "" {
+			w.Header().Set("Content-Type", "text/html")
+			w.Write([]byte(`<html><head><link rel="icon" type="image/png" href="/favicon.png"></head></html>`))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer failServer.Close()
 
-	path := filepath.Join(dir, "missing.com.png")
-	if err := c.fetchAndSave("missing.com", path); err == nil {
-		t.Fatal("expected error for non-200 status")
+	transport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		u := failServer.URL + r.URL.Path
+		if r.URL.RawQuery != "" {
+			u += "?" + r.URL.RawQuery
+		}
+		req, _ := http.NewRequest(r.Method, u, r.Body)
+		for k, vs := range r.Header {
+			for _, v := range vs {
+				req.Header.Add(k, v)
+			}
+		}
+		return failServer.Client().Do(req)
+	})
+
+	dir := t.TempDir()
+	c := New(dir, nil)
+	c.client = &http.Client{Transport: transport, Timeout: 10 * time.Second}
+	c.finder = faviconlib.New(faviconlib.WithClient(c.client))
+
+	path := filepath.Join(dir, "notfound.com.png")
+	if err := c.fetchAndSave("notfound.com", path); err == nil {
+		t.Fatal("expected error for non-200 download status")
 	}
 }
 
 func TestFetchAndSave_CreateFails(t *testing.T) {
-	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{
-		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader("data")),
-			}, nil
-		}),
-	}
+	server, client, finder := testServerWithFavicon(t)
+	defer server.Close()
 
-	// Path inside a non-existent subdirectory so os.Create fails.
+	dir := t.TempDir()
+	c := New(dir, nil)
+	c.client = client
+	c.finder = finder
+
 	path := filepath.Join(dir, "nonexistent", "test.com.png")
 	if err := c.fetchAndSave("test.com", path); err == nil {
 		t.Fatal("expected error when temp file create fails")
@@ -376,43 +440,48 @@ func TestFetchAndSave_CreateFails(t *testing.T) {
 }
 
 func TestFetchAndSave_CopyFails(t *testing.T) {
+	server, client, finder := testServerWithFavicon(t)
+	defer server.Close()
+
 	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{
-		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(&errReader{}),
-			}, nil
-		}),
-	}
+	c := New(dir, nil)
+	c.client = client
+	c.finder = finder
+
+	// Override client so download body errors on read, but finder still works.
+	origTransport := client.Transport
+	errorTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Path == "/" || r.URL.Path == "" {
+			return origTransport.RoundTrip(r)
+		}
+		return &http.Response{
+			StatusCode: http.StatusOK,
+			Body:       io.NopCloser(&errReader{}),
+		}, nil
+	})
+	c.client = &http.Client{Transport: errorTransport, Timeout: 10 * time.Second}
 
 	path := filepath.Join(dir, "copyerr.com.png")
 	if err := c.fetchAndSave("copyerr.com", path); err == nil {
 		t.Fatal("expected error when copy fails")
 	}
-	// Temp file should be cleaned up.
 	if _, err := os.Stat(path + ".tmp"); !os.IsNotExist(err) {
 		t.Error("expected temp file to be removed after copy error")
 	}
 }
 
-// errReader always returns an error on Read.
 type errReader struct{}
 
 func (errReader) Read([]byte) (int, error) { return 0, io.ErrUnexpectedEOF }
 
 func TestRefresh_Success(t *testing.T) {
+	server, client, finder := testServerWithFavicon(t)
+	defer server.Close()
+
 	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{
-		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader("REFRESHED")),
-			}, nil
-		}),
-	}
+	c := New(dir, nil)
+	c.client = client
+	c.finder = finder
 
 	path := filepath.Join(dir, "refresh.com.png")
 	c.refresh("refresh.com", path)
@@ -421,15 +490,20 @@ func TestRefresh_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected refreshed file: %v", err)
 	}
-	if string(data) != "REFRESHED" {
-		t.Fatalf("expected REFRESHED, got %q", string(data))
+	if string(data) != "FAVICON-DATA" {
+		t.Fatalf("expected FAVICON-DATA, got %q", string(data))
 	}
 }
 
 func TestRefresh_Failure(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{Timeout: 1 * time.Nanosecond}
+	c := New(dir, nil)
+
+	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		return nil, io.ErrUnexpectedEOF
+	})
+	c.client = &http.Client{Transport: failTransport, Timeout: 10 * time.Second}
+	c.finder = faviconlib.New(faviconlib.WithClient(c.client))
 
 	path := filepath.Join(dir, "fail.com.png")
 	c.refresh("fail.com", path)
@@ -444,14 +518,12 @@ func TestRefresh_Failure(t *testing.T) {
 
 func TestServeHTTP_StaleFileTriggersRefresh(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir)
-	c.client = &http.Client{Timeout: 1 * time.Nanosecond}
+	c := New(dir, nil)
 
 	path := c.cachePath("stale.com")
 	if err := os.WriteFile(path, []byte("old-data"), 0644); err != nil {
 		t.Fatal(err)
 	}
-	// Set mod time beyond CacheTTL so the stale branch triggers.
 	oldTime := time.Now().Add(-(CacheTTL + 24*time.Hour))
 	if err := os.Chtimes(path, oldTime, oldTime); err != nil {
 		t.Fatal(err)
@@ -464,6 +536,72 @@ func TestServeHTTP_StaleFileTriggersRefresh(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200 for stale cache hit, got %d", w.Code)
 	}
-	// Allow background goroutine to complete.
 	time.Sleep(20 * time.Millisecond)
+}
+
+func TestServeHTTP_CacheDisabled(t *testing.T) {
+	server, client, finder := testServerWithFavicon(t)
+	defer server.Close()
+
+	orig := config.C.FaviconCacheDisabled
+	config.C.FaviconCacheDisabled = true
+	defer func() { config.C.FaviconCacheDisabled = orig }()
+
+	dir := t.TempDir()
+	c := New(dir, nil)
+	c.client = client
+	c.finder = finder
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/_/favicon?domain=test.com", nil)
+	c.ServeHTTP(w, r)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected 200 with cache disabled, got %d", w.Code)
+	}
+	if w.Body.String() != "FAVICON-DATA" {
+		t.Errorf("expected FAVICON-DATA, got %q", w.Body.String())
+	}
+	if ct := w.Header().Get("Content-Type"); ct != "image/png" {
+		t.Errorf("expected Content-Type image/png, got %q", ct)
+	}
+}
+
+func TestSelectBestIcon(t *testing.T) {
+	icons := []*faviconlib.Icon{
+		{URL: "/favicon.ico", MimeType: "image/x-icon", Width: 16, Height: 16},
+		{URL: "/icon-32.png", MimeType: "image/png", Width: 32, Height: 32},
+		{URL: "/icon-64.png", MimeType: "image/png", Width: 64, Height: 64},
+		{URL: "/icon-128.png", MimeType: "image/png", Width: 128, Height: 128},
+		{URL: "/og.png", MimeType: "image/png", Width: 1200, Height: 630},
+	}
+
+	best := selectBestIcon(icons)
+	if best == nil {
+		t.Fatal("expected non-nil best icon")
+	}
+	if best.URL != "/icon-64.png" {
+		t.Errorf("expected /icon-64.png as best, got %q", best.URL)
+	}
+}
+
+func TestSelectBestIcon_Empty(t *testing.T) {
+	if got := selectBestIcon(nil); got != nil {
+		t.Error("expected nil for empty icon list")
+	}
+	if got := selectBestIcon([]*faviconlib.Icon{}); got != nil {
+		t.Error("expected nil for empty icon list")
+	}
+}
+
+func TestLogDebug_NilLogger(t *testing.T) {
+	c := New(t.TempDir(), nil)
+	// Must not panic.
+	c.logDebug("test", "key", "val")
+}
+
+func TestLogWarn_NilLogger(t *testing.T) {
+	c := New(t.TempDir(), nil)
+	// Must not panic.
+	c.logWarn("test", "key", "val")
 }

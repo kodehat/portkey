@@ -123,32 +123,16 @@ func TestDomainFromURL_ParseFails(t *testing.T) {
 	}
 }
 
-func TestFaviconURL_CacheDisabled(t *testing.T) {
+func TestFaviconURL_AlwaysLocalRoute(t *testing.T) {
+	// Even when FaviconCacheDisabled is true, faviconURL should still return
+	// the local route — the cache handler decides whether to use disk cache.
 	config.C = config.Config{
 		FaviconCacheDisabled: true,
-		FaviconServiceURL:    "https://favicon.example.com",
 	}
 	got := faviconURL("https://github.com")
-	if got == "" {
-		t.Fatal("expected non-empty favicon URL")
-	}
-	if !contains(got, "github.com") {
-		t.Errorf("expected domain in favicon URL, got %q", got)
-	}
-	if !contains(got, "favicon.example.com") {
-		t.Errorf("expected service URL in result, got %q", got)
-	}
-}
-
-func TestFaviconURL_CacheDisabled_TrailingSlash(t *testing.T) {
-	config.C = config.Config{
-		FaviconCacheDisabled: true,
-		FaviconServiceURL:    "https://favicon.example.com/",
-	}
-	got := faviconURL("https://github.com")
-	// TrimRight should strip the trailing slash before joining.
-	if contains(got, "//github.com") {
-		t.Errorf("unexpected double slash in URL: %q", got)
+	expected := "/_/favicon?domain=github.com"
+	if got != expected {
+		t.Errorf("expected local route regardless of cache setting, got %q", got)
 	}
 }
 

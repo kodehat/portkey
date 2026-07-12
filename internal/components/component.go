@@ -28,17 +28,13 @@ func isIconImage(icon string) bool {
 	return strings.HasPrefix(icon, "http") || strings.HasPrefix(icon, "/") || strings.HasPrefix(icon, "data:")
 }
 
-// faviconURL returns a favicon URL for the given link.
-// When caching is enabled (default), returns a local cache URL handled by
-// the favicon cache handler. When disabled, returns a direct remote URL.
+// faviconURL returns the local favicon cache URL for the given link.
+// The favicon handler discovers icons directly from the target website
+// and serves them from the local cache.
 func faviconURL(rawURL string) string {
 	domain := domainFromURL(rawURL)
 	if domain == "" {
 		return ""
-	}
-	if config.C.FaviconCacheDisabled {
-		base := strings.TrimRight(config.C.FaviconServiceURL, "/")
-		return base + "/" + domain + "?size=64&format=png"
 	}
 	return config.C.ContextPath + "/_/favicon?domain=" + domain
 }

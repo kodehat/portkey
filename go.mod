@@ -10,13 +10,16 @@ require (
 	github.com/kodehat/livereload v0.1.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/spf13/viper v1.21.0
+	go.deanishe.net/favicon v0.1.0
 )
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
+	github.com/PuerkitoBio/goquery v1.6.0 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/air-verse/air v1.65.3 // indirect
 	github.com/andybalholm/brotli v1.2.1 // indirect
+	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bep/godartsass/v2 v2.5.0 // indirect
 	github.com/bep/golibsass v1.2.0 // indirect
@@ -27,6 +30,7 @@ require (
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fatih/color v1.19.0 // indirect
+	github.com/friendsofgo/errors v0.9.2 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -56,6 +60,7 @@ require (
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/tools v0.46.0 // indirect
+	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
 

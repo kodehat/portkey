@@ -178,11 +178,9 @@ hideSearchBar: false
 # When groups exist, each group occupies one grid cell.
 # When no groups, portals are distributed across N columns.
 layoutColumns: 0
-# Self-hostable favicon fetch service URL.
-faviconServiceURL: https://favicon.vemetric.com
 # On-disk favicon cache directory. Mountable as a Docker volume for persistence across restarts.
 faviconCacheDir: ./favicon-cache
-# Set to true to bypass local favicon caching and fetch directly from the remote service.
+# Set to true to bypass local favicon caching and always discover + download fresh.
 faviconCacheDisabled: false
 # Directory for custom icon files (SVG, PNG). Files are served at /_/icons/<filename>.
 # Mountable as a Docker volume. Requires creating the directory and placing icon files.

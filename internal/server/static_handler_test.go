@@ -29,7 +29,7 @@ func TestStaticHandler(t *testing.T) {
 
 func TestNewServer(t *testing.T) {
 	setupServer()
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 
 	srv := NewServer(testLogger(), testStaticFS)
 	if srv == nil {
@@ -83,7 +83,7 @@ func TestDurationMiddleware_StaticPathSkipped(t *testing.T) {
 
 func TestNewServer_WithCustomIconsDir(t *testing.T) {
 	setupServer()
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 	config.C.CustomIconsDir = t.TempDir()
 	defer func() { config.C.CustomIconsDir = "" }()
 
@@ -103,7 +103,7 @@ func TestNewServer_WithCustomIconsDir(t *testing.T) {
 
 func TestNewServer_WithDevMode(t *testing.T) {
 	setupServer()
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 	config.C.DevMode = true
 	defer func() { config.C.DevMode = false }()
 

@@ -447,7 +447,7 @@ func TestRun_CancelImmediately(t *testing.T) {
 		Pages:    []models.Page{},
 	}
 	initGlobals(cfg)
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // pre-cancel so run shuts down immediately
@@ -469,7 +469,7 @@ func TestRun_WithMetrics(t *testing.T) {
 		Pages:         []models.Page{},
 	}
 	initGlobals(cfg)
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -491,7 +491,7 @@ func TestRun_ServerShutdown(t *testing.T) {
 		Pages:         []models.Page{},
 	}
 	initGlobals(cfg)
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -524,7 +524,7 @@ func TestRun_ServerShutdownNoMetrics(t *testing.T) {
 		Pages:    []models.Page{},
 	}
 	initGlobals(cfg)
-	favicon.Init(t.TempDir())
+	favicon.Init(t.TempDir(), nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
 

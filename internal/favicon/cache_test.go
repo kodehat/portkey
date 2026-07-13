@@ -81,16 +81,10 @@ func TestCachePath(t *testing.T) {
 	dir := t.TempDir()
 	c := New(dir, nil)
 
-	path := c.cachePath("github.com", "png")
+	path := c.cachePath("github.com")
 	expected := filepath.Join(dir, "github.com.png")
 	if path != expected {
-		t.Errorf("cachePath(%q, %q) = %q, want %q", "github.com", "png", path, expected)
-	}
-
-	// Default format
-	path2 := c.cachePath("github.com", "")
-	if path2 != expected {
-		t.Errorf("cachePath(%q, %q) = %q, want %q", "github.com", "", path2, expected)
+		t.Errorf("cachePath(%q) = %q, want %q", "github.com", path, expected)
 	}
 }
 
@@ -119,7 +113,7 @@ func TestServeHTTP_NoDomainParam(t *testing.T) {
 func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("github.com", "png")
+	path := c.cachePath("github.com")
 	if err := os.WriteFile(path, []byte("fake-png-data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -139,7 +133,7 @@ func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("github.com", "png")
+	path := c.cachePath("github.com")
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -225,7 +219,7 @@ func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
 func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("example.com", "png")
+	path := c.cachePath("example.com")
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -300,7 +294,7 @@ func TestCachePath_PathTraversal(t *testing.T) {
 	c := New(dir, nil)
 
 	malicious := "../etc/passwd"
-	got := c.cachePath(malicious, "png")
+	got := c.cachePath(malicious)
 	expected := filepath.Join(dir, "invalid.png")
 	if got != expected {
 		t.Errorf("cachePath(%q, %q) = %q, want %q (traversal protection)", malicious, "png", got, expected)
@@ -381,14 +375,11 @@ func TestFetchAndSave_Success(t *testing.T) {
 	c := New(dir, nil)
 	c.client = client
 
-	if err := c.fetchAndSave(context.Background(), "test.com"); err != nil {
+	path := filepath.Join(dir, "test.com.png")
+	if err := c.fetchAndSave(context.Background(), "test.com", path); err != nil {
 		t.Fatalf("expected success, got %v", err)
 	}
 
-	path, found := c.findExistingCache("test.com")
-	if !found {
-		t.Fatal("file not written")
-	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("file not readable: %v", err)
@@ -424,7 +415,8 @@ func TestFetchAndSave_NonOKStatus(t *testing.T) {
 	c := New(dir, nil)
 	c.client = &http.Client{Transport: transport, Timeout: 10 * time.Second}
 
-	if err := c.fetchAndSave(context.Background(), "notfound.com"); err == nil {
+	path := filepath.Join(dir, "notfound.com.png")
+	if err := c.fetchAndSave(context.Background(), "notfound.com", path); err == nil {
 		t.Fatal("expected error for non-200 download status")
 	}
 }
@@ -440,7 +432,8 @@ func TestFetchAndSave_CreateFails(t *testing.T) {
 	// Poison cachePath with a non-existent subdirectory.
 	c.dir = filepath.Join(dir, "nonexistent")
 
-	if err := c.fetchAndSave(context.Background(), "test.com"); err == nil {
+	path := c.cachePath("test.com")
+	if err := c.fetchAndSave(context.Background(), "test.com", path); err == nil {
 		t.Fatal("expected error when temp file create fails")
 	}
 }
@@ -454,12 +447,9 @@ func TestRefresh_Success(t *testing.T) {
 	c := New(dir, nil)
 	c.client = client
 
-	c.refresh("refresh.com")
+	c.refresh("refresh.com", filepath.Join(dir, "refresh.com.png"))
 
-	path, found := c.findExistingCache("refresh.com")
-	if !found {
-		t.Fatal("expected refreshed file to exist")
-	}
+	path := filepath.Join(dir, "refresh.com.png")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("expected refreshed file: %v", err)
@@ -478,7 +468,7 @@ func TestRefresh_Failure(t *testing.T) {
 	})
 	c.client = &http.Client{Transport: failTransport, Timeout: 10 * time.Second}
 
-	c.refresh("fail.com")
+	c.refresh("fail.com", filepath.Join(dir, "fail.com.png"))
 
 	c.mu.RLock()
 	_, failed := c.failures["fail.com"]
@@ -492,7 +482,7 @@ func TestServeHTTP_StaleFileTriggersRefresh(t *testing.T) {
 	dir := t.TempDir()
 	c := New(dir, nil)
 
-	path := c.cachePath("stale.com", "png")
+	path := c.cachePath("stale.com")
 	if err := os.WriteFile(path, []byte("old-data"), 0644); err != nil {
 		t.Fatal(err)
 	}

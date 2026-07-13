@@ -28,26 +28,42 @@ func initGlobals(cfg config.Config) {
 	config.C = cfg
 	globalsOnce.Do(func() {
 		build.LoadBuildDetails("testhash")
-		// metrics.Load() may have already been called by main() in TestAAAMainDirectly.
-		// Only load if the first metric hasn't been initialized yet.
-		if metrics.M.PortalHitCounter == nil {
-			metrics.Load()
-		}
+		metrics.Load()
 	})
 }
 
-func TestAAAMainDirectly(t *testing.T) {
-	// This test must run before any test that calls initGlobals(),
-	// because main() calls metrics.Load() which panics if already loaded.
+func TestMainLikeLifecycle_NoSignal(t *testing.T) {
+	cfg := config.Config{
+		LogLevel:      "INFO",
+		Host:          "127.0.0.1",
+		Port:          "0",
+		MetricsHost:   "127.0.0.1",
+		MetricsPort:   "0",
+		EnableMetrics: true,
+		Portals:       []models.Portal{},
+		Pages:         []models.Page{},
+	}
+	initGlobals(cfg)
+	favicon.Init(t.TempDir(), nil)
 
-	// Send interrupt after a brief delay so main() starts servers then shuts down.
+	ctx, cancel := context.WithCancel(context.Background())
+	errCh := make(chan error, 1)
+
 	go func() {
-		time.Sleep(300 * time.Millisecond)
-		p, _ := os.FindProcess(os.Getpid())
-		p.Signal(os.Interrupt)
+		errCh <- run(ctx, cfg, strings.NewReader(""), io.Discard, io.Discard)
 	}()
 
-	main()
+	time.Sleep(100 * time.Millisecond)
+	cancel()
+
+	select {
+	case err := <-errCh:
+		if err != nil {
+			t.Fatalf("expected nil error from run, got %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for run shutdown")
+	}
 }
 
 func TestHealthz(t *testing.T) {

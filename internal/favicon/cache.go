@@ -26,6 +26,15 @@ const (
 
 	// FailureRetryAfter is how long to wait before retrying a failed domain.
 	FailureRetryAfter = 1 * time.Hour
+
+	// HttpsPrefix is the prefix used for fetching favicons from target websites.
+	HttpsPrefix = "https://"
+
+	// ContentTypeHeader is the HTTP header for content type.
+	ContentTypeHeader = "Content-Type"
+
+	// MimeTypePng is the MIME type for PNG images.
+	MimeTypePng = "image/png"
 )
 
 // C is the global favicon cache. Initialized by Init().
@@ -67,7 +76,7 @@ func DomainFromURL(rawURL string) string {
 		return ""
 	}
 	// net/url is not imported; use a simple string-based approach.
-	raw := strings.TrimPrefix(rawURL, "https://")
+	raw := strings.TrimPrefix(rawURL, HttpsPrefix)
 	raw = strings.TrimPrefix(raw, "http://")
 	if idx := strings.IndexByte(raw, '/'); idx >= 0 {
 		raw = raw[:idx]
@@ -152,7 +161,7 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if info, err := os.Stat(path); err == nil {
 		metrics.M.FaviconCacheHits.Inc()
 		c.logDebug("favicon cache hit", "domain", domain, "age", time.Since(info.ModTime()))
-		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set(ContentTypeHeader, MimeTypePng)
 		http.ServeFile(w, r, path)
 		// Stale — refresh in background, but don't block the response.
 		if time.Since(info.ModTime()) > CacheTTL {
@@ -176,14 +185,14 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	c.logDebug("favicon cached successfully", "domain", domain)
 	metrics.M.FaviconCacheSize.Inc()
-	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set(ContentTypeHeader, MimeTypePng)
 	http.ServeFile(w, r, path)
 }
 
 // serveDirect discovers, converts to PNG, and serves a favicon without touching
 // the disk cache. Used when FaviconCacheDisabled is true.
 func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain string) {
-	result, err := favifetch.Fetch(r.Context(), "https://"+domain, c.fetchOptions()...)
+	result, err := favifetch.Fetch(r.Context(), HttpsPrefix+domain, c.fetchOptions()...)
 	if err != nil {
 		c.logWarn("favicon direct fetch failed, serving default", "domain", domain, "error", err)
 		c.mu.Lock()
@@ -195,7 +204,7 @@ func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain strin
 	}
 
 	c.logDebug("favicon served directly", "domain", domain, "size", result.Size, "source", result.Source)
-	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set(ContentTypeHeader, MimeTypePng)
 	w.Header().Set("Cache-Control", "public, max-age=86400")
 	w.Write(result.Data)
 }
@@ -218,7 +227,7 @@ func (c *Cache) refresh(domain, path string) {
 // the cache file.
 func (c *Cache) fetchAndSave(ctx context.Context, domain, path string) error {
 	// domain has already been validated by isValidHostname (alphanumeric, dots, hyphens only).
-	result, err := favifetch.Fetch(ctx, "https://"+domain, c.fetchOptions()...)
+	result, err := favifetch.Fetch(ctx, HttpsPrefix+domain, c.fetchOptions()...)
 	if err != nil {
 		c.logWarn("favifetch fetch failed", "domain", domain, "error", err)
 		return fmt.Errorf("fetch favicon for %s: %w", domain, err)
@@ -262,7 +271,7 @@ func (c *Cache) logWarn(msg string, args ...any) {
 
 // serveDefault writes a "no entry" SVG as a fallback favicon.
 func (c *Cache) serveDefault(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "image/svg+xml")
+	w.Header().Set(ContentTypeHeader, "image/svg+xml")
 	w.Header().Set("Cache-Control", "public, max-age=3600")
 	w.Write([]byte(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="%2394a3b8"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg>`))
 }

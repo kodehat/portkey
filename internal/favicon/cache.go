@@ -124,7 +124,8 @@ func (c *Cache) cachePath(domain string) string {
 func (c *Cache) fetchOptions() []favifetch.Option {
 	return []favifetch.Option{
 		favifetch.WithHTTPClient(c.client),
-		favifetch.WithFormat("png"),
+		favifetch.WithFormat(favifetch.TargetPNG),
+		favifetch.WithSize(64),
 	}
 }
 

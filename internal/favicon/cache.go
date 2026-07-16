@@ -32,9 +32,6 @@ const (
 
 	// ContentTypeHeader is the HTTP header for content type.
 	ContentTypeHeader = "Content-Type"
-
-	// MimeTypePng is the MIME type for PNG images.
-	MimeTypePng = "image/png"
 )
 
 // C is the global favicon cache. Initialized by Init().
@@ -110,21 +107,110 @@ func isValidHostname(domain string) bool {
 	return true
 }
 
-func (c *Cache) cachePath(domain string) string {
+// cachePath returns the on-disk path for a cached favicon with the given format.
+func (c *Cache) cachePath(domain string, format favifetch.DetectedFormat) string {
+	ext := extensionForFormat(format)
+	p := filepath.Join(c.dir, domain+ext)
 	// filepath.Join cleans the path, but we must ensure the result stays within
 	// the cache directory to prevent path traversal.
-	p := filepath.Join(c.dir, domain+".png")
 	if !strings.HasPrefix(p, filepath.Clean(c.dir)+string(filepath.Separator)) && p != filepath.Clean(c.dir) {
-		return filepath.Join(c.dir, "invalid.png")
+		return filepath.Join(c.dir, "invalid"+ext)
 	}
 	return p
+}
+
+// findCachedPath looks for a cached favicon file with any supported format.
+// Formats are tried in preference order (SVG > PNG > ICO > WebP > JPEG > GIF > BMP).
+// Returns the file path and detected format, or empty string if nothing is cached.
+func (c *Cache) findCachedPath(domain string) (string, favifetch.DetectedFormat) {
+	formats := []favifetch.DetectedFormat{
+		favifetch.FormatSVG,
+		favifetch.FormatPNG,
+		favifetch.FormatICO,
+		favifetch.FormatWebP,
+		favifetch.FormatJPEG,
+		favifetch.FormatGIF,
+		favifetch.FormatBMP,
+	}
+	for _, f := range formats {
+		p := c.cachePath(domain, f)
+		if _, err := os.Stat(p); err == nil {
+			return p, f
+		}
+	}
+	return "", favifetch.FormatUnknown
+}
+
+// cleanupOtherFormats removes cached favicon files for formats other than the
+// one being kept. Best-effort: errors are silently ignored.
+func (c *Cache) cleanupOtherFormats(domain string, keep favifetch.DetectedFormat) {
+	formats := []favifetch.DetectedFormat{
+		favifetch.FormatSVG,
+		favifetch.FormatPNG,
+		favifetch.FormatICO,
+		favifetch.FormatWebP,
+		favifetch.FormatJPEG,
+		favifetch.FormatGIF,
+		favifetch.FormatBMP,
+	}
+	for _, f := range formats {
+		if f == keep {
+			continue
+		}
+		os.Remove(c.cachePath(domain, f))
+	}
+}
+
+// extensionForFormat returns the file extension (with leading dot) for a detected format.
+func extensionForFormat(f favifetch.DetectedFormat) string {
+	switch f {
+	case favifetch.FormatSVG:
+		return ".svg"
+	case favifetch.FormatPNG:
+		return ".png"
+	case favifetch.FormatICO:
+		return ".ico"
+	case favifetch.FormatWebP:
+		return ".webp"
+	case favifetch.FormatJPEG:
+		return ".jpg"
+	case favifetch.FormatGIF:
+		return ".gif"
+	case favifetch.FormatBMP:
+		return ".bmp"
+	default:
+		return ".png"
+	}
+}
+
+// mimeForFormat returns the MIME type for a detected format.
+func mimeForFormat(f favifetch.DetectedFormat) string {
+	switch f {
+	case favifetch.FormatSVG:
+		return "image/svg+xml"
+	case favifetch.FormatPNG:
+		return "image/png"
+	case favifetch.FormatICO:
+		return "image/x-icon"
+	case favifetch.FormatWebP:
+		return "image/webp"
+	case favifetch.FormatJPEG:
+		return "image/jpeg"
+	case favifetch.FormatGIF:
+		return "image/gif"
+	case favifetch.FormatBMP:
+		return "image/bmp"
+	default:
+		return "image/png"
+	}
 }
 
 // fetchOptions returns the standard favifetch options applied to every request.
 func (c *Cache) fetchOptions() []favifetch.Option {
 	return []favifetch.Option{
+		favifetch.WithTimeout(5 * time.Second),
 		favifetch.WithHTTPClient(c.client),
-		favifetch.WithFormat(favifetch.TargetPNG),
+		favifetch.WithPreferredFormats(favifetch.FormatSVG, favifetch.FormatPNG),
 		favifetch.WithSize(64),
 	}
 }
@@ -149,8 +235,6 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := c.cachePath(domain)
-
 	// When caching is disabled, fetch and serve without touching disk.
 	if config.C.FaviconCacheDisabled {
 		c.logDebug("favicon cache disabled, fetching directly", "domain", domain)
@@ -158,24 +242,29 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Cache hit.
-	if info, err := os.Stat(path); err == nil {
-		metrics.M.FaviconCacheHits.Inc()
-		c.logDebug("favicon cache hit", "domain", domain, "age", time.Since(info.ModTime()))
-		w.Header().Set(ContentTypeHeader, MimeTypePng)
-		http.ServeFile(w, r, path)
-		// Stale — refresh in background, but don't block the response.
-		if time.Since(info.ModTime()) > CacheTTL {
-			c.logDebug("favicon cache stale, refreshing in background", "domain", domain)
-			go c.refresh(domain, path)
+	// Cache hit — findCachedPath tries formats in preference order (SVG first).
+	path, format := c.findCachedPath(domain)
+	if path != "" {
+		info, err := os.Stat(path)
+		if err == nil {
+			metrics.M.FaviconCacheHits.Inc()
+			c.logDebug("favicon cache hit", "domain", domain, "format", format.String(), "age", time.Since(info.ModTime()))
+			w.Header().Set(ContentTypeHeader, mimeForFormat(format))
+			http.ServeFile(w, r, path)
+			// Stale — refresh in background, but don't block the response.
+			if time.Since(info.ModTime()) > CacheTTL {
+				c.logDebug("favicon cache stale, refreshing in background", "domain", domain)
+				go c.refresh(domain)
+			}
+			return
 		}
-		return
 	}
 
 	// Cache miss — fetch synchronously.
 	c.logDebug("favicon cache miss, fetching", "domain", domain)
 	metrics.M.FaviconCacheMisses.Inc()
-	if err := c.fetchAndSave(r.Context(), domain, path); err != nil {
+	savedPath, savedFormat, err := c.fetchAndSave(r.Context(), domain)
+	if err != nil {
 		c.logWarn("favicon fetch failed, serving default", "domain", domain, "error", err)
 		c.mu.Lock()
 		c.failures[domain] = time.Now()
@@ -184,14 +273,14 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		c.serveDefault(w)
 		return
 	}
-	c.logDebug("favicon cached successfully", "domain", domain)
+	c.logDebug("favicon cached successfully", "domain", domain, "format", savedFormat.String())
 	metrics.M.FaviconCacheSize.Inc()
-	w.Header().Set(ContentTypeHeader, MimeTypePng)
-	http.ServeFile(w, r, path)
+	w.Header().Set(ContentTypeHeader, mimeForFormat(savedFormat))
+	http.ServeFile(w, r, savedPath)
 }
 
-// serveDirect discovers, converts to PNG, and serves a favicon without touching
-// the disk cache. Used when FaviconCacheDisabled is true.
+// serveDirect discovers, fetches, and serves a favicon without touching the disk
+// cache. Used when FaviconCacheDisabled is true.
 func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain string) {
 	result, err := favifetch.Fetch(r.Context(), HttpsPrefix+domain, c.fetchOptions()...)
 	if err != nil {
@@ -204,16 +293,16 @@ func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain strin
 		return
 	}
 
-	c.logDebug("favicon served directly", "domain", domain, "size", result.Size, "source", result.Source)
-	w.Header().Set(ContentTypeHeader, MimeTypePng)
+	c.logDebug("favicon served directly", "domain", domain, "format", result.Format.String(), "size", result.Size, "source", result.Source)
+	w.Header().Set(ContentTypeHeader, mimeForFormat(result.Format))
 	w.Header().Set("Cache-Control", "public, max-age=86400")
 	w.Write(result.Data)
 }
 
 // refresh fetches a favicon in the background and updates the cache.
-func (c *Cache) refresh(domain, path string) {
+func (c *Cache) refresh(domain string) {
 	c.logDebug("favicon background refresh started", "domain", domain)
-	if err := c.fetchAndSave(context.Background(), domain, path); err != nil {
+	if _, _, err := c.fetchAndSave(context.Background(), domain); err != nil {
 		c.logWarn("favicon background refresh failed", "domain", domain, "error", err)
 		c.mu.Lock()
 		c.failures[domain] = time.Now()
@@ -224,36 +313,40 @@ func (c *Cache) refresh(domain, path string) {
 	}
 }
 
-// fetchAndSave discovers, converts to PNG, and writes the favicon atomically to
-// the cache file.
-func (c *Cache) fetchAndSave(ctx context.Context, domain, path string) error {
+// fetchAndSave discovers, fetches, and writes the favicon atomically to the
+// cache file. Returns the saved file path and the detected format.
+func (c *Cache) fetchAndSave(ctx context.Context, domain string) (string, favifetch.DetectedFormat, error) {
 	// domain has already been validated by isValidHostname (alphanumeric, dots, hyphens only).
 	result, err := favifetch.Fetch(ctx, HttpsPrefix+domain, c.fetchOptions()...)
 	if err != nil {
 		c.logWarn("favifetch fetch failed", "domain", domain, "error", err)
-		return fmt.Errorf("fetch favicon for %s: %w", domain, err)
+		return "", favifetch.FormatUnknown, fmt.Errorf("fetch favicon for %s: %w", domain, err)
 	}
 
-	c.logDebug("favifetch succeeded", "domain", domain, "format", result.Format, "source", result.Source, "size", result.Size)
+	c.logDebug("favifetch succeeded", "domain", domain, "format", result.Format.String(), "source", result.Source, "size", result.Size)
 
+	// Clean up old files of other formats before writing the new one.
+	c.cleanupOtherFormats(domain, result.Format)
+
+	path := c.cachePath(domain, result.Format)
 	tmpPath := path + ".tmp"
 	f, err := os.Create(tmpPath)
 	if err != nil {
-		return fmt.Errorf("create temp %s: %w", tmpPath, err)
+		return "", favifetch.FormatUnknown, fmt.Errorf("create temp %s: %w", tmpPath, err)
 	}
 
 	if _, err := f.Write(result.Data); err != nil {
 		f.Close()
 		os.Remove(tmpPath)
-		return fmt.Errorf("write %s: %w", tmpPath, err)
+		return "", favifetch.FormatUnknown, fmt.Errorf("write %s: %w", tmpPath, err)
 	}
 	f.Close()
 
 	if err := os.Rename(tmpPath, path); err != nil {
 		os.Remove(tmpPath)
-		return fmt.Errorf("rename %s -> %s: %w", tmpPath, path, err)
+		return "", favifetch.FormatUnknown, fmt.Errorf("rename %s -> %s: %w", tmpPath, path, err)
 	}
-	return nil
+	return path, result.Format, nil
 }
 
 // logDebug logs a debug message if the cache has a logger configured.

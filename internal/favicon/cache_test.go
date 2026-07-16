@@ -13,6 +13,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kodehat/favifetch"
+
 	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/metrics"
@@ -81,10 +83,16 @@ func TestCachePath(t *testing.T) {
 	dir := t.TempDir()
 	c := New(dir, nil)
 
-	path := c.cachePath("github.com")
+	path := c.cachePath("github.com", favifetch.FormatPNG)
 	expected := filepath.Join(dir, "github.com.png")
 	if path != expected {
-		t.Errorf("cachePath(%q) = %q, want %q", "github.com", path, expected)
+		t.Errorf("cachePath(%q, FormatPNG) = %q, want %q", "github.com", path, expected)
+	}
+
+	svgPath := c.cachePath("github.com", favifetch.FormatSVG)
+	svgExpected := filepath.Join(dir, "github.com.svg")
+	if svgPath != svgExpected {
+		t.Errorf("cachePath(%q, FormatSVG) = %q, want %q", "github.com", svgPath, svgExpected)
 	}
 }
 
@@ -113,7 +121,7 @@ func TestServeHTTP_NoDomainParam(t *testing.T) {
 func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("github.com")
+	path := c.cachePath("github.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("fake-png-data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -133,7 +141,7 @@ func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("github.com")
+	path := c.cachePath("github.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -219,7 +227,7 @@ func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
 func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
-	path := c.cachePath("example.com")
+	path := c.cachePath("example.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -294,10 +302,17 @@ func TestCachePath_PathTraversal(t *testing.T) {
 	c := New(dir, nil)
 
 	malicious := "../etc/passwd"
-	got := c.cachePath(malicious)
+	got := c.cachePath(malicious, favifetch.FormatPNG)
 	expected := filepath.Join(dir, "invalid.png")
 	if got != expected {
-		t.Errorf("cachePath(%q, %q) = %q, want %q (traversal protection)", malicious, "png", got, expected)
+		t.Errorf("cachePath(%q, FormatPNG) = %q, want %q (traversal protection)", malicious, got, expected)
+	}
+
+	// SVG extension should also be protected.
+	gotSVG := c.cachePath(malicious, favifetch.FormatSVG)
+	expectedSVG := filepath.Join(dir, "invalid.svg")
+	if gotSVG != expectedSVG {
+		t.Errorf("cachePath(%q, FormatSVG) = %q, want %q (traversal protection)", malicious, gotSVG, expectedSVG)
 	}
 }
 
@@ -375,17 +390,26 @@ func TestFetchAndSave_Success(t *testing.T) {
 	c := New(dir, nil)
 	c.client = client
 
-	path := filepath.Join(dir, "test.com.png")
-	if err := c.fetchAndSave(context.Background(), "test.com", path); err != nil {
+	path, format, err := c.fetchAndSave(context.Background(), "test.com")
+	if err != nil {
 		t.Fatalf("expected success, got %v", err)
+	}
+	if format != favifetch.FormatPNG {
+		t.Errorf("expected FormatPNG, got %v", format)
+	}
+	expectedPath := filepath.Join(dir, "test.com.png")
+	if path != expectedPath {
+		t.Errorf("expected path %q, got %q", expectedPath, path)
 	}
 
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("file not readable: %v", err)
 	}
-	if !bytes.Equal(data, validPNG) {
-		t.Fatalf("expected valid PNG data, got %x", data)
+	// The PNG may be resized (WithSize(64)), so we can't compare exact bytes.
+	// Verify it's valid image data by checking it starts with PNG header.
+	if !bytes.HasPrefix(data, []byte{0x89, 0x50, 0x4E, 0x47}) {
+		t.Fatalf("expected PNG data, got %x", data[:min(16, len(data))])
 	}
 }
 
@@ -415,8 +439,8 @@ func TestFetchAndSave_NonOKStatus(t *testing.T) {
 	c := New(dir, nil)
 	c.client = &http.Client{Transport: transport, Timeout: 10 * time.Second}
 
-	path := filepath.Join(dir, "notfound.com.png")
-	if err := c.fetchAndSave(context.Background(), "notfound.com", path); err == nil {
+	_, _, err := c.fetchAndSave(context.Background(), "notfound.com")
+	if err == nil {
 		t.Fatal("expected error for non-200 download status")
 	}
 }
@@ -432,8 +456,8 @@ func TestFetchAndSave_CreateFails(t *testing.T) {
 	// Poison cachePath with a non-existent subdirectory.
 	c.dir = filepath.Join(dir, "nonexistent")
 
-	path := c.cachePath("test.com")
-	if err := c.fetchAndSave(context.Background(), "test.com", path); err == nil {
+	_, _, err := c.fetchAndSave(context.Background(), "test.com")
+	if err == nil {
 		t.Fatal("expected error when temp file create fails")
 	}
 }
@@ -447,15 +471,15 @@ func TestRefresh_Success(t *testing.T) {
 	c := New(dir, nil)
 	c.client = client
 
-	c.refresh("refresh.com", filepath.Join(dir, "refresh.com.png"))
+	c.refresh("refresh.com")
 
 	path := filepath.Join(dir, "refresh.com.png")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("expected refreshed file: %v", err)
 	}
-	if !bytes.Equal(data, validPNG) {
-		t.Fatalf("expected valid PNG data, got %x", data)
+	if !bytes.HasPrefix(data, []byte{0x89, 0x50, 0x4E, 0x47}) {
+		t.Fatalf("expected PNG data, got %x", data[:min(16, len(data))])
 	}
 }
 
@@ -468,7 +492,7 @@ func TestRefresh_Failure(t *testing.T) {
 	})
 	c.client = &http.Client{Transport: failTransport, Timeout: 10 * time.Second}
 
-	c.refresh("fail.com", filepath.Join(dir, "fail.com.png"))
+	c.refresh("fail.com")
 
 	c.mu.RLock()
 	_, failed := c.failures["fail.com"]
@@ -482,7 +506,7 @@ func TestServeHTTP_StaleFileTriggersRefresh(t *testing.T) {
 	dir := t.TempDir()
 	c := New(dir, nil)
 
-	path := c.cachePath("stale.com")
+	path := c.cachePath("stale.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("old-data"), 0644); err != nil {
 		t.Fatal(err)
 	}

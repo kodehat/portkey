@@ -5,7 +5,7 @@ go 1.26.5
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/adrg/strutil v0.3.1
-	github.com/kodehat/favifetch v0.3.0
+	github.com/kodehat/favifetch v0.4.1
 	github.com/kodehat/livereload v0.1.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/spf13/viper v1.21.0

@@ -24,6 +24,9 @@ func TestHomePortal_External(t *testing.T) {
 	if !strings.Contains(body, "nofollow") {
 		t.Fatal("expected rel=nofollow for external link")
 	}
+	if !strings.Contains(body, "onerror=") {
+		t.Fatal("expected favicon error handler to reveal the inline fallback")
+	}
 }
 
 func TestHomePortal_Internal(t *testing.T) {

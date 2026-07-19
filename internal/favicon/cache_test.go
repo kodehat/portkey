@@ -9,7 +9,6 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
@@ -76,6 +75,18 @@ func TestNew_WithLogger(t *testing.T) {
 	c := New(t.TempDir(), logger)
 	if c.logger != logger {
 		t.Error("expected logger to be set")
+	}
+}
+
+func TestFetchOptions_UseBrowserMode(t *testing.T) {
+	c := New(t.TempDir(), nil)
+	opts := favifetch.DefaultOptions(c.fetchOptions()...)
+
+	if opts.Mode != favifetch.ModeBrowser {
+		t.Errorf("fetch mode = %v, want %v", opts.Mode, favifetch.ModeBrowser)
+	}
+	if opts.Size != 0 {
+		t.Errorf("fetch size = %d, want 0 because browser mode cannot resize", opts.Size)
 	}
 }
 
@@ -155,7 +166,7 @@ func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
 	}
 }
 
-func TestServeHTTP_CacheMissShowsFallback(t *testing.T) {
+func TestServeHTTP_CacheMissSignalsFallback(t *testing.T) {
 	c := New(t.TempDir(), nil)
 
 	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
@@ -167,14 +178,11 @@ func TestServeHTTP_CacheMissShowsFallback(t *testing.T) {
 	r := httptest.NewRequest("GET", "/_/favicon?domain=any-unreachable.example", nil)
 	c.ServeHTTP(w, r)
 
-	if w.Code != http.StatusOK {
-		t.Errorf("expected 200 with fallback, got %d", w.Code)
+	if w.Code != http.StatusNotFound {
+		t.Errorf("expected 404 to trigger the inline fallback, got %d", w.Code)
 	}
-	if ct := w.Header().Get("Content-Type"); ct != "image/svg+xml" {
-		t.Errorf("expected SVG content type, got %q", ct)
-	}
-	if !strings.Contains(w.Body.String(), "<svg") {
-		t.Error("expected SVG in fallback response body")
+	if cc := w.Header().Get("Cache-Control"); cc != "no-store" {
+		t.Errorf("expected Cache-Control: no-store, got %q", cc)
 	}
 
 	c.mu.RLock()
@@ -199,11 +207,8 @@ func TestServeHTTP_FailureBackoff(t *testing.T) {
 	r := httptest.NewRequest("GET", "/_/favicon?domain=bad.example.com", nil)
 	c.ServeHTTP(w, r)
 
-	if w.Code != http.StatusOK {
-		t.Errorf("expected 200 with fallback during backoff, got %d", w.Code)
-	}
-	if ct := w.Header().Get("Content-Type"); ct != "image/svg+xml" {
-		t.Errorf("expected SVG content type during backoff, got %q", ct)
+	if w.Code != http.StatusNotFound {
+		t.Errorf("expected 404 to trigger the inline fallback during backoff, got %d", w.Code)
 	}
 }
 
@@ -219,8 +224,8 @@ func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
 	r := httptest.NewRequest("GET", "/_/favicon?domain=any.example", nil)
 	c.ServeHTTP(w, r)
 
-	if cc := w.Header().Get("Cache-Control"); cc != "public, max-age=3600" {
-		t.Errorf("expected Cache-Control on default, got %q", cc)
+	if cc := w.Header().Get("Cache-Control"); cc != "no-store" {
+		t.Errorf("expected Cache-Control: no-store, got %q", cc)
 	}
 }
 
@@ -462,7 +467,6 @@ func TestFetchAndSave_CreateFails(t *testing.T) {
 	}
 }
 
-
 func TestRefresh_Success(t *testing.T) {
 	server, client := testServerWithFavicon(t)
 	defer server.Close()
@@ -551,7 +555,6 @@ func TestServeHTTP_CacheDisabled(t *testing.T) {
 		t.Errorf("expected Content-Type image/png, got %q", ct)
 	}
 }
-
 
 func TestLogDebug_NilLogger(t *testing.T) {
 	c := New(t.TempDir(), nil)

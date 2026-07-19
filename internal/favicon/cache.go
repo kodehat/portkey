@@ -208,16 +208,18 @@ func mimeForFormat(f favifetch.DetectedFormat) string {
 // fetchOptions returns the standard favifetch options applied to every request.
 func (c *Cache) fetchOptions() []favifetch.Option {
 	return []favifetch.Option{
+		// Browser mode returns the regular tab icon a Chromium browser would use.
+		// It must not be combined with resizing or format conversion.
+		favifetch.WithMode(favifetch.ModeBrowser),
+		favifetch.WithFallbackAPI(true),
 		favifetch.WithTimeout(5 * time.Second),
 		favifetch.WithHTTPClient(c.client),
-		favifetch.WithPreferredFormats(favifetch.FormatSVG, favifetch.FormatPNG),
-		favifetch.WithSize(64),
 	}
 }
 
-// ServeHTTP handles a favicon request. It serves from cache if available,
-// discovers favicons from the target website on cache miss, and returns a
-// default fallback icon on failure.
+// ServeHTTP handles a favicon request. It serves from cache if available and
+// discovers favicons from the target website on cache miss. Failed requests
+// receive a not-found response so the client can render its inline fallback.
 func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	domain := NormalizeHostname(r.URL.Query().Get("domain"))
 	if domain == "" || !isValidHostname(domain) {
@@ -363,9 +365,9 @@ func (c *Cache) logWarn(msg string, args ...any) {
 	}
 }
 
-// serveDefault writes a "no entry" SVG as a fallback favicon.
+// serveDefault signals that no favicon is available. The portal image's error
+// handler then replaces it with the inline fallback SVG.
 func (c *Cache) serveDefault(w http.ResponseWriter) {
-	w.Header().Set(ContentTypeHeader, "image/svg+xml")
-	w.Header().Set("Cache-Control", "public, max-age=3600")
-	w.Write([]byte(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="%2394a3b8"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg>`))
+	w.Header().Set("Cache-Control", "no-store")
+	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 }

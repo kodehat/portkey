@@ -36,7 +36,7 @@ primary_region = 'ams'
 
   [services.ports.http_options.response.headers]
     Strict-Transport-Security = 'max-age=31536000; includeSubDomains'
-    Content-Security-Policy = "default-src 'self' 'unsafe-eval' analytics.thisismy.cloud;"
+    Content-Security-Policy = "default-src 'self' 'unsafe-eval' https://analytics.thisismy.cloud;"
     X-Frame-Options = 'SAMEORIGIN'
     X-Content-Type-Options = 'nosniff'
     Referrer-Policy = 'strict-origin-when-cross-origin'

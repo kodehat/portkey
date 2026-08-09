@@ -6,16 +6,22 @@
   "terminal.integrated.env.linux": {
     "PORTKEY_SERVER_LOGLEVEL": "debug",
     "PORTKEY_SERVER_DEVMODE": "true",
-    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->"
+    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->",
+    "PORTKEY_FAVICON_CACHE_DIR": "./favicon-cache",
+    "PORTKEY_FAVICON_CACHE_ENABLED": "true"
   },
   "terminal.integrated.env.osx": {
     "PORTKEY_SERVER_LOGLEVEL": "debug",
     "PORTKEY_SERVER_DEVMODE": "true",
-    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->"
+    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->",
+    "PORTKEY_FAVICON_CACHE_DIR": "./favicon-cache",
+    "PORTKEY_FAVICON_CACHE_ENABLED": "true"
   },
   "terminal.integrated.env.windows": {
     "PORTKEY_SERVER_LOGLEVEL": "debug",
     "PORTKEY_SERVER_DEVMODE": "true",
-    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->"
+    "PORTKEY_UI_HEADERADDITION": "<!-- dummy -->",
+    "PORTKEY_FAVICON_CACHE_DIR": "./favicon-cache",
+    "PORTKEY_FAVICON_CACHE_ENABLED": "true"
   }
 }

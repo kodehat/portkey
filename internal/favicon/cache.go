@@ -36,6 +36,9 @@ const (
 	// ContentTypeHeader is the HTTP header for content type.
 	ContentTypeHeader = "Content-Type"
 
+	// MimeTypePNG is the MIME type for PNG images.
+	MimeTypePNG = "image/png"
+
 	// defaultVemetricHost is the favicon service used as the relay target in
 	// proxied mode when faviconServiceURL is not configured. It mirrors
 	// favifetch's own built-in default fallback host.
@@ -215,7 +218,7 @@ func mimeForFormat(f favifetch.DetectedFormat) string {
 	case favifetch.FormatSVG:
 		return "image/svg+xml"
 	case favifetch.FormatPNG:
-		return "image/png"
+		return MimeTypePNG
 	case favifetch.FormatICO:
 		return "image/x-icon"
 	case favifetch.FormatWebP:
@@ -227,7 +230,7 @@ func mimeForFormat(f favifetch.DetectedFormat) string {
 	case favifetch.FormatBMP:
 		return "image/bmp"
 	default:
-		return "image/png"
+		return MimeTypePNG
 	}
 }
 
@@ -354,7 +357,7 @@ func detectFormatFromContentType(ct string) favifetch.DetectedFormat {
 		ct = ct[:i]
 	}
 	switch strings.ToLower(strings.TrimSpace(ct)) {
-	case "image/png", "image/jpg":
+	case MimeTypePNG, "image/jpg":
 		return favifetch.FormatPNG
 	case "image/svg+xml":
 		return favifetch.FormatSVG

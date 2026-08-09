@@ -139,8 +139,8 @@ func loadConfig(configPath string) {
 	viper.SetDefault("search.minimumSimilarity", 0.75)
 	viper.SetDefault("favicon.mode", FaviconModeDirect)
 	viper.SetDefault("favicon.serviceUrl", "")
-	viper.SetDefault("favicon.cacheDir", "./favicon-cache")
-	viper.SetDefault("favicon.cacheEnabled", true)
+	viper.SetDefault("favicon.cacheDir", "")
+	viper.SetDefault("favicon.cacheEnabled", false)
 	viper.SetDefault("favicon.customIconsDir", "")
 	viper.SetEnvPrefix("portkey")
 	// Nested config keys (e.g. "server.port") map to PORTKEY_SERVER_PORT instead
@@ -173,6 +173,12 @@ func postConfigHook() {
 		C.Favicon.Mode = FaviconModeProxied
 	default:
 		C.Favicon.Mode = FaviconModeDirect
+	}
+
+	// The on-disk cache requires a directory. Fail fast on the misconfiguration
+	// instead of silently running without caching.
+	if C.Favicon.CacheEnabled && strings.TrimSpace(C.Favicon.CacheDir) == "" {
+		panic(fmt.Errorf("favicon.cacheEnabled is true but favicon.cacheDir is empty: set favicon.cacheDir or disable the cache with favicon.cacheEnabled: false"))
 	}
 
 	if C.UI.SortAlphabetically {

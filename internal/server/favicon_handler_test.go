@@ -15,7 +15,7 @@ import (
 func TestFaviconHandler_MethodNotAllowed(t *testing.T) {
 	setupServer()
 	config.C.Portals = []models.Portal{}
-	favicon.Init(t.TempDir(), nil)
+	favicon.Init(t.TempDir(), true, nil)
 
 	h := faviconHandler{}.handle()
 	req := httptest.NewRequest(http.MethodPost, "/_/favicon?domain=github.com", nil)
@@ -30,7 +30,7 @@ func TestFaviconHandler_MethodNotAllowed(t *testing.T) {
 func TestFaviconHandler_EmptyDomain(t *testing.T) {
 	setupServer()
 	config.C.Portals = []models.Portal{}
-	favicon.Init(t.TempDir(), nil)
+	favicon.Init(t.TempDir(), true, nil)
 
 	h := faviconHandler{}.handle()
 	req := httptest.NewRequest(http.MethodGet, "/_/favicon", nil)
@@ -47,7 +47,7 @@ func TestFaviconHandler_DomainNotAllowed(t *testing.T) {
 	config.C.Portals = []models.Portal{
 		{Title: "GitHub", Link: "https://github.com"},
 	}
-	favicon.Init(t.TempDir(), nil)
+	favicon.Init(t.TempDir(), true, nil)
 
 	h := faviconHandler{}.handle()
 	req := httptest.NewRequest(http.MethodGet, "/_/favicon?domain=evil.com", nil)
@@ -66,7 +66,7 @@ func TestFaviconHandler_AllowedDomain(t *testing.T) {
 	}
 
 	cacheDir := t.TempDir()
-	favicon.Init(cacheDir, nil)
+	favicon.Init(cacheDir, true, nil)
 
 	// Pre-populate cache so no network request is needed.
 	cachePath := filepath.Join(cacheDir, "github.com.png")

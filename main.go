@@ -31,7 +31,7 @@ func main() {
 	config.Load()
 	logger := slog.New(config.C.GetLogHandler(os.Stdout))
 	slog.SetDefault(logger)
-	favicon.Init(config.C.Favicon.CacheDir, logger)
+	favicon.Init(config.C.Favicon.CacheDir, config.C.Favicon.CacheEnabled, logger)
 	metrics.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)

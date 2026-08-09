@@ -145,8 +145,8 @@ config.C.Search.StringSimilarity  // bool (Levenshtein search)
 config.C.Search.MinimumSimilarity // float64 (0.0–1.0)
 config.C.Favicon.Mode           // string: "direct" (discover via favifetch) | "proxied" (relay to ServiceURL); default direct
 config.C.Favicon.ServiceURL     // string (favicon service host/URL — fallback in direct mode, relay target in proxied mode)
-config.C.Favicon.CacheDir       // string (on-disk favicon cache path)
-config.C.Favicon.CacheEnabled   // bool (default true; false bypasses the cache)
+config.C.Favicon.CacheDir       // string (on-disk cache path; required when CacheEnabled is true)
+config.C.Favicon.CacheEnabled   // bool (default false; opt-in — requires CacheDir)
 config.C.Favicon.CustomIconsDir // string (served at /_/icons/)
 config.C.Portals                // []models.Portal
 config.C.Pages                  // []models.Page
@@ -243,8 +243,8 @@ search:
 favicon:
   mode: direct            # direct | proxied — direct: portkey discovers via favifetch; proxied: relay to serviceUrl
   serviceUrl: ""          # Favicon service (host or full https URL, e.g. https://favicon.vemetric.com): last-resort fallback in direct mode, relay target in proxied mode; empty uses the built-in default
-  cacheDir: ./favicon-cache   # On-disk favicon cache (Docker volume mountable)
-  cacheEnabled: true          # false = skip local cache, always discover + download fresh
+  cacheDir: ""                  # Required when cacheEnabled is true (created at startup; Docker volume mountable)
+  cacheEnabled: false            # Opt-in; when true, cacheDir must be set
   customIconsDir: ""          # Custom icon files (SVG/PNG), served at /_/icons/<filename>
 
 # Portals
@@ -307,7 +307,7 @@ All metrics are registered under the `portkey_` namespace.
 - The CSS file hash in `internal/build/` is computed from the content of `static/css/main.css` for cache-busting — it updates automatically at build time.
 - `config.C`, `metrics.M`, and `build.B` are globals initialized at startup; access them directly from handlers rather than passing through the call stack.
 
-- **Favicon caching & loading modes:** `internal/favicon/cache.go` provides a disk-backed favicon cache served via `GET /_/favicon?domain=<hostname>`. The `favicon.mode` config selects how icons are obtained: `direct` (default) uses `github.com/kodehat/favifetch` to discover icons itself (parses HTML <link> tags, web app manifests, common fallback paths, and the Vemetric favicon API as a last-resort fallback); `proxied` relays each request to a Vemetric-compatible favicon service (`favicon.serviceUrl`, which does all discovery) and streams the bytes back — the relayed result is cached like a direct fetch. In both modes, icons are stored by normalized hostname in `favicon.cacheDir` (default `./favicon-cache`); cache TTL is 7 days; stale entries are refreshed in the background; failed fetches are backed off for 1 hour. Set `favicon.cacheEnabled: false` to bypass the disk cache and always fetch/relay fresh. `favicon.serviceUrl` accepts a bare host or a full `https://` URL (the host is extracted from full URLs since both favifetch and proxied mode always use HTTPS); empty uses the built-in default `favicon.vemetric.com`.
+- **Favicon caching & loading modes:** `internal/favicon/cache.go` provides a disk-backed favicon cache served via `GET /_/favicon?domain=<hostname>`. The `favicon.mode` config selects how icons are obtained: `direct` (default) uses `github.com/kodehat/favifetch` to discover icons itself (parses HTML <link> tags, web app manifests, common fallback paths, and the Vemetric favicon API as a last-resort fallback); `proxied` relays each request to a Vemetric-compatible favicon service (`favicon.serviceUrl`, which does all discovery) and streams the bytes back — the relayed result is cached like a direct fetch. Caching is **opt-in** (`favicon.cacheEnabled`, default false); when enabled, icons are stored by normalized hostname in `favicon.cacheDir` (which must be non-empty — startup fails otherwise) with a TTL of 7 days; stale entries are refreshed in the background; failed fetches are backed off for 1 hour. When disabled, icons are still fetched, just never stored. `favicon.serviceUrl` accepts a bare host or a full `https://` URL (the host is extracted from full URLs since both favifetch and proxied mode always use HTTPS); empty uses the built-in default `favicon.vemetric.com`.
 - **Multi-column layout:** Set `config.C.UI.LayoutColumns` to 0 (vertical, default) or 2-12 (CSS grid). The `components.GridClass(columns int)` helper returns responsive Tailwind classes: mobile uses `max-md:flex flex-col items-start` (vertical stack), desktop uses `md:grid md:grid-cols-N`. Class strings are stored in a `[...]string` array with literal entries so Tailwind v4 detects them during CSS build; always add new column values as literal strings in `internal/components/component.go`.
 - The server uses the standard library `net/http` mux — no third-party router.
 - All binaries are statically linked (`CGO_ENABLED=0`); avoid importing packages that require CGO.

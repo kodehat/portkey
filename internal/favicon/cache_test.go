@@ -54,7 +54,7 @@ func TestNormalizeHostname(t *testing.T) {
 func TestNew(t *testing.T) {
 	dir := t.TempDir()
 	cacheDir := filepath.Join(dir, "favicons")
-	c := New(cacheDir, nil)
+	c := New(cacheDir, true, nil)
 
 	if c.dir != cacheDir {
 		t.Errorf("New().dir = %q, want %q", c.dir, cacheDir)
@@ -75,14 +75,14 @@ func TestNew(t *testing.T) {
 
 func TestNew_WithLogger(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	c := New(t.TempDir(), logger)
+	c := New(t.TempDir(), true, logger)
 	if c.logger != logger {
 		t.Error("expected logger to be set")
 	}
 }
 
 func TestFetchOptions_UseBrowserMode(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 	opts := favifetch.DefaultOptions(c.fetchOptions()...)
 
 	if opts.Mode != favifetch.ModeBrowser {
@@ -95,7 +95,7 @@ func TestFetchOptions_UseBrowserMode(t *testing.T) {
 
 func TestCachePath(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 
 	path := c.cachePath("github.com", favifetch.FormatPNG)
 	expected := filepath.Join(dir, "github.com.png")
@@ -111,7 +111,7 @@ func TestCachePath(t *testing.T) {
 }
 
 func TestServeHTTP_EmptyDomain(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon", nil)
 	c.ServeHTTP(w, r)
@@ -122,7 +122,7 @@ func TestServeHTTP_EmptyDomain(t *testing.T) {
 }
 
 func TestServeHTTP_NoDomainParam(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/_/favicon?domain=", nil)
 	c.ServeHTTP(w, r)
@@ -133,7 +133,7 @@ func TestServeHTTP_NoDomainParam(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitServesFile(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	path := c.cachePath("github.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("fake-png-data"), 0644); err != nil {
@@ -153,7 +153,7 @@ func TestServeHTTP_CacheHitServesFile(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	path := c.cachePath("github.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
@@ -170,7 +170,7 @@ func TestServeHTTP_CacheHitNormalizesDomain(t *testing.T) {
 }
 
 func TestServeHTTP_CacheMissSignalsFallback(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		return nil, io.ErrUnexpectedEOF
@@ -200,7 +200,7 @@ func TestServeHTTP_CacheMissSignalsFallback(t *testing.T) {
 }
 
 func TestServeHTTP_FailureBackoff(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	c.mu.Lock()
 	c.failures["bad.example.com"] = time.Now()
@@ -216,7 +216,7 @@ func TestServeHTTP_FailureBackoff(t *testing.T) {
 }
 
 func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		return nil, io.ErrUnexpectedEOF
@@ -233,7 +233,7 @@ func TestServeHTTP_ServeDefaultHeaders(t *testing.T) {
 }
 
 func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 
 	path := c.cachePath("example.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("data"), 0644); err != nil {
@@ -251,7 +251,7 @@ func TestServeHTTP_CacheHitSetsCacheControl(t *testing.T) {
 
 func TestInit(t *testing.T) {
 	dir := t.TempDir()
-	Init(dir, nil)
+	Init(dir, true, nil)
 
 	if C == nil {
 		t.Fatal("Init() did not set global C")
@@ -307,7 +307,7 @@ func TestIsValidHostname_Empty(t *testing.T) {
 
 func TestCachePath_PathTraversal(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 
 	malicious := "../etc/passwd"
 	got := c.cachePath(malicious, favifetch.FormatPNG)
@@ -337,7 +337,31 @@ func TestNew_PanicsOnInvalidDir(t *testing.T) {
 		}
 	}()
 
-	New(filepath.Join(filePath, "subdir"), nil)
+	New(filepath.Join(filePath, "subdir"), true, nil)
+}
+
+func TestNew_SkipsDirCreationWhenCacheDisabled(t *testing.T) {
+	dir := t.TempDir()
+	filePath := filepath.Join(dir, "notadir")
+	if err := os.WriteFile(filePath, []byte("x"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// The path is uncreateable (its parent is a regular file), but with
+	// caching disabled the directory must not be required at all.
+	cacheDir := filepath.Join(filePath, "subdir", "favicons")
+	c := New(cacheDir, false, nil)
+	if c == nil {
+		t.Fatal("expected non-nil cache")
+	}
+	if c.dir != cacheDir {
+		t.Errorf("New().dir = %q, want %q", c.dir, cacheDir)
+	}
+	// Stat succeeds only if the directory was actually created; with a regular
+	// file in the path it errors (ENOENT/ENOTDIR), which is the expected state.
+	if _, err := os.Stat(cacheDir); err == nil {
+		t.Errorf("cache directory %q should not exist when caching is disabled", cacheDir)
+	}
 }
 
 // validPNG is a minimal 1x1 pixel PNG used in tests to satisfy favifetch's image
@@ -395,7 +419,7 @@ func TestFetchAndSave_Success(t *testing.T) {
 	defer server.Close()
 
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 	c.client = client
 
 	path, format, err := c.fetchAndSave(context.Background(), "test.com")
@@ -444,7 +468,7 @@ func TestFetchAndSave_NonOKStatus(t *testing.T) {
 	})
 
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 	c.client = &http.Client{Transport: transport, Timeout: 10 * time.Second}
 
 	_, _, err := c.fetchAndSave(context.Background(), "notfound.com")
@@ -458,7 +482,7 @@ func TestFetchAndSave_CreateFails(t *testing.T) {
 	defer server.Close()
 
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 	c.client = client
 
 	// Poison cachePath with a non-existent subdirectory.
@@ -475,7 +499,7 @@ func TestRefresh_Success(t *testing.T) {
 	defer server.Close()
 
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 	c.client = client
 
 	c.refresh("refresh.com")
@@ -492,7 +516,7 @@ func TestRefresh_Success(t *testing.T) {
 
 func TestRefresh_Failure(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 
 	failTransport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		return nil, io.ErrUnexpectedEOF
@@ -511,7 +535,7 @@ func TestRefresh_Failure(t *testing.T) {
 
 func TestServeHTTP_StaleFileTriggersRefresh(t *testing.T) {
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 
 	path := c.cachePath("stale.com", favifetch.FormatPNG)
 	if err := os.WriteFile(path, []byte("old-data"), 0644); err != nil {
@@ -541,7 +565,7 @@ func TestServeHTTP_CacheDisabled(t *testing.T) {
 	defer func() { config.C.Favicon.CacheEnabled = orig }()
 
 	dir := t.TempDir()
-	c := New(dir, nil)
+	c := New(dir, true, nil)
 	c.client = client
 
 	w := httptest.NewRecorder()
@@ -560,13 +584,13 @@ func TestServeHTTP_CacheDisabled(t *testing.T) {
 }
 
 func TestLogDebug_NilLogger(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 	// Must not panic.
 	c.logDebug("test", "key", "val")
 }
 
 func TestLogWarn_NilLogger(t *testing.T) {
-	c := New(t.TempDir(), nil)
+	c := New(t.TempDir(), true, nil)
 	// Must not panic.
 	c.logWarn("test", "key", "val")
 }

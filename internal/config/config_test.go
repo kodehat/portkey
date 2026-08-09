@@ -451,3 +451,45 @@ func TestPostConfigHook_NormalizesFaviconMode(t *testing.T) {
 		})
 	}
 }
+
+func TestPostConfigHook_CacheEnabledRequiresCacheDir(t *testing.T) {
+	t.Run("enabled without dir panics", func(t *testing.T) {
+		C = Config{Favicon: FaviconConfig{CacheEnabled: true, CacheDir: ""}}
+		defer func() {
+			if recover() == nil {
+				t.Fatal("expected panic when cacheEnabled is true but cacheDir is empty")
+			}
+		}()
+		postConfigHook()
+	})
+
+	t.Run("enabled with dir is fine", func(t *testing.T) {
+		C = Config{Favicon: FaviconConfig{CacheEnabled: true, CacheDir: "./favicon-cache"}}
+		postConfigHook() // must not panic
+	})
+
+	t.Run("disabled without dir is fine", func(t *testing.T) {
+		C = Config{Favicon: FaviconConfig{CacheEnabled: false, CacheDir: ""}}
+		postConfigHook() // must not panic
+	})
+}
+
+func TestLoadConfig_CacheDisabledByDefault(t *testing.T) {
+	dir := t.TempDir()
+	yaml := `ui:
+  title: "Test"
+portals: []
+pages: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "config.yml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+	C = Config{}
+	loadConfig(dir)
+	if C.Favicon.CacheEnabled {
+		t.Fatal("expected favicon cache to be disabled by default")
+	}
+	if C.Favicon.CacheDir != "" {
+		t.Fatalf("expected empty favicon.cacheDir by default, got %q", C.Favicon.CacheDir)
+	}
+}

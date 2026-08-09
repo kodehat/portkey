@@ -24,8 +24,6 @@ search:
 favicon:
   mode: proxied
   serviceUrl: https://favicon-api.portkey.page
-  cacheDir: ./favicon-cache
-  cacheEnabled: true
 portals:
 - title: 1Password
   link: https://my.1password.eu/

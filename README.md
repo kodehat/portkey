@@ -215,9 +215,12 @@ favicon:
   serviceUrl: ""
   # On-disk favicon cache directory. Icons are stored by normalized hostname, TTL is
   # 7 days; stale entries are refreshed in the background, failed fetches are backed
-  # off for 1 hour. Mountable as a Docker volume for persistence across restarts. Default: "./favicon-cache".
+  # off for 1 hour. Created at startup, so it must be writable by the process.
+  # Mountable as a Docker volume for persistence across restarts. Default: "" —
+  # required (non-empty) when cacheEnabled is true.
   cacheDir: ./favicon-cache
-  # If false, the on-disk cache is bypassed and every icon is fetched fresh. Default: true.
+  # Whether fetched favicons are stored on disk under cacheDir. Disabled by default;
+  # if enabled, cacheDir must be set (startup fails otherwise). Default: false.
   cacheEnabled: true
   # Directory for custom icon files (SVG, PNG). Files are served at /_/icons/<filename>.
   # The path is resolved on the machine the process runs on. In Docker it must be a path
@@ -227,6 +230,12 @@ favicon:
   # the directory and placing icon files. Default: "" (custom icons disabled).
   customIconsDir: ./icons
 ```
+
+> **Note:** For external portals without an explicit `icon`, Portkey makes outbound
+> HTTP requests to fetch their favicons. Favicon caching is **disabled by default**;
+> to enable it, set `favicon.cacheEnabled: true` and a writable `favicon.cacheDir`
+> (created at startup — in Docker, mount a writable volume there, see the Docker
+> section). With the cache disabled, icons are still fetched, just never stored.
 
 ### Portals (Links)
 
@@ -368,6 +377,7 @@ docker run --rm -it \
   -v $(PWD)/config.yml:/opt/config.yml \
   -v $(PWD)/favicon-cache:/opt/favicon-cache \
   -v $(PWD)/icons:/opt/icons \
+  -e PORTKEY_FAVICON_CACHEENABLED=true \
   -e PORTKEY_FAVICON_CACHE_DIR=/opt/favicon-cache \
   -e PORTKEY_FAVICON_CUSTOMICONSDIR=/opt/icons \
   -p 3000:3000 \

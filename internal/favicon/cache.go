@@ -65,15 +65,24 @@ type Cache struct {
 
 // Init initializes the global favicon cache with the given disk directory and
 // logger. Must be called before C is used (typically during application startup).
-func Init(cacheDir string, logger *slog.Logger) {
-	C = New(cacheDir, logger)
+// When cacheEnabled is false, no cache directory is created and the cache stays
+// disk-free (every fetch is served directly).
+func Init(cacheDir string, cacheEnabled bool, logger *slog.Logger) {
+	C = New(cacheDir, cacheEnabled, logger)
 }
 
 // New creates a new Cache with the given disk directory. Pass nil for logger
-// to suppress all log output (useful in tests).
-func New(cacheDir string, logger *slog.Logger) *Cache {
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
-		panic(fmt.Errorf("failed to create favicon cache directory %s: %w", cacheDir, err))
+// to suppress all log output (useful in tests). When cacheEnabled is false, the
+// directory is not created (nothing is ever written to disk) and an uncreateable
+// cacheDir does not fail startup.
+func New(cacheDir string, cacheEnabled bool, logger *slog.Logger) *Cache {
+	if cacheEnabled {
+		if cacheDir == "" {
+			panic("favicon cache is enabled but cacheDir is empty")
+		}
+		if err := os.MkdirAll(cacheDir, 0755); err != nil {
+			panic(fmt.Errorf("failed to create favicon cache directory %s: %w", cacheDir, err))
+		}
 	}
 	return &Cache{
 		dir:      cacheDir,

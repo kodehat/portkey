@@ -5,6 +5,182 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-08-09
+
+### Added
+
+- Add favicon service
+- Add more tests
+- Add DomainFromURL function and update faviconHandler to validate domains
+- Add comprehensive metrics tests for Load and portal/group counts
+- Add missing package-lock.json to Dockerfile context
+- Add metrics for favicon cache, search, and HTTP request duration
+- Add SonarQube integration and coverage reporting
+- Add comprehensive unit tests for components, layouts, and server functionality
+- Add unit tests for components including layouts, pages, and utils
+- Add unit tests for server, utils, and build components; enhance coverage
+- Add permissions for actions in auto-merge job
+
+### Changed
+
+- Update README and screenshots for version 4.0.0 redesign
+- Update favicon cache configuration and remove deprecated files
+- Define MimeTypePNG constant and refactor MIME type usage
+- Update favicon caching mechanism and configuration options
+- Merge pull request #342 from kodehat/dependabot/github_actions/docker/login-action-4.6.0
+- Bump docker/login-action from 4.5.2 to 4.6.0
+- Restructure config options and introduce two favicon loading modes
+- Merge pull request #343 from kodehat/dependabot/docker/node-26.5.1-alpine3.23
+- Bump node from 26.5.0-alpine3.23 to 26.5.1-alpine3.23
+- Merge pull request #341 from kodehat/dependabot/github_actions/docker/login-action-4.5.2
+- Bump docker/login-action from 4.5.1 to 4.5.2
+- Merge pull request #340 from kodehat/dependabot/github_actions/docker/login-action-4.5.1
+- Bump docker/login-action from 4.4.0 to 4.5.1
+- Merge pull request #339 from kodehat/dependabot/go_modules/github.com/prometheus/client_golang-1.24.1
+- Bump github.com/prometheus/client_golang
+- Merge pull request #338 from kodehat/dependabot/npm_and_yarn/multi-1133c64998
+- Bump shell-quote and concurrently
+- Merge pull request #334 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.3.3
+- Bump @tailwindcss/cli from 4.3.2 to 4.3.3
+- Merge pull request #336 from kodehat/dependabot/github_actions/actions/checkout-7.0.1
+- Bump actions/checkout from 7.0.0 to 7.0.1
+- Merge pull request #335 from kodehat/dependabot/github_actions/actions/setup-go-7.0.0
+- Bump actions/setup-go from 6.5.0 to 7.0.0
+- Merge pull request #337 from kodehat/dependabot/go_modules/github.com/prometheus/client_golang-1.24.0
+- Bump github.com/prometheus/client_golang
+- Merge pull request #333 from kodehat/dependabot/npm_and_yarn/tailwindcss-4.3.3
+- Bump tailwindcss from 4.3.2 to 4.3.3
+- Merge pull request #332 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.2.1
+- Bump SonarSource/sonarqube-scan-action from 8.2.0 to 8.2.1
+- Merge pull request #331 from kodehat/dependabot/github_actions/actions/setup-node-7.0.0
+- Bump actions/setup-node from 6.4.0 to 7.0.0
+- Update favifetch and enhance favicon handling with improved error signaling
+- Enhance favicon cache handling with format support and cleanup
+- Update favifetch and enhance fetchOptions with size parameter
+- Introduce constants for HTTP headers and URL prefixes in favicon cache
+- Streamline initGlobals and enhance TestMainLikeLifecycle
+- Update Go version handling in CI workflows to use go.mod
+- Simplify cachePath and remove unused format handling
+- Update favifetch
+- Replace faviconlib with favifetch for favicon handling
+- Enhance TitleForUrl to support CJK and emoji titles with proper slugging
+- Refactor favicon handling and logging
+- Update tools
+- Merge pull request #329 from kodehat/dependabot/docker/golang-1.27rc2-alpine3.23
+- Bump golang from 1.26.4-alpine3.23 to 1.27rc2-alpine3.23
+- Merge pull request #326 from kodehat/dependabot/github_actions/docker/setup-buildx-action-4.2.0
+- Bump docker/setup-buildx-action from 4.1.0 to 4.2.0
+- Merge pull request #325 from kodehat/dependabot/github_actions/docker/build-push-action-7.3.0
+- Bump docker/build-push-action from 7.2.0 to 7.3.0
+- Merge pull request #327 from kodehat/dependabot/github_actions/docker/login-action-4.4.0
+- Bump docker/login-action from 4.2.0 to 4.4.0
+- Merge pull request #328 from kodehat/dependabot/github_actions/docker/setup-qemu-action-4.2.0
+- Bump docker/setup-qemu-action from 4.1.0 to 4.2.0
+- Merge pull request #324 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.3.2
+- Bump @tailwindcss/cli from 4.3.1 to 4.3.2
+- Merge pull request #322 from kodehat/dependabot/github_actions/actions/cache-6.1.0
+- Bump actions/cache from 6.0.0 to 6.1.0
+- Merge pull request #321 from kodehat/dependabot/github_actions/actions/cache-6.0.0
+- Bump actions/cache from 5.0.5 to 6.0.0
+- Merge pull request #320 from kodehat/dependabot/github_actions/actions/setup-go-6.5.0
+- Bump actions/setup-go from 6.4.0 to 6.5.0
+- Merge pull request #319 from kodehat/dependabot/docker/node-26.4.0-alpine3.23
+- Bump node from 26.3.1-alpine3.23 to 26.4.0-alpine3.23
+- Merge pull request #317 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.2.0
+- Bump SonarSource/sonarqube-scan-action from 8.1.0 to 8.2.0
+- Merge pull request #318 from kodehat/dependabot/github_actions/actions/checkout-7.0.0
+- Bump actions/checkout from 6.0.3 to 7.0.0
+- Comment out icons in portal configuration
+- Update dependencies
+- Merge pull request #315 from kodehat/copilot/adjust-main-page-width-mobile
+- Merge pull request #316 from kodehat/dependabot/docker/node-26.3.1-alpine3.23
+- Bump node from 26.3.0-alpine3.23 to 26.3.1-alpine3.23
+- Merge pull request #314 from kodehat/copilot/fix-code-scanning-findings
+- Merge pull request #312 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.3.1
+- Bump @tailwindcss/cli from 4.3.0 to 4.3.1
+- Merge pull request #311 from kodehat/dependabot/docker/alpine-3.24.1
+- Bump alpine from 3.24.0 to 3.24.1
+- Merge pull request #310 from kodehat/dependabot/npm_and_yarn/esbuild-0.28.1
+- Bump esbuild from 0.28.0 to 0.28.1
+- Complete redesign
+- Column support
+- Update Go toolchain to 1.26.4 and node to 26.3.0
+- Merge pull request #309 from kodehat/dependabot/docker/alpine-3.24.0
+- Bump alpine from 3.23.4 to 3.24.0
+- Merge pull request #307 from kodehat/dependabot/github_actions/actions/checkout-6.0.3
+- Bump actions/checkout from 6.0.2 to 6.0.3
+- Merge pull request #308 from kodehat/dependabot/npm_and_yarn/concurrently-10.0.3
+- Bump concurrently from 10.0.1 to 10.0.3
+- Merge pull request #306 from kodehat/dependabot/docker/golang-1.26.4-alpine3.23
+- Bump golang from 1.26.3-alpine3.23 to 1.26.4-alpine3.23
+- Merge pull request #305 from kodehat/dependabot/npm_and_yarn/concurrently-10.0.1
+- Bump concurrently from 10.0.0 to 10.0.1
+- Merge pull request #304 from kodehat/dependabot/docker/node-26.3.0-alpine3.23
+- Bump node from 26.2.0-alpine3.23 to 26.3.0-alpine3.23
+- Merge pull request #303 from kodehat/dependabot/github_actions/docker/setup-qemu-action-4.1.0
+- Bump docker/setup-qemu-action from 4.0.0 to 4.1.0
+- Merge pull request #302 from kodehat/dependabot/npm_and_yarn/concurrently-10.0.0
+- Bump concurrently from 9.2.1 to 10.0.0
+- Merge pull request #299 from kodehat/dependabot/github_actions/docker/setup-buildx-action-4.1.0
+- Bump docker/setup-buildx-action from 4.0.0 to 4.1.0
+- Merge pull request #301 from kodehat/dependabot/github_actions/docker/login-action-4.2.0
+- Bump docker/login-action from 4.1.0 to 4.2.0
+- Update generated files
+- Update tools
+- Merge pull request #300 from kodehat/dependabot/github_actions/docker/build-push-action-7.2.0
+- Bump docker/build-push-action from 7.1.0 to 7.2.0
+- Merge pull request #298 from kodehat/dependabot/docker/node-26.2.0-alpine3.23
+- Bump node from 26.1.0-alpine3.23 to 26.2.0-alpine3.23
+- Merge pull request #296 from kodehat/dependabot/docker/node-26.1.0-alpine3.23
+- Bump node from 25.9.0-alpine3.23 to 26.1.0-alpine3.23
+- Merge pull request #297 from kodehat/dependabot/docker/golang-1.26.3-alpine3.23
+- Bump golang from 1.26.2-alpine3.23 to 1.26.3-alpine3.23
+- Merge pull request #295 from kodehat/dependabot/go_modules/github.com/a-h/templ-0.3.1020
+- Bump github.com/a-h/templ from 0.3.1001 to 0.3.1020
+- Merge pull request #294 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.3.0
+- Bump @tailwindcss/cli from 4.2.4 to 4.3.0
+- Merge pull request #292 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.15.12
+- Bump @alpinejs/persist from 3.15.11 to 3.15.12
+- Merge pull request #291 from kodehat/dependabot/npm_and_yarn/alpinejs-3.15.12
+- Bump alpinejs from 3.15.10 to 3.15.12
+- Merge pull request #290 from kodehat/dependabot/github_actions/orhun/git-cliff-action-4.8.0
+- Bump orhun/git-cliff-action from 4.7.1 to 4.8.0
+- Merge pull request #289 from kodehat/dependabot/npm_and_yarn/htmx.org-2.0.10
+- Bump htmx.org from 2.0.9 to 2.0.10
+- Replace websocket implementation with livereload for dev mode
+- Update Go and Alpine versions in Dockerfile and mise.toml
+- Merge pull request #285 from kodehat/dependabot/github_actions/actions/setup-node-6.4.0
+- Bump actions/setup-node from 6.3.0 to 6.4.0
+- Merge pull request #287 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.2.4
+- Bump @tailwindcss/cli from 4.2.2 to 4.2.4
+- Merge pull request #288 from kodehat/dependabot/npm_and_yarn/tailwindcss-4.2.4
+- Bump tailwindcss from 4.2.2 to 4.2.4
+- Merge pull request #286 from kodehat/dependabot/npm_and_yarn/htmx.org-2.0.9
+- Bump htmx.org from 2.0.8 to 2.0.9
+- Merge pull request #284 from kodehat/dependabot/github_actions/dependabot/fetch-metadata-3.1.0
+- Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0
+
+### Fixed
+
+- Update Content-Security-Policy for enhanced security and resource loading in demo
+- Update favicon mode from direct to proxied
+- Update SonarQube job configuration and cleanup workflow
+- Replace npm install with npm ci for consistent dependency installation
+- Update loading bar tests to reflect margin behavior changes
+- Prevent path traversal in cachePath method
+- Use full width for search bar and progress bar on mobile
+- Prevent path traversal and URL injection in favicon cache
+- Fix missing environment variable for demo
+- Update environment variable name for Dependabot merge step
+- Update GitHub token for Dependabot to use GITHUB_TOKEN
+- Update GitHub token for Dependabot to use REPO_MERGE_TOKEN
+- Update panic recovery checks in config tests and add comment to API endpoint test
+- Enhance test coverage for health, home, version, and API endpoints
+
+### Removed
+
+- Remove unnecessary url.PathEscape (isValidHostname already ensures safe chars)
+
 ## [3.0.1] - 2026-04-16
 
 ### Changed
@@ -694,6 +870,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files
 - Remove generated files
 
+[4.0.0]: https://github.com/kodehat/portkey/compare/v3.0.1..v4.0.0
 [3.0.1]: https://github.com/kodehat/portkey/compare/v3.0.0..v3.0.1
 [3.0.0]: https://github.com/kodehat/portkey/compare/v2.0.2..v3.0.0
 [2.0.2]: https://github.com/kodehat/portkey/compare/v2.0.1..v2.0.2

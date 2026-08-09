@@ -158,7 +158,7 @@ func TestNamespace(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	config.C = config.Config{ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}}
 
 	oldRegistry := prometheus.DefaultRegisterer
 	reg := prometheus.NewRegistry()
@@ -213,7 +213,12 @@ func TestPortalAndGroupCount(t *testing.T) {
 	defer func() { prometheus.DefaultRegisterer = oldRegistry }()
 
 	config.C = config.Config{
-		ContextPath: "",
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
 		Portals: []models.Portal{
 			{Title: "A", Group: "Work"},
 			{Title: "B", Group: "Work"},
@@ -221,8 +226,7 @@ func TestPortalAndGroupCount(t *testing.T) {
 			{Title: "D", Group: "Social"},
 			{Title: "E", Group: "Dev"},
 			{Title: "F", Group: ""},
-		},
-	}
+		}}
 
 	Load()
 
@@ -240,7 +244,7 @@ func TestBuildInfoLabels(t *testing.T) {
 	prometheus.DefaultRegisterer = reg
 	defer func() { prometheus.DefaultRegisterer = oldRegistry }()
 
-	config.C = config.Config{ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}}
 	build.LoadBuildDetails("abc123")
 	build.BuildTime = "2024-01-01"
 	build.CommitHash = "deadbeef"

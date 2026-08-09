@@ -37,7 +37,7 @@ func TestDomainFromURL_InvalidURL(t *testing.T) {
 
 func TestFaviconURL(t *testing.T) {
 	// Set up a known context path.
-	config.C = config.Config{ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}}
 
 	tests := []struct {
 		url      string
@@ -56,7 +56,7 @@ func TestFaviconURL(t *testing.T) {
 }
 
 func TestFaviconURL_RelativeURL(t *testing.T) {
-	config.C = config.Config{ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}}
 	got := faviconURL("/about")
 	if got != "" {
 		t.Errorf("expected empty for relative URL, got %q", got)
@@ -64,7 +64,7 @@ func TestFaviconURL_RelativeURL(t *testing.T) {
 }
 
 func TestFaviconURL_WithContextPath(t *testing.T) {
-	config.C = config.Config{ContextPath: "/portkey"}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: "/portkey"}}
 	got := faviconURL("https://github.com")
 	expected := "/portkey/_/favicon?domain=github.com"
 	if got != expected {
@@ -127,8 +127,11 @@ func TestFaviconURL_AlwaysLocalRoute(t *testing.T) {
 	// Even when FaviconCacheDisabled is true, faviconURL should still return
 	// the local route — the cache handler decides whether to use disk cache.
 	config.C = config.Config{
-		FaviconCacheDisabled: true,
-	}
+
+		Favicon: config.FaviconConfig{
+
+			CacheEnabled: false,
+		}}
 	got := faviconURL("https://github.com")
 	expected := "/_/favicon?domain=github.com"
 	if got != expected {

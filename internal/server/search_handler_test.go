@@ -79,7 +79,7 @@ func TestSearchHandlerKeywordMatch(t *testing.T) {
 
 func TestIsSearchResult_DirectTitleMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{}}
@@ -91,7 +91,7 @@ func TestIsSearchResult_DirectTitleMatch(t *testing.T) {
 
 func TestIsSearchResult_CaseInsensitive(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{}}
@@ -103,7 +103,7 @@ func TestIsSearchResult_CaseInsensitive(t *testing.T) {
 
 func TestIsSearchResult_KeywordMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{"code", "git"}}
@@ -115,7 +115,7 @@ func TestIsSearchResult_KeywordMatch(t *testing.T) {
 
 func TestIsSearchResult_NoMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{"code"}}
@@ -127,8 +127,8 @@ func TestIsSearchResult_NoMatch(t *testing.T) {
 
 func TestIsSearchResult_SimilarityMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.5
+	config.C.Search.StringSimilarity = true
+	config.C.Search.MinimumSimilarity = 0.5
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{}}
@@ -140,7 +140,7 @@ func TestIsSearchResult_SimilarityMatch(t *testing.T) {
 
 func TestIsSearchResult_SimilarityDisabled(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "GitHub", Keywords: []string{}}

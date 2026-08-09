@@ -4,10 +4,13 @@
 package favicon
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,6 +35,20 @@ const (
 
 	// ContentTypeHeader is the HTTP header for content type.
 	ContentTypeHeader = "Content-Type"
+
+	// defaultVemetricHost is the favicon service used as the relay target in
+	// proxied mode when faviconServiceURL is not configured. It mirrors
+	// favifetch's own built-in default fallback host.
+	defaultVemetricHost = "favicon.vemetric.com"
+
+	// proxyFaviconSize is the requested icon size (in pixels) when relaying to
+	// a favicon service in proxied mode. It matches favifetch's default
+	// fallback size.
+	proxyFaviconSize = 64
+
+	// maxProxyImageSize caps how many bytes are read from a favicon service
+	// response in proxied mode, matching favifetch's MaxImageSize.
+	maxProxyImageSize = 5 * 1024 * 1024
 )
 
 // C is the global favicon cache. Initialized by Init().
@@ -207,7 +224,7 @@ func mimeForFormat(f favifetch.DetectedFormat) string {
 
 // fetchOptions returns the standard favifetch options applied to every request.
 func (c *Cache) fetchOptions() []favifetch.Option {
-	return []favifetch.Option{
+	opts := []favifetch.Option{
 		// Browser mode returns the regular tab icon a Chromium browser would use.
 		// It must not be combined with resizing or format conversion.
 		favifetch.WithMode(favifetch.ModeBrowser),
@@ -215,6 +232,170 @@ func (c *Cache) fetchOptions() []favifetch.Option {
 		favifetch.WithTimeout(5 * time.Second),
 		favifetch.WithHTTPClient(c.client),
 	}
+	// Allow overriding the self-hostable favicon service used as the
+	// last-resort fallback. favifetch expects a bare host (HTTPS is implicit);
+	// a full URL is reduced to its host so config.yml values such as
+	// "https://favicon.vemetric.com" work as-is.
+	if host := faviconServiceHost(config.C.Favicon.ServiceURL); host != "" {
+		opts = append(opts, favifetch.WithVemetricAPIHost(host))
+	}
+	return opts
+}
+
+// faviconServiceHost extracts the host (with optional port) from the configured
+// faviconServiceURL. favifetch's fallback API option expects a bare host and
+// always uses HTTPS, so a full URL like "https://favicon.vemetric.com" is
+// reduced to "favicon.vemetric.com". A bare host string is returned unchanged
+// (a trailing path or query, if present, is stripped). Returns "" when
+// serviceURL is empty.
+func faviconServiceHost(serviceURL string) string {
+	if serviceURL = strings.TrimSpace(serviceURL); serviceURL == "" {
+		return ""
+	}
+	// A scheme separator means it's a full URL — parse it and keep the host.
+	if strings.Contains(serviceURL, "://") {
+		if u, err := url.Parse(serviceURL); err == nil && u.Host != "" {
+			return u.Host
+		}
+	}
+	// Otherwise treat the value as a bare host. Strip any path/query suffix.
+	host := serviceURL
+	if idx := strings.IndexByte(host, '/'); idx >= 0 {
+		host = host[:idx]
+	}
+	if idx := strings.IndexByte(host, '?'); idx >= 0 {
+		host = host[:idx]
+	}
+	return strings.TrimSpace(host)
+}
+
+// fetchedIcon holds the bytes and detected format of a favicon, regardless of
+// whether it was obtained via direct discovery (favifetch) or by relaying to
+// a favicon service (proxied mode).
+type fetchedIcon struct {
+	data   []byte
+	format favifetch.DetectedFormat
+	source string
+}
+
+// fetch obtains the favicon for the given domain using the configured
+// FaviconMode: direct discovery via favifetch, or by relaying to a
+// Vemetric-compatible favicon service.
+func (c *Cache) fetch(ctx context.Context, domain string) (fetchedIcon, error) {
+	if config.C.Favicon.Mode == config.FaviconModeProxied {
+		return c.fetchProxied(ctx, domain)
+	}
+	return c.fetchDirect(ctx, domain)
+}
+
+// fetchDirect discovers and fetches the favicon via the favifetch library,
+// which parses the target website's HTML, manifest, and common fallback paths.
+func (c *Cache) fetchDirect(ctx context.Context, domain string) (fetchedIcon, error) {
+	result, err := favifetch.Fetch(ctx, HttpsPrefix+domain, c.fetchOptions()...)
+	if err != nil {
+		return fetchedIcon{}, err
+	}
+	return fetchedIcon{data: result.Data, format: result.Format, source: result.Source}, nil
+}
+
+// fetchProxied relays the favicon request to a Vemetric-compatible favicon
+// service (configured via faviconServiceURL). The service performs all
+// discovery and returns the image bytes; portkey just relays them. The result
+// is cached like a direct fetch so subsequent requests are served from disk.
+func (c *Cache) fetchProxied(ctx context.Context, domain string) (fetchedIcon, error) {
+	host := faviconServiceHost(config.C.Favicon.ServiceURL)
+	if host == "" {
+		host = defaultVemetricHost
+	}
+	target := fmt.Sprintf("https://%s/%s?size=%d", host, domain, proxyFaviconSize)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	if err != nil {
+		return fetchedIcon{}, fmt.Errorf("build proxy request for %s: %w", domain, err)
+	}
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return fetchedIcon{}, fmt.Errorf("proxy favicon for %s: %w", domain, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fetchedIcon{}, fmt.Errorf("proxy favicon for %s: service returned %s", domain, resp.Status)
+	}
+
+	data, err := io.ReadAll(io.LimitReader(resp.Body, maxProxyImageSize))
+	if err != nil {
+		return fetchedIcon{}, fmt.Errorf("read proxied favicon for %s: %w", domain, err)
+	}
+
+	format := detectFormatFromContentType(resp.Header.Get(ContentTypeHeader))
+	if format == favifetch.FormatUnknown {
+		format = detectFormatFromMagic(data)
+	}
+	if format == favifetch.FormatUnknown {
+		format = favifetch.FormatPNG // safest default for caching and serving
+	}
+	return fetchedIcon{data: data, format: format, source: "proxied"}, nil
+}
+
+// detectFormatFromContentType maps a Content-Type header value (including any
+// parameters such as "; charset=utf-8") to a DetectedFormat.
+func detectFormatFromContentType(ct string) favifetch.DetectedFormat {
+	if i := strings.IndexByte(ct, ';'); i >= 0 {
+		ct = ct[:i]
+	}
+	switch strings.ToLower(strings.TrimSpace(ct)) {
+	case "image/png", "image/jpg":
+		return favifetch.FormatPNG
+	case "image/svg+xml":
+		return favifetch.FormatSVG
+	case "image/x-icon", "image/vnd.microsoft.icon":
+		return favifetch.FormatICO
+	case "image/webp":
+		return favifetch.FormatWebP
+	case "image/jpeg":
+		return favifetch.FormatJPEG
+	case "image/gif":
+		return favifetch.FormatGIF
+	case "image/bmp":
+		return favifetch.FormatBMP
+	default:
+		return favifetch.FormatUnknown
+	}
+}
+
+// detectFormatFromMagic sniffs the image format from the leading magic bytes
+// of raw image data. It is a fallback for proxied responses that arrive
+// without a recognizable Content-Type header.
+func detectFormatFromMagic(data []byte) favifetch.DetectedFormat {
+	switch {
+	case len(data) >= 8 && bytes.HasPrefix(data, []byte{0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A}):
+		return favifetch.FormatPNG
+	case len(data) >= 3 && bytes.HasPrefix(data, []byte{0xFF, 0xD8, 0xFF}):
+		return favifetch.FormatJPEG
+	case len(data) >= 12 && bytes.HasPrefix(data, []byte("RIFF")) && bytes.Equal(data[8:12], []byte("WEBP")):
+		return favifetch.FormatWebP
+	case len(data) >= 6 && (bytes.HasPrefix(data, []byte("GIF87a")) || bytes.HasPrefix(data, []byte("GIF89a"))):
+		return favifetch.FormatGIF
+	case len(data) >= 4 && bytes.Equal(data[:4], []byte{0x00, 0x00, 0x01, 0x00}):
+		return favifetch.FormatICO
+	case len(data) >= 2 && bytes.HasPrefix(data, []byte("BM")):
+		return favifetch.FormatBMP
+	case hasSVGMarker(data):
+		return favifetch.FormatSVG
+	default:
+		return favifetch.FormatUnknown
+	}
+}
+
+// hasSVGMarker reports whether the data looks like SVG markup by searching for
+// an "<svg" tag within the first 512 bytes.
+func hasSVGMarker(data []byte) bool {
+	prefix := data
+	if len(prefix) > 512 {
+		prefix = prefix[:512]
+	}
+	return bytes.Contains(bytes.ToLower(prefix), []byte("<svg"))
 }
 
 // ServeHTTP handles a favicon request. It serves from cache if available and
@@ -238,7 +419,7 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// When caching is disabled, fetch and serve without touching disk.
-	if config.C.FaviconCacheDisabled {
+	if !config.C.Favicon.CacheEnabled {
 		c.logDebug("favicon cache disabled, fetching directly", "domain", domain)
 		c.serveDirect(w, r, domain)
 		return
@@ -284,7 +465,7 @@ func (c *Cache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // serveDirect discovers, fetches, and serves a favicon without touching the disk
 // cache. Used when FaviconCacheDisabled is true.
 func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain string) {
-	result, err := favifetch.Fetch(r.Context(), HttpsPrefix+domain, c.fetchOptions()...)
+	icon, err := c.fetch(r.Context(), domain)
 	if err != nil {
 		c.logWarn("favicon direct fetch failed, serving default", "domain", domain, "error", err)
 		c.mu.Lock()
@@ -295,10 +476,10 @@ func (c *Cache) serveDirect(w http.ResponseWriter, r *http.Request, domain strin
 		return
 	}
 
-	c.logDebug("favicon served directly", "domain", domain, "format", result.Format.String(), "size", result.Size, "source", result.Source)
-	w.Header().Set(ContentTypeHeader, mimeForFormat(result.Format))
+	c.logDebug("favicon served directly", "domain", domain, "format", icon.format.String(), "size", len(icon.data), "source", icon.source)
+	w.Header().Set(ContentTypeHeader, mimeForFormat(icon.format))
 	w.Header().Set("Cache-Control", "public, max-age=86400")
-	w.Write(result.Data)
+	w.Write(icon.data)
 }
 
 // refresh fetches a favicon in the background and updates the cache.
@@ -319,25 +500,25 @@ func (c *Cache) refresh(domain string) {
 // cache file. Returns the saved file path and the detected format.
 func (c *Cache) fetchAndSave(ctx context.Context, domain string) (string, favifetch.DetectedFormat, error) {
 	// domain has already been validated by isValidHostname (alphanumeric, dots, hyphens only).
-	result, err := favifetch.Fetch(ctx, HttpsPrefix+domain, c.fetchOptions()...)
+	icon, err := c.fetch(ctx, domain)
 	if err != nil {
-		c.logWarn("favifetch fetch failed", "domain", domain, "error", err)
+		c.logWarn("favicon fetch failed", "domain", domain, "error", err)
 		return "", favifetch.FormatUnknown, fmt.Errorf("fetch favicon for %s: %w", domain, err)
 	}
 
-	c.logDebug("favifetch succeeded", "domain", domain, "format", result.Format.String(), "source", result.Source, "size", result.Size)
+	c.logDebug("favicon fetched", "domain", domain, "format", icon.format.String(), "source", icon.source, "size", len(icon.data))
 
 	// Clean up old files of other formats before writing the new one.
-	c.cleanupOtherFormats(domain, result.Format)
+	c.cleanupOtherFormats(domain, icon.format)
 
-	path := c.cachePath(domain, result.Format)
+	path := c.cachePath(domain, icon.format)
 	tmpPath := path + ".tmp"
 	f, err := os.Create(tmpPath)
 	if err != nil {
 		return "", favifetch.FormatUnknown, fmt.Errorf("create temp %s: %w", tmpPath, err)
 	}
 
-	if _, err := f.Write(result.Data); err != nil {
+	if _, err := f.Write(icon.data); err != nil {
 		f.Close()
 		os.Remove(tmpPath)
 		return "", favifetch.FormatUnknown, fmt.Errorf("write %s: %w", tmpPath, err)
@@ -348,7 +529,7 @@ func (c *Cache) fetchAndSave(ctx context.Context, domain string) (string, favife
 		os.Remove(tmpPath)
 		return "", favifetch.FormatUnknown, fmt.Errorf("rename %s -> %s: %w", tmpPath, path, err)
 	}
-	return path, result.Format, nil
+	return path, icon.format, nil
 }
 
 // logDebug logs a debug message if the cache has a logger configured.

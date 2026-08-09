@@ -184,8 +184,8 @@ func TestSearchHandler_SimilarityMatch(t *testing.T) {
 	config.C.Portals = []models.Portal{
 		{Title: "GitHub", Link: "https://github.com"},
 	}
-	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.5
+	config.C.Search.StringSimilarity = true
+	config.C.Search.MinimumSimilarity = 0.5
 	config.R.WithGroups = false
 
 	req := httptest.NewRequest(http.MethodGet, "/_/portals?search=Githu", nil)
@@ -246,7 +246,7 @@ func TestSearchHandler_IsSimilar(t *testing.T) {
 
 func TestSearchHandler_IsSearchResult_DirectMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 	portal := models.Portal{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code", "git"}}
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
@@ -264,8 +264,8 @@ func TestSearchHandler_IsSearchResult_DirectMatch(t *testing.T) {
 
 func TestSearchHandler_IsSearchResult_SimilarityMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.5
+	config.C.Search.StringSimilarity = true
+	config.C.Search.MinimumSimilarity = 0.5
 	portal := models.Portal{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code"}}
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
@@ -280,7 +280,7 @@ func TestSearchHandler_IsSearchResult_SimilarityMatch(t *testing.T) {
 
 func TestSearchHandler_IsSearchResult_SimilarityDisabled(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 	portal := models.Portal{Title: "GitHub", Link: "https://github.com"}
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
@@ -346,7 +346,7 @@ func TestSearchHandler_Handle_NoQueryNoGroups(t *testing.T) {
 
 func TestSearchHandler_IncreaseMetrics(t *testing.T) {
 	setupServer()
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 
@@ -356,7 +356,7 @@ func TestSearchHandler_IncreaseMetrics(t *testing.T) {
 
 func TestSearchHandler_IsSearchResult_KeywordDirectMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 	portal := models.Portal{Title: "DevTools", Link: "/tools", Keywords: []string{"code", "git", "repo"}}
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
@@ -371,8 +371,8 @@ func TestSearchHandler_IsSearchResult_KeywordDirectMatch(t *testing.T) {
 
 func TestIsSearchResult_SimilarityKeywordMatch(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.3
+	config.C.Search.StringSimilarity = true
+	config.C.Search.MinimumSimilarity = 0.3
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "ZZZZ", Keywords: []string{"programming", "development"}}
@@ -385,7 +385,7 @@ func TestIsSearchResult_SimilarityKeywordMatch(t *testing.T) {
 
 func TestIsSearchResult_NoSimilarityWhenDisabled(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = false
+	config.C.Search.StringSimilarity = false
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	portal := models.Portal{Title: "ZZZZ", Keywords: []string{"something_else"}}
@@ -398,8 +398,8 @@ func TestIsSearchResult_NoSimilarityWhenDisabled(t *testing.T) {
 
 func TestIsSearchResult_SimilarityKeyword_LastResort(t *testing.T) {
 	setupServer()
-	config.C.SearchWithStringSimilarity = true
-	config.C.MinimumStringSimilarity = 0.3
+	config.C.Search.StringSimilarity = true
+	config.C.Search.MinimumSimilarity = 0.3
 
 	sh := searchHandler{logger: testLogger(), levenshtein: metrics.NewLevenshtein()}
 	// Title has low similarity, but second keyword is close
@@ -415,7 +415,7 @@ func TestIsSearchResult_SimilarityKeyword_LastResort(t *testing.T) {
 
 func TestPageHandler_WithMetrics(t *testing.T) {
 	setupServer()
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 	config.C.Pages = []models.Page{
 		{Heading: "About", Path: "/about", Content: "<p>info</p>"},
 	}
@@ -436,7 +436,7 @@ func TestPageHandler_WithMetrics(t *testing.T) {
 
 func TestPageMetricsHandler(t *testing.T) {
 	setupServer()
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 
 	innerHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -455,7 +455,7 @@ func TestPageMetricsHandler(t *testing.T) {
 
 func TestPortalHandler_Handle_WithMetrics(t *testing.T) {
 	setupServer()
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 	config.C.Portals = []models.Portal{
 		{Title: "GitHub", Link: "https://github.com"},
 	}
@@ -482,7 +482,7 @@ func TestPortalHandler_Handle_InternalLink(t *testing.T) {
 
 func TestPortalHandler_TitleModifiedWithMetrics(t *testing.T) {
 	setupServer()
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 	config.C.Portals = []models.Portal{
 		{Title: "My Portal!", Link: "https://example.com"},
 	}
@@ -515,7 +515,7 @@ func TestSearchHandler_Handle_SearchWithResults(t *testing.T) {
 		{Title: "Google", Link: "https://google.com"},
 	}
 	config.R.WithGroups = false
-	config.C.EnableMetrics = true
+	config.C.Metrics.Enabled = true
 
 	req := httptest.NewRequest(http.MethodGet, "/_/portals?search=Hub", nil)
 	rec := httptest.NewRecorder()
@@ -578,7 +578,7 @@ func TestAddRoutes_WithCustomIcons(t *testing.T) {
 	os.WriteFile(dir+"/icon.svg", []byte("<svg/>"), 0644)
 
 	setupServer()
-	config.C.CustomIconsDir = dir
+	config.C.Favicon.CustomIconsDir = dir
 
 	srv := NewServer(testLogger(), testStatic)
 	if srv == nil {

@@ -19,7 +19,7 @@ type pageHandlerInfo struct {
 func pageHandler() []pageHandlerInfo {
 	var pageHandlerInfos = make([]pageHandlerInfo, len(config.C.Pages))
 	for i, page := range config.C.Pages {
-		if config.C.EnableMetrics {
+		if config.C.Metrics.Enabled {
 			// Required to initialize all portal metrics to "0".
 			metrics.M.PageHitCounter.WithLabelValues(page.Path).Add(0)
 		}
@@ -33,7 +33,7 @@ func pageHandler() []pageHandlerInfo {
 
 func pageMetricsHandler(p models.Page, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if config.C.EnableMetrics {
+		if config.C.Metrics.Enabled {
 			metrics.M.PageHitCounter.WithLabelValues(p.Path).Inc()
 		}
 		h.ServeHTTP(w, r)

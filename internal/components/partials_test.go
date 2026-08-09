@@ -82,7 +82,7 @@ func TestGroupedPortalPartial_Grouped(t *testing.T) {
 }
 
 func TestPortalPartial_WithKeywordsTooltips(t *testing.T) {
-	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	config.C = config.Config{UI: config.UIConfig{ShowKeywordsAsTooltips: true}}
 	portals := []models.Portal{
 		{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code", "git"}},
 	}
@@ -150,7 +150,7 @@ func TestPortalPartial_WithColumns(t *testing.T) {
 }
 
 func TestPortalPartial_WithColumnsAndTooltips(t *testing.T) {
-	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	config.C = config.Config{UI: config.UIConfig{ShowKeywordsAsTooltips: true}}
 	portals := []models.Portal{
 		{Title: "GitHub", Link: "https://github.com", Keywords: []string{"code"}},
 	}
@@ -184,7 +184,7 @@ func TestGroupedPortalPartial_WithColumns(t *testing.T) {
 }
 
 func TestGroupedPortalPartial_WithColumnsAndTooltips(t *testing.T) {
-	config.C = config.Config{ShowKeywordsAsTooltips: true}
+	config.C = config.Config{UI: config.UIConfig{ShowKeywordsAsTooltips: true}}
 	groups := []models.PortalGroup{
 		{
 			Name: "Tools",

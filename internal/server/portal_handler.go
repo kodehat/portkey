@@ -25,14 +25,14 @@ func (p portalHandler) handle() []portalHandlerInfo {
 			if fixedTitleUrl != portal.Title {
 				slog.Debug("fixed title", "old", portal.Title, "new", fixedTitleUrl)
 			}
-			if config.C.EnableMetrics {
+			if config.C.Metrics.Enabled {
 				// Required to initialize all portal metrics to "0".
 				metrics.M.PortalHitCounter.WithLabelValues(portal.Title).Add(0)
 			}
 			portalHandlerInfos = append(portalHandlerInfos, portalHandlerInfo{
 				portalPath: "/" + fixedTitleUrl,
 				handlerFunc: func(w http.ResponseWriter, r *http.Request) {
-					if config.C.EnableMetrics {
+					if config.C.Metrics.Enabled {
 						metrics.M.PortalHitCounter.WithLabelValues(portal.Title).Inc()
 					}
 					p.logger.Debug("opening portal", "link", portal.Link)

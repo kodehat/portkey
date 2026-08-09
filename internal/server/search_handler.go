@@ -29,14 +29,14 @@ func (p searchHandler) handle() http.HandlerFunc {
 		}()
 
 		query := r.URL.Query().Get(searchQueryParam)
-		cols := config.C.LayoutColumns
+		cols := config.C.UI.LayoutColumns
 		if query == "" && config.R.WithGroups {
 			groups := utils.GroupPortals(config.C.Portals)
 			components.GroupedPortalPartial(groups, cols).Render(r.Context(), w)
 			return
 		}
 		homePortals := p.queryHomePortals(query)
-		if query != "" && config.C.EnableMetrics {
+		if query != "" && config.C.Metrics.Enabled {
 			p.increaseMetrics(len(homePortals) > 0)
 		}
 		if config.R.WithGroups {
@@ -76,17 +76,17 @@ func (p searchHandler) isSearchResult(query string, portal models.Portal) bool {
 		return true
 	}
 
-	if !config.C.SearchWithStringSimilarity {
+	if !config.C.Search.StringSimilarity {
 		return false
 	}
 	p.logger.Debug("searching with string similarity", "query", query)
 
-	similar := p.isSimilar(query, portal.Title, p.levenshtein, config.C.MinimumStringSimilarity)
+	similar := p.isSimilar(query, portal.Title, p.levenshtein, config.C.Search.MinimumSimilarity)
 	if similar {
 		return similar
 	}
 	for _, keyword := range portal.Keywords {
-		similar = p.isSimilar(query, keyword, p.levenshtein, config.C.MinimumStringSimilarity)
+		similar = p.isSimilar(query, keyword, p.levenshtein, config.C.Search.MinimumSimilarity)
 		if similar {
 			return similar
 		}

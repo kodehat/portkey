@@ -13,7 +13,7 @@ templ PortalPartial(portals []models.Portal, columns int) {
 	} else if columns > 0 {
 		<div class={ GridClass(columns) }>
 			for _, portal := range portals {
-				if config.C.ShowKeywordsAsTooltips {
+				if config.C.UI.ShowKeywordsAsTooltips {
 					@HomePortalWithToolTip(portal)
 				} else {
 					@HomePortal(portal)
@@ -23,7 +23,7 @@ templ PortalPartial(portals []models.Portal, columns int) {
 	} else {
 		<div class="flex flex-col w-full space-y-1.5">
 			for _, portal := range portals {
-				if config.C.ShowKeywordsAsTooltips {
+				if config.C.UI.ShowKeywordsAsTooltips {
 					@HomePortalWithToolTip(portal)
 				} else {
 					@HomePortal(portal)
@@ -55,7 +55,7 @@ templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 						</h2>
 						<div class="flex flex-col gap-1.5 w-full">
 							for _, portal := range group.Portals {
-								if config.C.ShowKeywordsAsTooltips {
+								if config.C.UI.ShowKeywordsAsTooltips {
 									@HomePortalWithToolTip(portal)
 								} else {
 									@HomePortal(portal)
@@ -81,7 +81,7 @@ templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 						</h2>
 						<div class="flex flex-col gap-1.5 w-full">
 							for _, portal := range group.Portals {
-								if config.C.ShowKeywordsAsTooltips {
+								if config.C.UI.ShowKeywordsAsTooltips {
 									@HomePortalWithToolTip(portal)
 								} else {
 									@HomePortal(portal)

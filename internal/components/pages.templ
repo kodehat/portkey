@@ -3,7 +3,7 @@ package components
 import "github.com/kodehat/portkey/internal/config"
 
 templ SearchBar() {
-	if !config.C.HideSearchBar {
+	if config.C.UI.ShowSearchBar {
 		<div class="flex flex-col items-center w-full">
 			<p class="text-center text-xs text-slate-500 dark:text-slate-400 mb-2">Serving { len(config.C.Portals) } portals</p>
 			<div class="relative w-full max-w-lg">
@@ -20,7 +20,7 @@ templ SearchBar() {
 					}"
 					x-model="query"
 					name="search"
-					hx-get={ config.C.ContextPath + "/_/portals" }
+					hx-get={ config.C.Server.ContextPath + "/_/portals" }
 					hx-trigger="load, input changed delay:200ms, search"
 					hx-target="#search-results"
 					hx-indicator=".htmx-indicator,#search-results"
@@ -48,7 +48,7 @@ templ SearchBar() {
 	} else {
 		<div
 			class="hidden"
-			hx-get={ config.C.ContextPath + "/_/portals" }
+			hx-get={ config.C.Server.ContextPath + "/_/portals" }
 			hx-trigger="load"
 			hx-target="#search-results"
 			hx-indicator=".htmx-indicator,#search-results"
@@ -63,7 +63,7 @@ templ HomePage() {
 }
 
 templ ResultsContainer() {
-	if config.C.LayoutColumns > 0 {
+	if config.C.UI.LayoutColumns > 0 {
 		<div id="search-results" class="w-full md:mx-auto md:max-w-7xl mt-4"></div>
 	} else {
 		<div id="search-results" class="w-full mt-4"></div>

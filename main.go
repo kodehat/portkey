@@ -31,7 +31,7 @@ func main() {
 	config.Load()
 	logger := slog.New(config.C.GetLogHandler(os.Stdout))
 	slog.SetDefault(logger)
-	favicon.Init(config.C.FaviconCacheDir, logger)
+	favicon.Init(config.C.Favicon.CacheDir, logger)
 	metrics.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -49,7 +49,7 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 		static,
 	)
 	httpServer := &http.Server{
-		Addr:    net.JoinHostPort(config.Host, config.Port),
+		Addr:    net.JoinHostPort(config.Server.Host, config.Server.Port),
 		Handler: srv,
 	}
 	go func() {
@@ -59,10 +59,10 @@ func run(ctx context.Context, config config.Config, stdin io.Reader, stdout, std
 		}
 	}()
 	var metricHttpServer *http.Server
-	if config.EnableMetrics {
+	if config.Metrics.Enabled {
 		metricsSrv := server.NewMetricsServer(logger)
 		metricHttpServer = &http.Server{
-			Addr:    net.JoinHostPort(config.MetricsHost, config.MetricsPort),
+			Addr:    net.JoinHostPort(config.Metrics.Host, config.Metrics.Port),
 			Handler: metricsSrv,
 		}
 		go func() {

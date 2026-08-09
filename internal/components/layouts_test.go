@@ -13,9 +13,16 @@ import (
 
 func TestBase_Render(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+		}}
 	details := build.BuildDetails{
 		Version:   "1.0.0",
 		BuildTime: "2024-01-01",
@@ -46,11 +53,20 @@ func TestBase_Render(t *testing.T) {
 
 func TestHomeLayout(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ShowTopIcon: true,
-		ContextPath: "",
-		Footer:      "test footer",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			ShowTopIcon: true,
+
+			Footer: "test footer",
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
@@ -72,11 +88,20 @@ func TestHomeLayout(t *testing.T) {
 
 func TestContentLayout(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ContextPath: "",
-		Footer:      "test footer",
-		Portals:     []models.Portal{},
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			Footer: "test footer",
+		},
+
+		Portals: []models.Portal{}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	ContentLayout("About", cfg, details, ContentPage("about content")).Render(context.Background(), rec)
@@ -95,10 +120,18 @@ func TestContentLayout(t *testing.T) {
 
 func TestBase_WithHeaderAddition(t *testing.T) {
 	cfg := config.Config{
-		Title:          "portkey",
-		ContextPath:    "",
-		HeaderAddition: `<meta name="custom" content="test"/>`,
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			HeaderAddition: `<meta name="custom" content="test"/>`,
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	build.LoadBuildDetails("test")
 	rec := httptest.NewRecorder()
@@ -112,10 +145,18 @@ func TestBase_WithHeaderAddition(t *testing.T) {
 
 func TestBase_DevMode(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ContextPath: "",
-		DevMode:     true,
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+
+			DevMode: true,
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	Base("Test", cfg, details).Render(context.Background(), rec)
@@ -128,9 +169,16 @@ func TestBase_DevMode(t *testing.T) {
 
 func TestBase_WithCommitHash(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+		}}
 	details := build.BuildDetails{CssHash: "test", CommitHash: "abc123def"}
 	build.LoadBuildDetails("test")
 	build.CommitHash = "abc123def"
@@ -154,13 +202,22 @@ func TestBase_WithCommitHash(t *testing.T) {
 
 func TestContentLayout_WithPortals(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ContextPath: "",
-		Footer:      "test footer",
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			Footer: "test footer",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com"},
-		},
-	}
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	ContentLayout("About", cfg, details, ContentPage("content")).Render(context.Background(), rec)
@@ -171,28 +228,42 @@ func TestContentLayout_WithPortals(t *testing.T) {
 	}
 }
 
-func TestHomeLayout_HideTitle(t *testing.T) {
+func TestHomeLayout_EmptyTitle(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		HideTitle:   true,
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "",
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
 
 	body := rec.Body.String()
-	if !strings.Contains(body, "hidden") {
-		t.Fatal("expected hidden class when HideTitle is true")
+	if strings.Contains(body, ">portkey<") {
+		t.Fatal("did not expect title text when Title is empty")
 	}
 }
 
 func TestHomeLayout_NoTopIcon(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		ShowTopIcon: false,
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			ShowTopIcon: false,
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	HomeLayout("Home", cfg, details, SearchBar(), ResultsContainer()).Render(context.Background(), rec)
@@ -203,31 +274,46 @@ func TestHomeLayout_NoTopIcon(t *testing.T) {
 	}
 }
 
-func TestContentLayout_HideTitle(t *testing.T) {
+func TestContentLayout_EmptyTitle(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		HideTitle:   true,
-		ContextPath: "",
-		Footer:      "footer",
-		Portals:     []models.Portal{},
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "",
+
+			Footer: "footer",
+		},
+
+		Portals: []models.Portal{}}
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()
 	ContentLayout("About", cfg, details, ContentPage("content")).Render(context.Background(), rec)
 
 	body := rec.Body.String()
-	if !strings.Contains(body, "hidden") {
-		t.Fatal("expected hidden class when HideTitle is true")
+	if strings.Contains(body, ">portkey<") {
+		t.Fatal("did not expect title text when Title is empty")
 	}
 }
 
-func TestBase_HideTitleOnly(t *testing.T) {
+func TestBase_EmptyTitleWithIcon(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		HideTitle:   true,
-		ShowTopIcon: true,
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "",
+
+			ShowTopIcon: true,
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	build.LoadBuildDetails("test")
 	rec := httptest.NewRecorder()
@@ -238,39 +324,53 @@ func TestBase_HideTitleOnly(t *testing.T) {
 		t.Fatal("expected logo image when ShowTopIcon is true")
 	}
 	if strings.Contains(body, ">portkey<") {
-		t.Fatal("did not expect title text when HideTitle is true")
+		t.Fatal("did not expect title text when Title is empty")
 	}
 }
 
-func TestBase_NoTopIconNoHideTitle(t *testing.T) {
+func TestBase_NoTopIconWithTitle(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		HideTitle:   false,
-		ShowTopIcon: false,
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			ShowTopIcon: false,
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	build.LoadBuildDetails("test")
 	rec := httptest.NewRecorder()
 	Base("Page", cfg, details).Render(context.Background(), rec)
 
 	body := rec.Body.String()
-	// When ShowTopIcon=false but HideTitle=false, should render title-only link
+	// When ShowTopIcon=false and a Title is set, render a title-only link
 	if !strings.Contains(body, ">portkey<") {
-		t.Fatal("expected title text when HideTitle is false")
+		t.Fatal("expected title text when a Title is set")
 	}
 	if strings.Contains(body, "android-chrome") {
 		t.Fatal("did not expect logo when ShowTopIcon is false")
 	}
 }
 
-func TestBase_BothHidden(t *testing.T) {
+func TestBase_EmptyTitleNoIcon(t *testing.T) {
 	cfg := config.Config{
-		Title:       "portkey",
-		HideTitle:   true,
-		ShowTopIcon: false,
-		ContextPath: "",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "",
+
+			ShowTopIcon: false,
+		}}
 	details := build.BuildDetails{CssHash: "test"}
 	build.LoadBuildDetails("test")
 	rec := httptest.NewRecorder()
@@ -278,20 +378,30 @@ func TestBase_BothHidden(t *testing.T) {
 
 	body := rec.Body.String()
 	if strings.Contains(body, ">portkey<") || strings.Contains(body, "android-chrome") {
-		t.Fatal("expected neither title nor logo when both hidden")
+		t.Fatal("expected neither title nor logo when both are empty/disabled")
 	}
 }
 
 func TestHomeLayout_WithColumns(t *testing.T) {
 	cfg := config.Config{
-		Title:         "portkey",
-		LayoutColumns: 2,
-		ShowTopIcon:   true,
-		ContextPath:   "",
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+
+			LayoutColumns: 2,
+
+			ShowTopIcon: true,
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com"},
-		},
-	}
+		}}
 	config.C = cfg
 	details := build.BuildDetails{CssHash: "test"}
 	rec := httptest.NewRecorder()

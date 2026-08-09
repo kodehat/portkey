@@ -26,7 +26,7 @@ func durationMiddleware(next http.Handler) http.Handler {
 		start := time.Now()
 		next.ServeHTTP(w, r)
 		// Exclude static files and dev reload to reduce cardinality.
-		cp := config.C.ContextPath
+		cp := config.C.Server.ContextPath
 		if !strings.HasPrefix(r.URL.Path, cp+"/static/") && !strings.HasPrefix(r.URL.Path, cp+"/reload") {
 			metrics.M.HTTPRequestDuration.WithLabelValues(r.URL.Path).Observe(time.Since(start).Seconds())
 		}

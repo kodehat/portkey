@@ -5,6 +5,7 @@ go 1.26.5
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/adrg/strutil v0.3.1
+	github.com/go-viper/mapstructure/v2 v2.5.0
 	github.com/kodehat/favifetch v0.4.1
 	github.com/kodehat/livereload v0.1.1
 	github.com/prometheus/client_golang v1.24.1
@@ -28,7 +29,6 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
-	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gohugoio/hashstructure v0.6.0 // indirect
 	github.com/gohugoio/hugo v0.163.3 // indirect

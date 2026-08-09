@@ -11,7 +11,7 @@ import (
 
 func homeHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != config.C.ContextPath+"/" {
+		if r.URL.Path != config.C.Server.ContextPath+"/" {
 			templ.Handler(components.ContentLayout("Page not found", config.C, build.B, components.NotFound()), templ.WithStatus(http.StatusNotFound)).ServeHTTP(w, r)
 			return
 		}

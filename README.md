@@ -1,7 +1,7 @@
 > [!IMPORTANT]
-> This branch reflects **version 4.0.0**, which is in active development with a complete redesign of the UI.
-> The live demo at [demo.portkey.page](https://demo.portkey.page) shows this in-development version, **not** the latest stable release.
-> The screenshots later in this document still show the previous stable version and have not yet been updated to reflect the 4.0.0 redesign.
+> **Version 4.0.0** ships a complete redesign of the UI.
+> The live demo at [demo.portkey.page](https://demo.portkey.page) reflects the latest version.
+> The screenshots later in this document still show the previous version and have not yet been updated to reflect the 4.0.0 redesign.
 
 <p align="center"><img src="docs/images/logo.png" alt="portkey logo"></p>
 
@@ -76,6 +76,8 @@
 - 🔎 Includes a search box with configurable keyword support and fuzzy matching.
 - 📂 Portals can be organised into named groups/sections on the home page.
 - 📐 Optional multi-column grid layout for portals and groups (configurable column count, mobile-responsive).
+- 🌎 Automatically fetches and caches favicons for external portals (direct or proxied).
+- 🎨 Portal icons support emojis, image files, or URLs.
 - 📄 Can be configured easily by modifying only one file.
 - 🗒️ Also supports adding smaller custom pages.
 - 🌓 Dark and light mode available.
@@ -122,69 +124,108 @@ Download the `portkey` file for your OS. Probably to a location that is in your 
 
 `portkey` is configured with a single configuration file called `config.yml`. You can pass its location using the `--config-path` argument.
 
-You can also overwrite configuration values from file by using environment variables in uppercase and prefixed with `PORTKEY_`. For instance, the configuration key `host` can be passed as environment variable `PORTKEY_HOST`.
+You can also overwrite configuration values from file by using environment variables in uppercase and prefixed with `PORTKEY_`. Nested keys use underscores: the configuration key `server.host` can be passed as environment variable `PORTKEY_SERVER_HOST`, `favicon.mode` as `PORTKEY_FAVICON_MODE`.
 
 The `config.yml` contains the following configuration options:
 
 ### Server
 
 ```yaml
-# Can be changed to reduce or increase logs. Values could be "ERROR", "WARN", "INFO" (default) or "DEBUG".
-logLevel: INFO
-# If enabled logs are in JSON format.
-logJson: false
-# Set the host where the application should bind to.
-host: localhost
-# Set the port where the application should bind to.
-port: 3000
-# Set the context path (aka base-url) portkey is hosted under. Must not be specified unless you're using a reverse proxy and are hosting portkey under a directory. If that's the case then you can set this value to e.g. /portkey or whatever the directory is called. Note that the forward slash (/) in the beginning is required!
-contextPath: ""
-# Enables the HTTP server that serves metrics that can be scraped by e.g. Prometheus.
-enableMetrics: false
-# Set the host where the metrics server should bind to.
-metricsHost: localhost
-# Set the port where the metrics server should bind to.
-metricsPort: 3030
+server:
+  # Can be changed to reduce or increase logs. Values could be "ERROR", "WARN", "INFO" or "DEBUG". Default: "INFO".
+  logLevel: INFO
+  # If enabled logs are in JSON format. Default: false.
+  logJson: false
+  # Set the host where the application should bind to. Default: "localhost".
+  host: localhost
+  # Set the port where the application should bind to. Default: "3000".
+  port: 3000
+  # Set the context path (aka base-url) portkey is hosted under. Must not be specified unless you're using a reverse proxy and are hosting portkey under a directory. If that's the case then you can set this value to e.g. /portkey or whatever the directory is called. Note that the forward slash (/) in the beginning is required! Default: "" (no context path).
+  contextPath: ""
+  # Enables development-mode additions (browser-reload WebSocket endpoint at /reload and dev-mode markup). Default: false.
+  devMode: false
 ```
 
-### Styling
+### Metrics
 
 ```yaml
-# Title of the application shown in the browser tab and on the front page.
-title: "portkey"
-# Allows to hide the title.
-hideTitle: false
-# Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications.
-headerAddition: |-
-  <script async src="https://analytics.example.com"></script>
-# Footer (HTML support) that is shown on every page.
-# Remember that Tailwind CSS classes used here do only work if already used somewhere else in the application because the bundler couldn't look here!
-footer: |-
-  <p>This is a footer!</p>
-# Defines whether portkey's application icon should be shown at the top left of the front page.
-showTopIcon: true
-# If true keywords of portals are shown as tooltip on hover.
-showKeywordsAsTooltips: false
-# If true all links are sorted alphabetically when shown on the front page. Otherwise they are shown in the order they are defined.
-sortAlphabetically: false
-# If true search query is also compared to portals and keywords using Levenshtein string metric.
-searchWithStringSimilarity: false
-# Minimum required similarity for results when 'searchWithStringSimilarity' is 'true'. Must be between '0.0' (0%) and '1.0' (100%).
-minimumStringSimilarity: 0.5
-# If true, search bar is hidden. Can be useful with a low amount of portals making the search unnecessary.
-hideSearchBar: false
-# Number of columns for the grid layout (0 = disabled/vertical).
-# On mobile (<768px) the layout always falls back to vertical stacking.
-# When groups exist, each group occupies one grid cell.
-# When no groups, portals are distributed across N columns.
-layoutColumns: 0
-# On-disk favicon cache directory. Mountable as a Docker volume for persistence across restarts.
-faviconCacheDir: ./favicon-cache
-# Set to true to bypass local favicon caching and always discover + download fresh.
-faviconCacheDisabled: false
-# Directory for custom icon files (SVG, PNG). Files are served at /_/icons/<filename>.
-# Mountable as a Docker volume. Requires creating the directory and placing icon files.
-customIconsDir: ./icons
+metrics:
+  # Enables the HTTP server that serves metrics that can be scraped by e.g. Prometheus. Default: false.
+  enabled: false
+  # Set the host where the metrics server should bind to. Default: "localhost".
+  host: localhost
+  # Set the port where the metrics server should bind to. Default: "3030".
+  port: 3030
+```
+
+### UI
+
+```yaml
+ui:
+  # Title of the application shown in the browser tab and in the top bar.
+  # If empty, the top-bar title is hidden and the browser tab only shows the page name. Default: "portkey".
+  title: "portkey"
+  # Whether the search bar is shown. Can be useful with a low amount of portals making the search unnecessary. Default: true.
+  showSearchBar: true
+  # Defines whether portkey's application icon should be shown at the top left of the front page. Default: true.
+  showTopIcon: true
+  # If true keywords of portals are shown as tooltip on hover. Default: false.
+  showKeywordsAsTooltips: false
+  # If true all links are sorted alphabetically when shown on the front page. Otherwise they are shown in the order they are defined. Default: false.
+  sortAlphabetically: false
+  # Number of columns for the grid layout (0 = disabled/vertical).
+  # On mobile (<768px) the layout always falls back to vertical stacking.
+  # When groups exist, each group occupies one grid cell.
+  # When no groups, portals are distributed across N columns. Default: 0 (vertical).
+  layoutColumns: 0
+  # Allows adding additional scripts/stylesheets etc. to the HTML header. Can be useful for analytics or smaller style modifications. Default: "" (nothing added).
+  headerAddition: |-
+    <script async src="https://analytics.example.com"></script>
+  # Footer (HTML support) that is shown on every page.
+  # Remember that Tailwind CSS classes used here do only work if already used somewhere else in the application because the bundler couldn't look here! Default: "Works like a portal.".
+  footer: |-
+    <p>This is a footer!</p>
+```
+
+### Search
+
+```yaml
+search:
+  # If true search query is also compared to portals and keywords using Levenshtein string metric. Default: false.
+  stringSimilarity: false
+  # Minimum required similarity for results when 'stringSimilarity' is 'true'. Must be between '0.0' (0%) and '1.0' (100%). Default: 0.75.
+  minimumSimilarity: 0.5
+```
+
+### Favicons
+
+```yaml
+favicon:
+  # How favicons are loaded. "direct": portkey discovers icons itself via the
+  # favifetch library (parses the target site's HTML <link> tags, web app manifests and
+  # common fallback paths, with the Vemetric favicon API as last-resort fallback).
+  # "proxied": every request is relayed to a Vemetric-compatible favicon service
+  # (serviceUrl), which performs all discovery; the result is cached like a
+  # direct fetch. Empty or unrecognized values fall back to "direct". Default: "direct".
+  mode: direct
+  # Favicon service host or full https URL (e.g. https://favicon.vemetric.com) used as
+  # last-resort fallback in "direct" mode and as relay target in "proxied" mode.
+  # Empty uses the built-in default (favicon.vemetric.com). A full URL is reduced to
+  # its host (both favifetch and proxied mode always use HTTPS). Default: "" (built-in default).
+  serviceUrl: ""
+  # On-disk favicon cache directory. Icons are stored by normalized hostname, TTL is
+  # 7 days; stale entries are refreshed in the background, failed fetches are backed
+  # off for 1 hour. Mountable as a Docker volume for persistence across restarts. Default: "./favicon-cache".
+  cacheDir: ./favicon-cache
+  # If false, the on-disk cache is bypassed and every icon is fetched fresh. Default: true.
+  cacheEnabled: true
+  # Directory for custom icon files (SVG, PNG). Files are served at /_/icons/<filename>.
+  # The path is resolved on the machine the process runs on. In Docker it must be a path
+  # valid INSIDE the container: use the container-side destination of the volume mount,
+  # e.g. mount with `-v $(PWD)/icons:/opt/icons` and set `/opt/icons` here. Relative paths
+  # resolve against the working directory (/opt in the official image). Requires creating
+  # the directory and placing icon files. Default: "" (custom icons disabled).
+  customIconsDir: ./icons
 ```
 
 ### Portals (Links)
@@ -221,12 +262,11 @@ portals:
 ```yaml
 # Defines a list of custom pages that are made available at the defined paths.
 # Important: These are not automatically added to the list of portals and have to be added manually!
-# This may be changed in the future.
 pages:
   # Heading for the custom page. Shown in browser tab and as heading on the page.
 - heading: Custom
-  # If true, shows the (optionally configured) subtitle also on this page.
-  showSubtitle: true
+  # Optional subtitle for the page (accepted but not displayed by the 4.0.0 layout).
+  subtitle: An optional subtitle
   # Path where the custom page will be available.
   path: /custom
   # Content of the custom page and it supports using HTML.
@@ -238,7 +278,7 @@ pages:
 
 ## Metrics
 
-Metrics can be enabled with the `enableMetrics` configuration key and are served on a dedicated HTTP server. By default they are served on `http://localhost:3030/metrics`. Use this address to configure your tool of choice (e.g. [Prometheus](https://prometheus.io/)) to scrape the exported metrics.
+Metrics can be enabled with the `metrics.enabled` configuration key and are served on a dedicated HTTP server. By default they are served on `http://localhost:3030/metrics`. Use this address to configure your tool of choice (e.g. [Prometheus](https://prometheus.io/)) to scrape the exported metrics.
 
 Besides the default metrics provided by the [Prometheus instrumentation library for Go applications ](https://github.com/prometheus/client_golang), the following additional metrics are provided:
 
@@ -328,11 +368,19 @@ docker run --rm -it \
   -v $(PWD)/config.yml:/opt/config.yml \
   -v $(PWD)/favicon-cache:/opt/favicon-cache \
   -v $(PWD)/icons:/opt/icons \
-  -e PORTKEY_FAVICONCACHEDIR=/opt/favicon-cache \
-  -e PORTKEY_CUSTOMICONSDIR=/opt/icons \
+  -e PORTKEY_FAVICON_CACHE_DIR=/opt/favicon-cache \
+  -e PORTKEY_FAVICON_CUSTOMICONSDIR=/opt/icons \
   -p 3000:3000 \
   codehat/portkey:latest
 ```
+
+> **Paths in Docker:** the container runs with the working directory `/opt`, so relative
+> paths in `config.yml` (e.g. `favicon.cacheDir: ./favicon-cache`) resolve to `/opt/...`.
+> For volume-mounted directories such as `favicon.customIconsDir`, always configure the
+> **container-side destination** of the mount, not a host path: `-v $(PWD)/icons:/opt/icons`
+> requires `favicon.customIconsDir: /opt/icons` (or `PORTKEY_FAVICON_CUSTOMICONSDIR=/opt/icons`). A volume
+> mount does not rewrite config paths — the path in the config must equal the mount target
+> inside the container.
 
 ## Development
 
@@ -364,6 +412,8 @@ Live reloading is possible by installing [air](https://github.com/cosmtrek/air) 
 ```sh
 go tool air
 ```
+
+Set `server.devMode: true` in `config.yml` (or the environment variable `PORTKEY_SERVER_DEVMODE=true`) to enable development-mode additions: a browser-reload WebSocket endpoint at `/reload` and dev-mode markup in the page layout. Dev mode is disabled by default.
 
 ## License
 

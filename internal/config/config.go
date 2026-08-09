@@ -10,37 +10,74 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/kodehat/portkey/internal/models"
 	"github.com/spf13/viper"
 )
 
+// Favicon loading modes. In "direct" mode portkey discovers favicons itself
+// via the favifetch library (parsing the target site's HTML, manifest, and
+// common fallback paths). In "proxied" mode portkey relays each request to a
+// Vemetric-compatible favicon service (configured via faviconServiceURL),
+// which performs all discovery; the relayed result is cached like a direct
+// fetch.
+const (
+	FaviconModeDirect  = "direct"
+	FaviconModeProxied = "proxied"
+)
+
 type Config struct {
-	DevMode                    bool
-	LogLevel                   string
-	LogJson                    bool
-	Host                       string
-	Port                       string
-	ContextPath                string
-	EnableMetrics              bool
-	MetricsHost                string
-	MetricsPort                string
-	Title                      string
-	HideTitle                  bool
-	Subtitle                   string
-	Footer                     string
-	ShowTopIcon                bool
-	ShowKeywordsAsTooltips     bool
-	SortAlphabetically         bool
-	SearchWithStringSimilarity bool
-	MinimumStringSimilarity    float64
-	Portals                    []models.Portal
-	Pages                      []models.Page
-	HeaderAddition             string
-	HideSearchBar              bool
-	LayoutColumns              int
-	FaviconCacheDir           string
-	FaviconCacheDisabled      bool
-	CustomIconsDir            string
+	Server  ServerConfig
+	Metrics MetricsConfig
+	UI      UIConfig
+	Search  SearchConfig
+	Favicon FaviconConfig
+	Portals []models.Portal
+	Pages   []models.Page
+}
+
+// ServerConfig holds the HTTP server and logging settings.
+type ServerConfig struct {
+	LogLevel    string
+	LogJson     bool
+	Host        string
+	Port        string
+	ContextPath string
+	DevMode     bool
+}
+
+// MetricsConfig configures the optional Prometheus metrics server.
+type MetricsConfig struct {
+	Enabled bool
+	Host    string
+	Port    string
+}
+
+// UIConfig holds front-page appearance settings.
+type UIConfig struct {
+	Title                  string
+	ShowSearchBar          bool
+	ShowTopIcon            bool
+	ShowKeywordsAsTooltips bool
+	SortAlphabetically     bool
+	LayoutColumns          int
+	HeaderAddition         string
+	Footer                 string
+}
+
+// SearchConfig configures the portal search behavior.
+type SearchConfig struct {
+	StringSimilarity  bool
+	MinimumSimilarity float64
+}
+
+// FaviconConfig configures favicon loading, caching, and custom icons.
+type FaviconConfig struct {
+	Mode           string
+	ServiceURL     string
+	CacheDir       string
+	CacheEnabled   bool
+	CustomIconsDir string
 }
 
 type Flags struct {
@@ -81,46 +118,78 @@ func loadConfig(configPath string) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
-	viper.SetDefault("devMode", false)
-	viper.SetDefault("logLevel", "INFO")
-	viper.SetDefault("host", "localhost")
-	viper.SetDefault("port", "3000")
-	viper.SetDefault("contextPath", "")
-	viper.SetDefault("metricsHost", "localhost")
-	viper.SetDefault("metricsPort", "3030")
-	viper.SetDefault("title", "Your Portal")
-	viper.SetDefault("footerText", "Works like a portal.")
-	viper.SetDefault("minimumStringSimilarity", 0.75)
-	viper.SetDefault("headerAddition", "")
-	viper.SetDefault("faviconCacheDir", "./favicon-cache")
+	viper.SetDefault("server.logLevel", "INFO")
+	viper.SetDefault("server.logJson", false)
+	viper.SetDefault("server.host", "localhost")
+	viper.SetDefault("server.port", "3000")
+	viper.SetDefault("server.contextPath", "")
+	viper.SetDefault("server.devMode", false)
+	viper.SetDefault("metrics.enabled", false)
+	viper.SetDefault("metrics.host", "localhost")
+	viper.SetDefault("metrics.port", "3030")
+	viper.SetDefault("ui.title", "portkey")
+	viper.SetDefault("ui.showSearchBar", true)
+	viper.SetDefault("ui.showTopIcon", true)
+	viper.SetDefault("ui.showKeywordsAsTooltips", false)
+	viper.SetDefault("ui.sortAlphabetically", false)
+	viper.SetDefault("ui.layoutColumns", 0)
+	viper.SetDefault("ui.headerAddition", "")
+	viper.SetDefault("ui.footer", "Works like a portal.")
+	viper.SetDefault("search.stringSimilarity", false)
+	viper.SetDefault("search.minimumSimilarity", 0.75)
+	viper.SetDefault("favicon.mode", FaviconModeDirect)
+	viper.SetDefault("favicon.serviceUrl", "")
+	viper.SetDefault("favicon.cacheDir", "./favicon-cache")
+	viper.SetDefault("favicon.cacheEnabled", true)
+	viper.SetDefault("favicon.customIconsDir", "")
 	viper.SetEnvPrefix("portkey")
+	// Nested config keys (e.g. "server.port") map to PORTKEY_SERVER_PORT instead
+	// of PORTKEY_SERVER.PORT when looking up environment variables.
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
-	viper.Unmarshal(&C)
+	// Unknown keys (e.g. old flat names like "faviconMode" or "hideTitle")
+	// fail loudly so stale configs from previous major versions are caught.
+	err = viper.Unmarshal(&C, viper.DecoderConfigOption(func(dc *mapstructure.DecoderConfig) {
+		dc.ErrorUnused = true
+	}))
+	if err != nil {
+		panic(fmt.Errorf("fatal error decoding config: %w", err))
+	}
 
 	postConfigHook()
 }
 
-// portConfigHook is used to make dynamic changes to already loaded config values.
+// postConfigHook is used to make dynamic changes to already loaded config values.
 func postConfigHook() {
-	if C.SortAlphabetically {
+	// Normalize the favicon loading mode. Empty or unrecognized values fall
+	// back to "direct" so a typo never breaks startup; the favicon path is
+	// non-critical and "direct" is always a safe default.
+	switch strings.ToLower(strings.TrimSpace(C.Favicon.Mode)) {
+	case FaviconModeProxied:
+		C.Favicon.Mode = FaviconModeProxied
+	default:
+		C.Favicon.Mode = FaviconModeDirect
+	}
+
+	if C.UI.SortAlphabetically {
 		sort.Slice(C.Portals, func(i, j int) bool {
 			return strings.ToLower(C.Portals[i].Title) < strings.ToLower(C.Portals[j].Title)
 		})
 	}
 
-	if C.ContextPath != "" {
+	if C.Server.ContextPath != "" {
 		for i := range C.Portals {
 			if !C.Portals[i].IsExternal() {
-				C.Portals[i].Link = C.ContextPath + C.Portals[i].Link
+				C.Portals[i].Link = C.Server.ContextPath + C.Portals[i].Link
 			}
 		}
 
 		for i := range C.Pages {
-			C.Pages[i].Path = C.ContextPath + C.Pages[i].Path
+			C.Pages[i].Path = C.Server.ContextPath + C.Pages[i].Path
 		}
 	}
 
@@ -134,7 +203,7 @@ func postConfigHook() {
 
 func (c Config) GetLogLevel() (slog.Level, error) {
 	var level slog.Level
-	err := level.UnmarshalText([]byte(c.LogLevel))
+	err := level.UnmarshalText([]byte(c.Server.LogLevel))
 	return level, err
 }
 
@@ -144,7 +213,7 @@ func (c Config) GetLogHandler(w io.Writer) slog.Handler {
 		panic(fmt.Errorf("unable to unmarshal log level: %w", err))
 	}
 	logHandlerOptions := &slog.HandlerOptions{Level: logLevel}
-	if c.LogJson {
+	if c.Server.LogJson {
 		return slog.NewJSONHandler(w, logHandlerOptions)
 	}
 	return slog.NewTextHandler(w, logHandlerOptions)

@@ -34,15 +34,28 @@ func initGlobals(cfg config.Config) {
 
 func TestMainLikeLifecycle_NoSignal(t *testing.T) {
 	cfg := config.Config{
-		LogLevel:      "INFO",
-		Host:          "127.0.0.1",
-		Port:          "0",
-		MetricsHost:   "127.0.0.1",
-		MetricsPort:   "0",
-		EnableMetrics: true,
-		Portals:       []models.Portal{},
-		Pages:         []models.Page{},
-	}
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+		},
+
+		Metrics: config.MetricsConfig{
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+
+			Enabled: true,
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}}
 	initGlobals(cfg)
 	favicon.Init(t.TempDir(), nil)
 
@@ -68,12 +81,19 @@ func TestMainLikeLifecycle_NoSignal(t *testing.T) {
 
 func TestHealthz(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -94,13 +114,24 @@ func TestHealthz(t *testing.T) {
 
 func TestHomePage(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Title:    "test-portkey",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "test-portkey",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -117,12 +148,19 @@ func TestHomePage(t *testing.T) {
 
 func TestVersionPage(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -139,12 +177,19 @@ func TestVersionPage(t *testing.T) {
 
 func TestNotFound(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -161,16 +206,23 @@ func TestNotFound(t *testing.T) {
 
 func TestAPIEndpoints(t *testing.T) { // NOSONAR
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
+
 		Pages: []models.Page{
 			{Heading: "About", Path: "/about", Content: "<p>hello</p>"},
-		},
-	})
+		}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -220,14 +272,21 @@ func TestAPIEndpoints(t *testing.T) { // NOSONAR
 
 func TestPortalRedirect(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
-		Pages: []models.Page{},
-	})
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -253,14 +312,21 @@ func TestPortalRedirect(t *testing.T) {
 
 func TestPageServing(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
 		Pages: []models.Page{
 			{Heading: "About", Path: "/about", Content: "<p>hello</p>"},
-		},
-	})
+		}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -281,14 +347,21 @@ func TestPageServing(t *testing.T) {
 
 func TestSearchEndpoint(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com", Icon: "💻", Keywords: []string{"code"}},
 		},
-		Pages: []models.Page{},
-	})
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -329,12 +402,19 @@ func TestSearchEndpoint(t *testing.T) {
 
 func TestStaticServing(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -367,16 +447,27 @@ func TestGetCssResourceHash(t *testing.T) {
 
 func TestHomePage_WithPortals(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Title:    "test",
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "test",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com"},
 			{Title: "GitLab", Link: "https://gitlab.com"},
 		},
-		Pages: []models.Page{},
-	})
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -403,16 +494,27 @@ func TestHomePage_WithPortals(t *testing.T) {
 
 func TestHomePage_WithGroupedPortals(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Title:    "test",
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "test",
+		},
+
 		Portals: []models.Portal{
 			{Title: "GitHub", Link: "https://github.com", Group: "Dev"},
 			{Title: "GitLab", Link: "https://gitlab.com", Group: "Dev"},
 		},
-		Pages: []models.Page{},
-	})
+
+		Pages: []models.Page{}})
 	config.R.WithGroups = true
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
@@ -434,12 +536,19 @@ func TestHomePage_WithGroupedPortals(t *testing.T) {
 
 func TestMetricsServer(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewMetricsServer(testLogger())
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -456,12 +565,19 @@ func TestMetricsServer(t *testing.T) {
 
 func TestRun_CancelImmediately(t *testing.T) {
 	cfg := config.Config{
-		LogLevel: "INFO",
-		Host:     "127.0.0.1",
-		Port:     "0",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	}
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}}
 	initGlobals(cfg)
 	favicon.Init(t.TempDir(), nil)
 
@@ -475,15 +591,28 @@ func TestRun_CancelImmediately(t *testing.T) {
 
 func TestRun_WithMetrics(t *testing.T) {
 	cfg := config.Config{
-		LogLevel:      "INFO",
-		Host:          "127.0.0.1",
-		Port:          "0",
-		MetricsHost:   "127.0.0.1",
-		MetricsPort:   "0",
-		EnableMetrics: true,
-		Portals:       []models.Portal{},
-		Pages:         []models.Page{},
-	}
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+		},
+
+		Metrics: config.MetricsConfig{
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+
+			Enabled: true,
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}}
 	initGlobals(cfg)
 	favicon.Init(t.TempDir(), nil)
 
@@ -497,15 +626,28 @@ func TestRun_WithMetrics(t *testing.T) {
 
 func TestRun_ServerShutdown(t *testing.T) {
 	cfg := config.Config{
-		LogLevel:      "INFO",
-		Host:          "127.0.0.1",
-		Port:          "0",
-		MetricsHost:   "127.0.0.1",
-		MetricsPort:   "0",
-		EnableMetrics: true,
-		Portals:       []models.Portal{},
-		Pages:         []models.Page{},
-	}
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+		},
+
+		Metrics: config.MetricsConfig{
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+
+			Enabled: true,
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}}
 	initGlobals(cfg)
 	favicon.Init(t.TempDir(), nil)
 
@@ -533,12 +675,19 @@ func TestRun_ServerShutdown(t *testing.T) {
 
 func TestRun_ServerShutdownNoMetrics(t *testing.T) {
 	cfg := config.Config{
-		LogLevel: "INFO",
-		Host:     "127.0.0.1",
-		Port:     "0",
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	}
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "127.0.0.1",
+
+			Port: "0",
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}}
 	initGlobals(cfg)
 	favicon.Init(t.TempDir(), nil)
 
@@ -570,13 +719,24 @@ func TestServer_CustomIconsDir(t *testing.T) {
 	}
 
 	initGlobals(config.Config{
-		LogLevel:       "INFO",
-		Host:           "localhost",
-		Port:           "3000",
-		CustomIconsDir: iconsDir,
-		Portals:        []models.Portal{},
-		Pages:          []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+		},
+
+		Favicon: config.FaviconConfig{
+
+			CustomIconsDir: iconsDir,
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	srv := server.NewServer(testLogger(), static)
 	svr := httptest.NewServer(srv)
 	defer svr.Close()
@@ -593,13 +753,21 @@ func TestServer_CustomIconsDir(t *testing.T) {
 
 func TestServer_DevMode(t *testing.T) {
 	initGlobals(config.Config{
-		LogLevel: "INFO",
-		Host:     "localhost",
-		Port:     "3000",
-		DevMode:  true,
-		Portals:  []models.Portal{},
-		Pages:    []models.Page{},
-	})
+
+		Server: config.ServerConfig{
+
+			LogLevel: "INFO",
+
+			Host: "localhost",
+
+			Port: "3000",
+
+			DevMode: true,
+		},
+
+		Portals: []models.Portal{},
+
+		Pages: []models.Page{}})
 	// Creating the server with DevMode=true registers the /reload handler
 	srv := server.NewServer(testLogger(), static)
 

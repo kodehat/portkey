@@ -31,7 +31,7 @@ func SearchBar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if !config.C.HideSearchBar {
+		if config.C.UI.ShowSearchBar {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col items-center w-full\"><p class=\"text-center text-xs text-slate-500 dark:text-slate-400 mb-2\">Serving ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -50,9 +50,9 @@ func SearchBar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.C.ContextPath + "/_/portals")
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.C.Server.ContextPath + "/_/portals")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 23, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 23, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -76,9 +76,9 @@ func SearchBar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.C.ContextPath + "/_/portals")
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.C.Server.ContextPath + "/_/portals")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 51, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pages.templ`, Line: 51, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
@@ -151,7 +151,7 @@ func ResultsContainer() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if config.C.LayoutColumns > 0 {
+		if config.C.UI.LayoutColumns > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"search-results\" class=\"w-full md:mx-auto md:max-w-7xl mt-4\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

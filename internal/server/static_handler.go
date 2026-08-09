@@ -9,5 +9,5 @@ import (
 )
 
 func staticHandler(static embed.FS) http.HandlerFunc {
-	return utils.StaticHandler(http.StripPrefix(config.C.ContextPath, http.FileServer(http.FS(static))))
+	return utils.StaticHandler(http.StripPrefix(config.C.Server.ContextPath, http.FileServer(http.FS(static))))
 }

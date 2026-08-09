@@ -22,6 +22,9 @@ import (
 func TestMain(m *testing.M) {
 	build.LoadBuildDetails("test")
 	metrics.Load()
+	// Mirror the production default (favicon.cacheEnabled: true): tests construct
+	// config.C directly, so the zero value would disable the cache.
+	config.C.Favicon.CacheEnabled = true
 	os.Exit(m.Run())
 }
 
@@ -533,9 +536,9 @@ func TestServeHTTP_CacheDisabled(t *testing.T) {
 	server, client := testServerWithFavicon(t)
 	defer server.Close()
 
-	orig := config.C.FaviconCacheDisabled
-	config.C.FaviconCacheDisabled = true
-	defer func() { config.C.FaviconCacheDisabled = orig }()
+	orig := config.C.Favicon.CacheEnabled
+	config.C.Favicon.CacheEnabled = false
+	defer func() { config.C.Favicon.CacheEnabled = orig }()
 
 	dir := t.TempDir()
 	c := New(dir, nil)

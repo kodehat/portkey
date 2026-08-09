@@ -47,7 +47,7 @@ func TestNewServer(t *testing.T) {
 
 func TestDurationMiddleware(t *testing.T) {
 	setupServer()
-	config.C.ContextPath = ""
+	config.C.Server.ContextPath = ""
 
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -65,7 +65,7 @@ func TestDurationMiddleware(t *testing.T) {
 
 func TestDurationMiddleware_StaticPathSkipped(t *testing.T) {
 	setupServer()
-	config.C.ContextPath = ""
+	config.C.Server.ContextPath = ""
 
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -84,8 +84,8 @@ func TestDurationMiddleware_StaticPathSkipped(t *testing.T) {
 func TestNewServer_WithCustomIconsDir(t *testing.T) {
 	setupServer()
 	favicon.Init(t.TempDir(), nil)
-	config.C.CustomIconsDir = t.TempDir()
-	defer func() { config.C.CustomIconsDir = "" }()
+	config.C.Favicon.CustomIconsDir = t.TempDir()
+	defer func() { config.C.Favicon.CustomIconsDir = "" }()
 
 	srv := NewServer(testLogger(), testStaticFS)
 	if srv == nil {
@@ -104,8 +104,8 @@ func TestNewServer_WithCustomIconsDir(t *testing.T) {
 func TestNewServer_WithDevMode(t *testing.T) {
 	setupServer()
 	favicon.Init(t.TempDir(), nil)
-	config.C.DevMode = true
-	defer func() { config.C.DevMode = false }()
+	config.C.Server.DevMode = true
+	defer func() { config.C.Server.DevMode = false }()
 
 	srv := NewServer(testLogger(), testStaticFS)
 	if srv == nil {

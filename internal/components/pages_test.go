@@ -10,7 +10,7 @@ import (
 )
 
 func TestHomePage_SearchBar(t *testing.T) {
-	config.C = config.Config{HideSearchBar: false, ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}, UI: config.UIConfig{ShowSearchBar: true}}
 	rec := httptest.NewRecorder()
 	HomePage().Render(context.Background(), rec)
 
@@ -24,7 +24,7 @@ func TestHomePage_SearchBar(t *testing.T) {
 }
 
 func TestHomePage_Hidden(t *testing.T) {
-	config.C = config.Config{HideSearchBar: true, ContextPath: ""}
+	config.C = config.Config{Server: config.ServerConfig{ContextPath: ""}, UI: config.UIConfig{ShowSearchBar: false}}
 	rec := httptest.NewRecorder()
 	HomePage().Render(context.Background(), rec)
 
@@ -73,11 +73,18 @@ func TestContentPage(t *testing.T) {
 	}
 }
 
-func TestHomePage_WithSubtitle(t *testing.T) {
+func TestHomePage(t *testing.T) {
 	config.C = config.Config{
-		Title:       "portkey",
-		Subtitle:    "Where do you want to go?",
-		ContextPath: "",
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+		},
 	}
 	rec := httptest.NewRecorder()
 	HomePage().Render(context.Background(), rec)
@@ -103,9 +110,16 @@ func TestLoadingBar_NoMargin(t *testing.T) {
 
 func TestHomePage_WithContextPath(t *testing.T) {
 	config.C = config.Config{
-		Title:       "portkey",
-		ContextPath: "/app",
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "/app",
+		},
+
+		UI: config.UIConfig{
+
+			Title: "portkey",
+		}}
 	rec := httptest.NewRecorder()
 	HomePage().Render(context.Background(), rec)
 
@@ -116,7 +130,7 @@ func TestHomePage_WithContextPath(t *testing.T) {
 }
 
 func TestResultsContainer_Columns(t *testing.T) {
-	config.C = config.Config{LayoutColumns: 3}
+	config.C = config.Config{UI: config.UIConfig{LayoutColumns: 3}}
 	rec := httptest.NewRecorder()
 	ResultsContainer().Render(context.Background(), rec)
 
@@ -127,7 +141,7 @@ func TestResultsContainer_Columns(t *testing.T) {
 }
 
 func TestResultsContainer_NoColumns(t *testing.T) {
-	config.C = config.Config{LayoutColumns: 0}
+	config.C = config.Config{UI: config.UIConfig{LayoutColumns: 0}}
 	rec := httptest.NewRecorder()
 	ResultsContainer().Render(context.Background(), rec)
 
@@ -142,10 +156,18 @@ func TestResultsContainer_NoColumns(t *testing.T) {
 
 func TestHomePage_WithColumns(t *testing.T) {
 	config.C = config.Config{
-		HideSearchBar: false,
-		ContextPath:   "",
-		LayoutColumns: 3,
-	}
+
+		Server: config.ServerConfig{
+
+			ContextPath: "",
+		},
+
+		UI: config.UIConfig{
+
+			ShowSearchBar: true,
+
+			LayoutColumns: 3,
+		}}
 	rec := httptest.NewRecorder()
 	HomePage().Render(context.Background(), rec)
 

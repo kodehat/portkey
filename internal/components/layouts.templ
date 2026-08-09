@@ -21,41 +21,47 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- Favicon stuff -->
-			<link rel="apple-touch-icon" sizes="180x180" href={ config.ContextPath + "/static/img/apple-touch-icon.png" }/>
-			<link rel="icon" type="image/png" sizes="32x32" href={ config.ContextPath + "/static/img/favicon-32x32.png" }/>
-			<link rel="icon" type="image/png" sizes="16x16" href={ config.ContextPath + "/static/img/favicon-16x16.png" }/>
-			<link rel="manifest" href={ config.ContextPath + "/static/img/site.webmanifest" }/>
-			<link rel="shortcut icon" href={ config.ContextPath + "/static/img/favicon.ico" }/>
+			<link rel="apple-touch-icon" sizes="180x180" href={ config.Server.ContextPath + "/static/img/apple-touch-icon.png" }/>
+			<link rel="icon" type="image/png" sizes="32x32" href={ config.Server.ContextPath + "/static/img/favicon-32x32.png" }/>
+			<link rel="icon" type="image/png" sizes="16x16" href={ config.Server.ContextPath + "/static/img/favicon-16x16.png" }/>
+			<link rel="manifest" href={ config.Server.ContextPath + "/static/img/site.webmanifest" }/>
+			<link rel="shortcut icon" href={ config.Server.ContextPath + "/static/img/favicon.ico" }/>
 			<!-- Theme stuff -->
 			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
 			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
 			<!-- Stylesheets -->
-			<link href={ config.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
+			<link href={ config.Server.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
-			<script defer src={ config.ContextPath + "/static/js/main.js" }></script>
-			if config.DevMode {
-				@DevModeSnippet(config.ContextPath)
+			<script defer src={ config.Server.ContextPath + "/static/js/main.js" }></script>
+			if config.Server.DevMode {
+				@DevModeSnippet(config.Server.ContextPath)
 			}
 			<!-- Set title -->
-			<title>{ pageTitle } - { config.Title }</title>
-			if config.HeaderAddition != "" {
+			<title>
+				if config.UI.Title != "" {
+					{ pageTitle } - { config.UI.Title }
+				} else {
+					{ pageTitle }
+				}
+			</title>
+			if config.UI.HeaderAddition != "" {
 				<!-- Header addition -->
-				@templ.Raw(config.HeaderAddition)
+				@templ.Raw(config.UI.HeaderAddition)
 			}
 		</head>
 		<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col">
 			<!-- Top bar -->
 			<div class="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 bg-slate-200/60 dark:bg-slate-950/40">
 				<div class="flex items-center gap-2.5">
-					if config.ShowTopIcon {
-						<a href={ templ.SafeURL(config.ContextPath + "/") } class="flex items-center gap-2.5 no-underline">
-							<img class="w-7 h-7 rounded-full" src={ config.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
-							if !config.HideTitle {
-								<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{ config.Title }</span>
+					if config.UI.ShowTopIcon {
+						<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="flex items-center gap-2.5 no-underline">
+							<img class="w-7 h-7 rounded-full" src={ config.Server.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
+							if config.UI.Title != "" {
+								<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{ config.UI.Title }</span>
 							}
 						</a>
-					} else if !config.HideTitle {
-						<a href={ templ.SafeURL(config.ContextPath + "/") } class="text-sm font-semibold text-slate-700 dark:text-slate-300 no-underline">{ config.Title }</a>
+					} else if config.UI.Title != "" {
+						<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="text-sm font-semibold text-slate-700 dark:text-slate-300 no-underline">{ config.UI.Title }</a>
 					}
 				</div>
 				<div class="flex items-center gap-2">
@@ -96,7 +102,7 @@ templ HomeLayout(pageTitle string, config config.Config, buildDetails build.Buil
 			<div class="flex-1 min-h-4"></div>
 		</nav>
 		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
-			@templ.Raw(config.Footer)
+			@templ.Raw(config.UI.Footer)
 		</footer>
 	}
 }
@@ -106,7 +112,7 @@ templ ContentLayout(pageTitle string, config config.Config, buildDetails build.B
 		<div class="flex-1 flex flex-col max-w-2xl mx-auto px-4 w-full">
 			<div class="flex flex-col mt-12 md:mt-24 pb-12">
 				<header class="mb-5">
-					<a href={ templ.SafeURL(config.ContextPath + "/") } class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" title="Back to home">
+					<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" title="Back to home">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							<path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"></path>
@@ -129,7 +135,7 @@ templ ContentLayout(pageTitle string, config config.Config, buildDetails build.B
 			</div>
 		</div>
 		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
-			@templ.Raw(config.Footer)
+			@templ.Raw(config.UI.Footer)
 		</footer>
 	}
 }

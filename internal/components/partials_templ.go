@@ -63,7 +63,7 @@ func PortalPartial(portals []models.Portal, columns int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, portal := range portals {
-				if config.C.ShowKeywordsAsTooltips {
+				if config.C.UI.ShowKeywordsAsTooltips {
 					templ_7745c5c3_Err = HomePortalWithToolTip(portal).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -85,7 +85,7 @@ func PortalPartial(portals []models.Portal, columns int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, portal := range portals {
-				if config.C.ShowKeywordsAsTooltips {
+				if config.C.UI.ShowKeywordsAsTooltips {
 					templ_7745c5c3_Err = HomePortalWithToolTip(portal).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -188,7 +188,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 						return templ_7745c5c3_Err
 					}
 					for _, portal := range group.Portals {
-						if config.C.ShowKeywordsAsTooltips {
+						if config.C.UI.ShowKeywordsAsTooltips {
 							templ_7745c5c3_Err = HomePortalWithToolTip(portal).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
@@ -246,7 +246,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 						return templ_7745c5c3_Err
 					}
 					for _, portal := range group.Portals {
-						if config.C.ShowKeywordsAsTooltips {
+						if config.C.UI.ShowKeywordsAsTooltips {
 							templ_7745c5c3_Err = HomePortalWithToolTip(portal).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err

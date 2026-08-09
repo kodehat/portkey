@@ -36,7 +36,7 @@ func faviconURL(rawURL string) string {
 	if domain == "" {
 		return ""
 	}
-	return config.C.ContextPath + "/_/favicon?domain=" + domain
+	return config.C.Server.ContextPath + "/_/favicon?domain=" + domain
 }
 
 // gridClasses holds Tailwind class strings for 1-12 column grid layouts.

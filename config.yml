@@ -22,7 +22,7 @@ search:
   stringSimilarity: true
   minimumSimilarity: 0.5
 favicon:
-  mode: direct
+  mode: proxied
   serviceUrl: https://favicon-api.portkey.page
   cacheDir: ./favicon-cache
   cacheEnabled: true

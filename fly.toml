@@ -36,7 +36,7 @@ primary_region = 'ams'
 
   [services.ports.http_options.response.headers]
     Strict-Transport-Security = 'max-age=31536000; includeSubDomains'
-    Content-Security-Policy = "default-src 'self' 'unsafe-eval' https://analytics.thisismy.cloud;"
+    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://analytics.thisismy.cloud; script-src 'self' https://analytics.thisismy.cloud 'unsafe-eval'; script-src-attr 'unsafe-hashes' 'sha256-WJVwka4Hdl1HaEQB/03Zftm7U/5iNmwShJUIvpe7Ues=';"
     X-Frame-Options = 'SAMEORIGIN'
     X-Content-Type-Options = 'nosniff'
     Referrer-Policy = 'strict-origin-when-cross-origin'

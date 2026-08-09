@@ -1,8 +1,3 @@
-> [!IMPORTANT]
-> **Version 4.0.0** ships a complete redesign of the UI.
-> The live demo at [demo.portkey.page](https://demo.portkey.page) reflects the latest version.
-> The screenshots later in this document still show the previous version and have not yet been updated to reflect the 4.0.0 redesign.
-
 <p align="center"><img src="docs/images/logo.png" alt="portkey logo"></p>
 
 <h1 align="center">portkey</h1>

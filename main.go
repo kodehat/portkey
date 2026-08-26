@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	authpkg "github.com/kodehat/portkey/internal/auth"
 	"github.com/kodehat/portkey/internal/build"
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/favicon"
@@ -32,6 +33,12 @@ func main() {
 	logger := slog.New(config.C.GetLogHandler(os.Stdout))
 	slog.SetDefault(logger)
 	favicon.Init(config.C.Favicon.CacheDir, config.C.Favicon.CacheEnabled, logger)
+	if config.C.Auth.Enabled {
+		if err := authpkg.Init(); err != nil {
+			fmt.Fprintf(os.Stderr, "auth init failed: %s\n", err)
+			os.Exit(1)
+		}
+	}
 	metrics.Load()
 	if err := run(ctx, config.C, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)

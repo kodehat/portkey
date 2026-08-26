@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kodehat/portkey/internal/auth"
 	"github.com/kodehat/portkey/internal/config"
 	"github.com/kodehat/portkey/internal/metrics"
 )
@@ -17,7 +18,11 @@ func NewServer(
 ) http.Handler {
 	mux := http.NewServeMux()
 	addRoutes(mux, logger, static)
-	return durationMiddleware(mux)
+	var h http.Handler = durationMiddleware(mux)
+	if config.C.Auth.Enabled {
+		h = auth.Require(h)
+	}
+	return h
 }
 
 // durationMiddleware records HTTP request duration as a Prometheus histogram.

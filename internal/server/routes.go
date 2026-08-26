@@ -10,11 +10,23 @@ import (
 	"github.com/kodehat/portkey/internal/config"
 )
 
+
 const (
 	devModeReloadPath = "/reload"
 )
 
 func addRoutes(mux *http.ServeMux, logger *slog.Logger, static embed.FS) {
+	// Auth (passkey)
+	if config.C.Auth.Enabled {
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth", authPageHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/begin", authBeginHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/finish", authFinishHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/register", authRegisterPageHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/register/begin", authRegisterBeginHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/register/finish", authRegisterFinishHandler())
+		mux.HandleFunc(config.C.Server.ContextPath+"/auth/logout", authLogoutHandler())
+	}
+
 	// Dev Mode browser reload
 	if config.C.Server.DevMode {
 		logger.Info("registering dev mode", "devMode", true)

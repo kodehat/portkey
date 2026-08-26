@@ -32,8 +32,17 @@ type Config struct {
 	UI      UIConfig
 	Search  SearchConfig
 	Favicon FaviconConfig
+	Auth    AuthConfig
 	Portals []models.Portal
 	Pages   []models.Page
+}
+
+// AuthConfig configures WebAuthn passkey authentication.
+type AuthConfig struct {
+	Enabled         bool
+	RPId            string
+	RPOrigin        string
+	CredentialsFile string
 }
 
 // ServerConfig holds the HTTP server and logging settings.
@@ -142,6 +151,10 @@ func loadConfig(configPath string) {
 	viper.SetDefault("favicon.cacheDir", "")
 	viper.SetDefault("favicon.cacheEnabled", false)
 	viper.SetDefault("favicon.customIconsDir", "")
+	viper.SetDefault("auth.enabled", false)
+	viper.SetDefault("auth.rpId", "")
+	viper.SetDefault("auth.rpOrigin", "")
+	viper.SetDefault("auth.credentialsFile", "/opt/portkey-credentials.json")
 	viper.SetEnvPrefix("portkey")
 	// Nested config keys (e.g. "server.port") map to PORTKEY_SERVER_PORT instead
 	// of PORTKEY_SERVER.PORT when looking up environment variables.

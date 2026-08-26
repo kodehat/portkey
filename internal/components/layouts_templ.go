@@ -35,7 +35,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-cloak x-data=\"{ darkMode: $persist(false) }\" :class=\"{ 'dark': darkMode === true }\"><!-- === portkey === -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"dark\"><!-- === portkey === -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +64,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/img/apple-touch-icon.png")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 24, Col: 117}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 24, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -77,7 +77,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/img/favicon-32x32.png")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 25, Col: 117}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 25, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -90,7 +90,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/img/favicon-16x16.png")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 26, Col: 117}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 26, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -103,7 +103,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/img/site.webmanifest")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 27, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 27, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -116,20 +116,20 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var6 templ.SafeURL
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/img/favicon.ico")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 28, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 28, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><!-- Theme stuff --><meta name=\"theme-color\" media=\"(prefers-color-scheme: dark)\" content=\"#334155\"><meta name=\"theme-color\" media=\"(prefers-color-scheme: light)\" content=\"#e2e8f0\"><!-- Stylesheets --><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><!-- Theme --><meta name=\"theme-color\" content=\"#0a0a0a\"><!-- Stylesheets --><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(config.Server.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 33, Col: 95}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 32, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -142,7 +142,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.Server.ContextPath + "/static/js/main.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 35, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 34, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -166,7 +166,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 42, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 41, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -179,7 +179,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(config.UI.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 42, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 41, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -189,7 +189,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 44, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 43, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -210,7 +210,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</head><body class=\"bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col\"><!-- Top bar --><div class=\"flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 bg-slate-200/60 dark:bg-slate-950/40\"><div class=\"flex items-center gap-2.5\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</head><body class=\"text-slate-200 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col\"><!-- Top bar --><div class=\"flex items-center justify-between px-5 py-3 border-b border-white/8 bg-black/30 backdrop-blur-md\"><div class=\"flex items-center gap-2.5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,20 +222,20 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			var templ_7745c5c3_Var12 templ.SafeURL
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(config.Server.ContextPath + "/"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 57, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 56, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"flex items-center gap-2.5 no-underline\"><img class=\"w-7 h-7 rounded-full\" src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"flex items-center gap-2.5 no-underline\"><img class=\"w-6 h-6 rounded-full opacity-80\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(config.Server.ContextPath + "/static/img/android-chrome-512x512.png")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 58, Col: 115}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 57, Col: 126}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 			if templ_7745c5c3_Err != nil {
@@ -246,14 +246,14 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 				return templ_7745c5c3_Err
 			}
 			if config.UI.Title != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span class=\"text-sm font-semibold text-slate-700 dark:text-slate-300\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span class=\"text-sm font-medium text-white/70 tracking-wide\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(config.UI.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 60, Col: 96}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 59, Col: 87}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -276,20 +276,20 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 			var templ_7745c5c3_Var15 templ.SafeURL
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(config.Server.ContextPath + "/"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 64, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 63, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"text-sm font-semibold text-slate-700 dark:text-slate-300 no-underline\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"text-sm font-medium text-white/70 tracking-wide no-underline hover:text-white/90 transition-colors\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(config.UI.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 64, Col: 160}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 63, Col: 189}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -300,7 +300,7 @@ func Base(pageTitle string, config config.Config, buildDetails build.BuildDetail
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div><div class=\"flex items-center gap-2\"><button @click=\"darkMode = !darkMode\" type=\"button\" class=\"relative inline-flex shrink-0 h-5 w-9 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:ring-offset-2\" role=\"switch\" :aria-checked=\"darkMode.toString()\"><span class=\"sr-only\">Toggle theme</span> <span class=\"relative inline-block h-4 w-4 transition duration-300 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-4 ring-0\"><span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-300 ease-in opacity-100 dark:opacity-0\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3 w-3 text-slate-600\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\"></path> <path d=\"M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7\"></path></svg></span> <span class=\"absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100\" aria-hidden=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3 w-3 text-slate-300\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\"></path></svg></span></span></button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -349,7 +349,7 @@ func HomeLayout(pageTitle string, config config.Config, buildDetails build.Build
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<nav class=\"flex-1 flex flex-col items-center px-4 max-w-6xl mx-auto w-full\"><div class=\"flex flex-col items-center w-full mt-12 md:mt-24\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<nav class=\"flex-1 flex flex-col items-center px-4 max-w-5xl mx-auto w-full\"><div class=\"flex flex-col items-center w-full mt-14 md:mt-28\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -365,7 +365,7 @@ func HomeLayout(pageTitle string, config config.Config, buildDetails build.Build
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"flex-1 min-h-4\"></div></nav><footer class=\"w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"flex-1 min-h-4\"></div></nav><footer class=\"w-full flex justify-center text-center px-4 pb-3 text-[10px] text-white/25\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -427,26 +427,26 @@ func ContentLayout(pageTitle string, config config.Config, buildDetails build.Bu
 			var templ_7745c5c3_Var21 templ.SafeURL
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(config.Server.ContextPath + "/"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 115, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 94, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-slate-200/50 dark:hover:bg-slate-700/50\" title=\"Back to home\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3\"></path></svg> <span>Back</span></a><h2 class=\"text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-white/8\" title=\"Back to home\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path> <path d=\"M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3\"></path></svg> <span>Back</span></a><h2 class=\"text-lg md:text-xl font-semibold text-white/90\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `layouts.templ`, Line: 122, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/layouts.templ`, Line: 101, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</h2></header><article class=\"bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 p-4 md:p-6 leading-relaxed text-sm text-slate-700 dark:text-slate-300 shadow-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</h2></header><article class=\"bg-white/6 backdrop-blur-md rounded-xl border border-white/10 p-4 md:p-6 leading-relaxed text-sm text-white/75 shadow-xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -454,7 +454,7 @@ func ContentLayout(pageTitle string, config config.Config, buildDetails build.Bu
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</article><div class=\"mt-8 pt-5 border-t border-slate-200/40 dark:border-slate-700/20\"><p class=\"text-xs font-medium tracking-wider uppercase text-slate-500 dark:text-slate-500 mb-3\">Links</p><nav class=\"flex flex-col gap-1.5 w-full opacity-80\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</article><div class=\"mt-8 pt-5 border-t border-white/8\"><p class=\"text-xs font-medium tracking-wider uppercase text-white/30 mb-3\">Links</p><nav class=\"flex flex-col gap-1.5 w-full opacity-80\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -464,7 +464,7 @@ func ContentLayout(pageTitle string, config config.Config, buildDetails build.Bu
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</nav></div></div></div><footer class=\"w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</nav></div></div></div><footer class=\"w-full flex justify-center text-center px-4 pb-3 text-[10px] text-white/25\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

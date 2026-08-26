@@ -8,7 +8,7 @@ import (
 
 templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetails) {
 	<!DOCTYPE html>
-	<html lang="en" x-cloak x-data="{ darkMode: $persist(false) }" :class="{ 'dark': darkMode === true }">
+	<html lang="en" class="dark">
 		<!-- === portkey === -->
 		@templ.Raw(fmt.Sprintf("<!-- build time: %s -->", build.BuildTime))
 		if buildDetails.CommitHash != "" {
@@ -26,9 +26,8 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 			<link rel="icon" type="image/png" sizes="16x16" href={ config.Server.ContextPath + "/static/img/favicon-16x16.png" }/>
 			<link rel="manifest" href={ config.Server.ContextPath + "/static/img/site.webmanifest" }/>
 			<link rel="shortcut icon" href={ config.Server.ContextPath + "/static/img/favicon.ico" }/>
-			<!-- Theme stuff -->
-			<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#334155"/>
-			<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e2e8f0"/>
+			<!-- Theme -->
+			<meta name="theme-color" content="#0a0a0a"/>
 			<!-- Stylesheets -->
 			<link href={ config.Server.ContextPath + "/static/css/main.css?hash=" + buildDetails.CssHash } rel="stylesheet"/>
 			<!-- Deferred JavaScript -->
@@ -49,40 +48,20 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 				@templ.Raw(config.UI.HeaderAddition)
 			}
 		</head>
-		<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col">
+		<body class="text-slate-200 text-sm m-0 p-0 leading-normal min-h-screen flex flex-col">
 			<!-- Top bar -->
-			<div class="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 bg-slate-200/60 dark:bg-slate-950/40">
+			<div class="flex items-center justify-between px-5 py-3 border-b border-white/8 bg-black/30 backdrop-blur-md">
 				<div class="flex items-center gap-2.5">
 					if config.UI.ShowTopIcon {
 						<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="flex items-center gap-2.5 no-underline">
-							<img class="w-7 h-7 rounded-full" src={ config.Server.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
+							<img class="w-6 h-6 rounded-full opacity-80" src={ config.Server.ContextPath + "/static/img/android-chrome-512x512.png" } alt="logo"/>
 							if config.UI.Title != "" {
-								<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{ config.UI.Title }</span>
+								<span class="text-sm font-medium text-white/70 tracking-wide">{ config.UI.Title }</span>
 							}
 						</a>
 					} else if config.UI.Title != "" {
-						<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="text-sm font-semibold text-slate-700 dark:text-slate-300 no-underline">{ config.UI.Title }</a>
+						<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="text-sm font-medium text-white/70 tracking-wide no-underline hover:text-white/90 transition-colors">{ config.UI.Title }</a>
 					}
-				</div>
-				<div class="flex items-center gap-2">
-					<button @click="darkMode = !darkMode" type="button" class="relative inline-flex shrink-0 h-5 w-9 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer bg-slate-300 dark:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:ring-offset-2" role="switch" :aria-checked="darkMode.toString()">
-						<span class="sr-only">Toggle theme</span>
-						<span class="relative inline-block h-4 w-4 transition duration-300 ease-in-out transform translate-x-0 bg-white rounded-full shadow-sm pointer-events-none dark:translate-x-4 ring-0">
-							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-300 ease-in opacity-100 dark:opacity-0" aria-hidden="true">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-600" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-									<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
-									<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
-								</svg>
-							</span>
-							<span class="absolute inset-0 flex items-center justify-center w-full h-full transition-opacity duration-100 ease-out opacity-0 dark:opacity-100" aria-hidden="true">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-300" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-									<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
-								</svg>
-							</span>
-						</span>
-					</button>
 				</div>
 			</div>
 			{ children... }
@@ -92,8 +71,8 @@ templ Base(pageTitle string, config config.Config, buildDetails build.BuildDetai
 
 templ HomeLayout(pageTitle string, config config.Config, buildDetails build.BuildDetails, searchBar templ.Component, results templ.Component) {
 	@Base(pageTitle, config, buildDetails) {
-		<nav class="flex-1 flex flex-col items-center px-4 max-w-6xl mx-auto w-full">
-			<div class="flex flex-col items-center w-full mt-12 md:mt-24">
+		<nav class="flex-1 flex flex-col items-center px-4 max-w-5xl mx-auto w-full">
+			<div class="flex flex-col items-center w-full mt-14 md:mt-28">
 				@searchBar
 			</div>
 			<div class="flex flex-col items-center w-full">
@@ -101,7 +80,7 @@ templ HomeLayout(pageTitle string, config config.Config, buildDetails build.Buil
 			</div>
 			<div class="flex-1 min-h-4"></div>
 		</nav>
-		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
+		<footer class="w-full flex justify-center text-center px-4 pb-3 text-[10px] text-white/25">
 			@templ.Raw(config.UI.Footer)
 		</footer>
 	}
@@ -112,20 +91,20 @@ templ ContentLayout(pageTitle string, config config.Config, buildDetails build.B
 		<div class="flex-1 flex flex-col max-w-2xl mx-auto px-4 w-full">
 			<div class="flex flex-col mt-12 md:mt-24 pb-12">
 				<header class="mb-5">
-					<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" title="Back to home">
+					<a href={ templ.SafeURL(config.Server.ContextPath + "/") } class="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors mb-3 rounded-md px-1.5 py-0.5 -ml-1.5 hover:bg-white/8" title="Back to home">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							<path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"></path>
 						</svg>
 						<span>Back</span>
 					</a>
-					<h2 class="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100">{ pageTitle }</h2>
+					<h2 class="text-lg md:text-xl font-semibold text-white/90">{ pageTitle }</h2>
 				</header>
-				<article class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 p-4 md:p-6 leading-relaxed text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+				<article class="bg-white/6 backdrop-blur-md rounded-xl border border-white/10 p-4 md:p-6 leading-relaxed text-sm text-white/75 shadow-xl">
 					@contents
 				</article>
-				<div class="mt-8 pt-5 border-t border-slate-200/40 dark:border-slate-700/20">
-					<p class="text-xs font-medium tracking-wider uppercase text-slate-500 dark:text-slate-500 mb-3">Links</p>
+				<div class="mt-8 pt-5 border-t border-white/8">
+					<p class="text-xs font-medium tracking-wider uppercase text-white/30 mb-3">Links</p>
 					<nav class="flex flex-col gap-1.5 w-full opacity-80">
 						for _, portal := range config.Portals {
 							@HomePortal(portal)
@@ -134,7 +113,7 @@ templ ContentLayout(pageTitle string, config config.Config, buildDetails build.B
 				</div>
 			</div>
 		</div>
-		<footer class="w-full flex justify-center text-center px-4 pb-2 text-[10px] text-slate-400 dark:text-slate-500">
+		<footer class="w-full flex justify-center text-center px-4 pb-3 text-[10px] text-white/25">
 			@templ.Raw(config.UI.Footer)
 		</footer>
 	}

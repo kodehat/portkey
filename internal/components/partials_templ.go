@@ -35,7 +35,7 @@ func PortalPartial(portals []models.Portal, columns int) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if len(portals) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex justify-center w-full pt-4\"><span class=\"text-sm text-slate-500 dark:text-slate-400\">no results</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex justify-center w-full pt-4\"><span class=\"text-sm text-white/30\">no results</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func PortalPartial(portals []models.Portal, columns int) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var2).String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `partials.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/partials.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -80,7 +80,7 @@ func PortalPartial(portals []models.Portal, columns int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex flex-col w-full space-y-1.5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex flex-col w-full space-y-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -128,7 +128,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 		}
 		ctx = templ.ClearChildren(ctx)
 		if len(groups) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex justify-center w-full pt-4\"><span class=\"text-sm text-slate-500 dark:text-slate-400\">no results</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex justify-center w-full pt-4\"><span class=\"text-sm text-white/30\">no results</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -146,7 +146,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var5).String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `partials.templ`, Line: 1, Col: 0}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/partials.templ`, Line: 1, Col: 0}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {
@@ -163,7 +163,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " <div class=\"flex flex-col gap-2\"><h2 class=\"text-xs font-normal tracking-wide uppercase text-slate-500 dark:text-slate-400 pb-0.5 border-b border-slate-200/40 dark:border-slate-700/20\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " <div class=\"flex flex-col gap-2\"><h2 class=\"text-[10px] font-medium tracking-widest uppercase text-white/30 pb-1 border-b border-white/8\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -171,7 +171,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(group.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `partials.templ`, Line: 51, Col: 20}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/partials.templ`, Line: 51, Col: 20}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {
@@ -183,7 +183,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</h2><div class=\"flex flex-col gap-1.5 w-full\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</h2><div class=\"flex flex-col gap-1 w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -221,7 +221,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " <div class=\"flex flex-col gap-2\"><h2 class=\"text-xs font-normal tracking-wide uppercase text-slate-500 dark:text-slate-400 pb-0.5 border-b border-slate-200/40 dark:border-slate-700/20\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " <div class=\"flex flex-col gap-2\"><h2 class=\"text-[10px] font-medium tracking-widest uppercase text-white/30 pb-1 border-b border-white/8\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -229,7 +229,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(group.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `partials.templ`, Line: 77, Col: 20}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/partials.templ`, Line: 77, Col: 20}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 						if templ_7745c5c3_Err != nil {
@@ -241,7 +241,7 @@ func GroupedPortalPartial(groups []models.PortalGroup, columns int) templ.Compon
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</h2><div class=\"flex flex-col gap-1.5 w-full\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</h2><div class=\"flex flex-col gap-1 w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

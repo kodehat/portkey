@@ -8,7 +8,7 @@ import (
 templ PortalPartial(portals []models.Portal, columns int) {
 	if len(portals) == 0 {
 		<div class="flex justify-center w-full pt-4">
-			<span class="text-sm text-slate-500 dark:text-slate-400">no results</span>
+			<span class="text-sm text-white/30">no results</span>
 		</div>
 	} else if columns > 0 {
 		<div class={ GridClass(columns) }>
@@ -21,7 +21,7 @@ templ PortalPartial(portals []models.Portal, columns int) {
 			}
 		</div>
 	} else {
-		<div class="flex flex-col w-full space-y-1.5">
+		<div class="flex flex-col w-full space-y-1">
 			for _, portal := range portals {
 				if config.C.UI.ShowKeywordsAsTooltips {
 					@HomePortalWithToolTip(portal)
@@ -36,7 +36,7 @@ templ PortalPartial(portals []models.Portal, columns int) {
 templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 	if len(groups) == 0 {
 		<div class="flex justify-center w-full pt-4">
-			<span class="text-sm text-slate-500 dark:text-slate-400">no results</span>
+			<span class="text-sm text-white/30">no results</span>
 		</div>
 	} else {
 		if columns > 0 {
@@ -46,14 +46,14 @@ templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 						continue
 					}
 					<div class="flex flex-col gap-2">
-						<h2 class="text-xs font-normal tracking-wide uppercase text-slate-500 dark:text-slate-400 pb-0.5 border-b border-slate-200/40 dark:border-slate-700/20">
+						<h2 class="text-[10px] font-medium tracking-widest uppercase text-white/30 pb-1 border-b border-white/8">
 							if group.Name != "" {
 								{ group.Name }
 							} else {
 								ungrouped
 							}
 						</h2>
-						<div class="flex flex-col gap-1.5 w-full">
+						<div class="flex flex-col gap-1 w-full">
 							for _, portal := range group.Portals {
 								if config.C.UI.ShowKeywordsAsTooltips {
 									@HomePortalWithToolTip(portal)
@@ -72,14 +72,14 @@ templ GroupedPortalPartial(groups []models.PortalGroup, columns int) {
 						continue
 					}
 					<div class="flex flex-col gap-2">
-						<h2 class="text-xs font-normal tracking-wide uppercase text-slate-500 dark:text-slate-400 pb-0.5 border-b border-slate-200/40 dark:border-slate-700/20">
+						<h2 class="text-[10px] font-medium tracking-widest uppercase text-white/30 pb-1 border-b border-white/8">
 							if group.Name != "" {
 								{ group.Name }
 							} else {
 								ungrouped
 							}
 						</h2>
-						<div class="flex flex-col gap-1.5 w-full">
+						<div class="flex flex-col gap-1 w-full">
 							for _, portal := range group.Portals {
 								if config.C.UI.ShowKeywordsAsTooltips {
 									@HomePortalWithToolTip(portal)

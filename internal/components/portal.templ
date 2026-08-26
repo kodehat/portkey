@@ -8,7 +8,7 @@ templ HomePortalWithToolTip(portal models.Portal) {
 	} else {
 		<div class="relative group">
 			@HomePortal(portal)
-			<div class="hidden group-hover:flex absolute z-10 top-full left-0 mt-1 flex-wrap gap-1.5 px-2 py-1.5 rounded-md bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700">
+			<div class="hidden group-hover:flex absolute z-10 top-full left-0 mt-1 flex-wrap gap-1.5 px-2 py-1.5 rounded-lg bg-black/70 backdrop-blur-md shadow-xl border border-white/10">
 				for _, keyword := range portal.Keywords {
 					@tooltip(keyword)
 				}
@@ -18,7 +18,7 @@ templ HomePortalWithToolTip(portal models.Portal) {
 }
 
 templ tooltip(keyword string) {
-	<span class="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 text-xs font-normal">
+	<span class="inline-flex items-center rounded-md bg-white/8 text-white/50 px-2 py-0.5 text-xs font-normal">
 		{ keyword }
 	</span>
 }
@@ -34,25 +34,25 @@ templ HomePortal(portal models.Portal) {
 		} else {
 			href={ templ.SafeURL(portal.Link) }
 		}
-		class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-transparent dark:border-transparent bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:focus-visible:ring-sky-400"
+		class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent bg-white/5 hover:bg-white/10 hover:border-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
 	>
-		<span class="shrink-0 w-5 h-5 flex items-center justify-center">
+		<span class="shrink-0 w-4 h-4 flex items-center justify-center opacity-70">
 			if portal.Icon != "" && isIconImage(portal.Icon) {
-				<img src={ templ.SafeURL(portal.Icon) } alt="" class="w-5 h-5 rounded"/>
+				<img src={ templ.SafeURL(portal.Icon) } alt="" class="w-4 h-4 rounded"/>
 			} else if portal.Icon != "" {
 				<span class="text-sm">{ portal.Icon }</span>
 			} else if portal.IsExternal() {
 				<img
 					src={ templ.SafeURL(faviconURL(portal.Link)) }
 					alt=""
-					class="w-5 h-5 rounded"
+					class="w-4 h-4 rounded"
 					onerror="this.style.display='none';var fb=this.parentNode.querySelector('.fav-fb');if(fb)fb.classList.remove('hidden');"
 				/>
-				<svg class="fav-fb hidden w-4 h-4 text-slate-400 dark:text-slate-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+				<svg class="fav-fb hidden w-3.5 h-3.5 text-white/30" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/>
 				</svg>
 			} else {
-				<svg class="w-4 h-4 text-slate-400 dark:text-slate-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+				<svg class="w-3.5 h-3.5 text-white/30" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 					<path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
 					<path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
@@ -62,18 +62,12 @@ templ HomePortal(portal models.Portal) {
 				</svg>
 			}
 		</span>
-		<span class="flex-1 min-w-0">
+		<span class="flex-1 min-w-0 text-white/80 font-normal">
 			<span class="truncate block">{ portal.Title }</span>
 		</span>
 		if portal.IsExternal() {
-			<span class="shrink-0 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-300 truncate max-w-[120px] text-right">
-				<svg class="shrink-0 w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-					<path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path>
-					<path d="M11 13l9 -9"></path>
-					<path d="M15 4h5v5"></path>
-				</svg>
-				<span class="truncate">{ domainFromURL(portal.Link) }</span>
+			<span class="shrink-0 text-xs text-white/25 truncate max-w-[110px] text-right">
+				{ domainFromURL(portal.Link) }
 			</span>
 		}
 	</a>
@@ -98,7 +92,7 @@ templ FooterPortal(portal models.Portal) {
 			} else {
 				href={ templ.SafeURL(portal.Link) }
 			}
-			class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 rounded-sm"
+			class="text-white/30 hover:text-white/60 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded-sm"
 		>{ portal.Title }</a>
 	</span>
 }

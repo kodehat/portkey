@@ -23,5 +23,9 @@
     "husky": "^9.1.7",
     "tailwindcss": "^4.3.3",
     "@tailwindcss/cli": "^4.3.3"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "esbuild@0.28.2": true
   }
 }

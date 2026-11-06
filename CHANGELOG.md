@@ -5,6 +5,119 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] - 2026-11-06
+
+### Changed
+
+- Allow private and loopback IPs in direct mode
+- Downgrade github.com/a-h/parse and allow updated scripts
+- Merge pull request #399 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.4.1
+- Bump SonarSource/sonarqube-scan-action from 8.4.0 to 8.4.1
+- Merge pull request #400 from kodehat/dependabot/npm_and_yarn/tailwindcss/cli-4.3.4
+- Bump @tailwindcss/cli from 4.3.3 to 4.3.4
+- Merge pull request #398 from kodehat/dependabot/npm_and_yarn/htmx.org-4.0.1
+- Bump htmx.org from 4.0.0 to 4.0.1
+- Merge pull request #396 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.4.0
+- Bump SonarSource/sonarqube-scan-action from 8.3.0 to 8.4.0
+- Update tools and dependencies
+- Bump github.com/a-h/templ from 0.3.1070 to 0.3.1100
+- Merge pull request #392 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.5
+- Bump alpinejs from 3.17.4 to 3.17.5
+- Merge pull request #394 from kodehat/dependabot/github_actions/docker/login-action-4.7.0
+- Bump docker/login-action from 4.6.0 to 4.7.0
+- Merge pull request #390 from kodehat/dependabot/docker/alpine-3.24.3
+- Bump alpine from 3.24.2 to 3.24.3
+- Merge pull request #391 from kodehat/dependabot/docker/node-26.12.1-alpine3.23
+- Bump node from 26.12.0-alpine3.23 to 26.12.1-alpine3.23
+- Merge pull request #393 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.5
+- Bump @alpinejs/persist from 3.17.4 to 3.17.5
+- Merge pull request #389 from kodehat/dependabot/docker/node-26.12.0-alpine3.23
+- Bump node from 26.11.1-alpine3.23 to 26.12.0-alpine3.23
+- Merge pull request #388 from kodehat/dependabot/docker/node-26.11.1-alpine3.23
+- Bump node from 26.10.0-alpine3.23 to 26.11.1-alpine3.23
+- Merge pull request #387 from kodehat/dependabot/github_actions/actions/setup-node-7.1.0
+- Bump actions/setup-node from 7.0.0 to 7.1.0
+- Merge pull request #386 from kodehat/dependabot/go_modules/github.com/prometheus/client_golang-1.25.0
+- Bump github.com/prometheus/client_golang
+- Merge pull request #385 from kodehat/dependabot/npm_and_yarn/source-map-js-1.2.2
+- Bump source-map-js from 1.2.1 to 1.2.2
+- Merge pull request #384 from kodehat/dependabot/npm_and_yarn/multi-ccb330a867
+- Bump shell-quote and concurrently
+- Merge pull request #383 from kodehat/dependabot/go_modules/github.com/a-h/templ-0.3.1070
+- Bump github.com/a-h/templ from 0.3.1020 to 0.3.1070
+- Merge pull request #382 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.3.0
+- Bump SonarSource/sonarqube-scan-action from 8.2.2 to 8.3.0
+- Merge pull request #381 from kodehat/dependabot/docker/node-26.10.0-alpine3.23
+- Bump node from 26.9.0-alpine3.23 to 26.10.0-alpine3.23
+- Merge pull request #380 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.4
+- Bump @alpinejs/persist from 3.17.3 to 3.17.4
+- Merge pull request #379 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.4
+- Bump alpinejs from 3.17.3 to 3.17.4
+- Merge pull request #378 from kodehat/dependabot/npm_and_yarn/htmx.org-4.0.0
+- Bump htmx.org from 2.0.10 to 4.0.0
+- Merge pull request #377 from kodehat/dependabot/docker/alpine-3.24.2
+- Bump alpine from 3.24.1 to 3.24.2
+- Merge pull request #376 from kodehat/dependabot/github_actions/orhun/git-cliff-action-4.9.1
+- Bump orhun/git-cliff-action from 4.9.0 to 4.9.1
+- Merge pull request #375 from kodehat/dependabot/github_actions/SonarSource/sonarqube-scan-action-8.2.2
+- Bump SonarSource/sonarqube-scan-action from 8.2.1 to 8.2.2
+- Merge pull request #372 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.3
+- Bump alpinejs from 3.17.2 to 3.17.3
+- Merge pull request #374 from kodehat/dependabot/github_actions/docker/setup-qemu-action-4.4.0
+- Bump docker/setup-qemu-action from 4.3.0 to 4.4.0
+- Merge pull request #373 from kodehat/dependabot/github_actions/docker/build-push-action-7.4.0
+- Bump docker/build-push-action from 7.3.0 to 7.4.0
+- Merge pull request #371 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.3
+- Bump @alpinejs/persist from 3.17.2 to 3.17.3
+- Merge pull request #370 from kodehat/dependabot/github_actions/docker/setup-buildx-action-4.4.0
+- Bump docker/setup-buildx-action from 4.3.0 to 4.4.0
+- Merge pull request #369 from kodehat/dependabot/docker/node-26.9.0-alpine3.23
+- Bump node from 26.8.2-alpine3.23 to 26.9.0-alpine3.23
+- Merge pull request #368 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.2
+- Bump alpinejs from 3.17.1 to 3.17.2
+- Merge pull request #367 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.2
+- Bump @alpinejs/persist from 3.17.1 to 3.17.2
+- Merge pull request #366 from kodehat/dependabot/docker/node-26.8.2-alpine3.23
+- Bump node from 26.8.1-alpine3.23 to 26.8.2-alpine3.23
+- Merge pull request #365 from kodehat/dependabot/github_actions/orhun/git-cliff-action-4.9.0
+- Bump orhun/git-cliff-action from 4.8.0 to 4.9.0
+- Merge pull request #364 from kodehat/dependabot/github_actions/docker/setup-qemu-action-4.3.0
+- Bump docker/setup-qemu-action from 4.2.0 to 4.3.0
+- Merge pull request #363 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.1
+- Bump @alpinejs/persist from 3.17.0 to 3.17.1
+- Merge pull request #362 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.1
+- Bump alpinejs from 3.17.0 to 3.17.1
+- Merge pull request #361 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.17.0
+- Bump @alpinejs/persist from 3.16.3 to 3.17.0
+- Merge pull request #360 from kodehat/dependabot/npm_and_yarn/alpinejs-3.17.0
+- Bump alpinejs from 3.16.3 to 3.17.0
+- Merge pull request #359 from kodehat/dependabot/docker/node-26.8.1-alpine3.23
+- Bump node from 26.7.0-alpine3.23 to 26.8.1-alpine3.23
+- Merge pull request #358 from kodehat/dependabot/npm_and_yarn/alpinejs-3.16.3
+- Bump alpinejs from 3.16.2 to 3.16.3
+- Merge pull request #357 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.16.3
+- Bump @alpinejs/persist from 3.16.2 to 3.16.3
+- Merge pull request #355 from kodehat/dependabot/docker/golang-1.27-alpine3.23
+- Bump golang from 1.27rc2-alpine3.23 to 1.27-alpine3.23
+- Merge pull request #353 from kodehat/dependabot/npm_and_yarn/alpinejs-3.16.2
+- Bump alpinejs from 3.16.1 to 3.16.2
+- Merge pull request #354 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.16.2
+- Bump @alpinejs/persist from 3.16.1 to 3.16.2
+- Merge pull request #352 from kodehat/dependabot/github_actions/docker/setup-buildx-action-4.3.0
+- Bump docker/setup-buildx-action from 4.2.0 to 4.3.0
+- Merge pull request #351 from kodehat/dependabot/npm_and_yarn/concurrently-10.0.5
+- Bump concurrently from 10.0.4 to 10.0.5
+- Merge pull request #349 from kodehat/dependabot/npm_and_yarn/alpinejs/persist-3.16.1
+- Bump @alpinejs/persist from 3.15.12 to 3.16.1
+- Merge pull request #348 from kodehat/dependabot/npm_and_yarn/alpinejs-3.16.1
+- Bump alpinejs from 3.15.12 to 3.16.1
+- Merge pull request #347 from kodehat/dependabot/docker/golang-1.27rc2-alpine3.23
+- Bump golang from 1.26.5-alpine3.23 to 1.27rc2-alpine3.23
+- Merge pull request #346 from kodehat/dependabot/npm_and_yarn/esbuild-0.28.2
+- Bump esbuild from 0.28.1 to 0.28.2
+- Merge pull request #345 from kodehat/dependabot/docker/node-26.7.0-alpine3.23
+- Bump node from 26.5.1-alpine3.23 to 26.7.0-alpine3.23
+
 ## [4.0.0] - 2026-08-09
 
 ### Added
@@ -870,6 +983,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove generated files
 - Remove generated files
 
+[4.0.1]: https://github.com/kodehat/portkey/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/kodehat/portkey/compare/v3.0.1..v4.0.0
 [3.0.1]: https://github.com/kodehat/portkey/compare/v3.0.0..v3.0.1
 [3.0.0]: https://github.com/kodehat/portkey/compare/v2.0.2..v3.0.0

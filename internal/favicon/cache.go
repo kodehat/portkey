@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -243,6 +244,7 @@ func (c *Cache) fetchOptions() []favifetch.Option {
 		favifetch.WithFallbackAPI(true),
 		favifetch.WithTimeout(5 * time.Second),
 		favifetch.WithHTTPClient(c.client),
+		favifetch.WithBlockPrivateIPs(false),
 	}
 	// Allow overriding the self-hostable favicon service used as the
 	// last-resort fallback. favifetch expects a bare host (HTTPS is implicit);
@@ -300,14 +302,28 @@ func (c *Cache) fetch(ctx context.Context, domain string) (fetchedIcon, error) {
 	return c.fetchDirect(ctx, domain)
 }
 
-// fetchDirect discovers and fetches the favicon via the favifetch library,
-// which parses the target website's HTML, manifest, and common fallback paths.
+// fetchDirect discovers and fetches a favicon using favifetch. It first tries
+// HTTPS; if that fails for a literal private, loopback, or link-local IP
+// address, it retries over HTTP. The remote fallback API is disabled.
 func (c *Cache) fetchDirect(ctx context.Context, domain string) (fetchedIcon, error) {
-	result, err := favifetch.Fetch(ctx, HttpsPrefix+domain, c.fetchOptions()...)
+	opts := append(c.fetchOptions(), favifetch.WithFallbackAPI(false))
+
+	result, err := favifetch.Fetch(ctx, "https://"+domain, opts...)
+	if err != nil {
+		ip := net.ParseIP(domain)
+		if ip != nil && (ip.IsPrivate() || ip.IsLoopback() || ip.IsLinkLocalUnicast()) {
+			result, err = favifetch.Fetch(ctx, "http://"+domain, opts...) //NOSONAR
+		}
+	}
 	if err != nil {
 		return fetchedIcon{}, err
 	}
-	return fetchedIcon{data: result.Data, format: result.Format, source: result.Source}, nil
+
+	return fetchedIcon{
+		data:   result.Data,
+		format: result.Format,
+		source: result.Source,
+	}, nil
 }
 
 // fetchProxied relays the favicon request to a Vemetric-compatible favicon

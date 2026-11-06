@@ -25,7 +25,7 @@
     "@tailwindcss/cli": "^4.3.4"
   },
   "allowScripts": {
-    "@parcel/watcher@2.5.1": true,
-    "esbuild@0.28.2": true
+    "esbuild@0.28.2": true,
+    "@parcel/watcher@2.6.0": true
   }
 }

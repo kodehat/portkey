@@ -8,8 +8,8 @@ github.com/JohannesKaufmann/dom v0.3.1 h1:J16l9JAHWgkFPR3VIPbQ1gvS0cWab6laK1q7PF
 github.com/JohannesKaufmann/dom v0.3.1/go.mod h1:BZPkf8ZeYrBgABjwJn9iiKt8aiCtkxpHkevms+Yp2DE=
 github.com/JohannesKaufmann/html-to-markdown/v2 v2.5.2 h1:XFJZFWESIWlUEHHjzBuv8RvrtCWnSGlimEX17ysSDb8=
 github.com/JohannesKaufmann/html-to-markdown/v2 v2.5.2/go.mod h1:BHWO8lJzttJLqwuV8Rb1B3OG2OSzLbssZDI1FRg2eAA=
-github.com/a-h/parse v0.0.0-20261027111828-db2689052003 h1:nCPGPS64FA7tcGOl8qJjoHtjhQVVFEiezG5J4jG2+nI=
-github.com/a-h/parse v0.0.0-20261027111828-db2689052003/go.mod h1:X9OHJ1IjgakwZoDSoHYhdtKKD0zXZ2agpoIztPAA95w=
+github.com/a-h/parse v0.0.0-20250122154542-74294addb73e h1:HjVbSQHy+dnlS6C3XajZ69NYAb5jbGNfHanvm1+iYlo=
+github.com/a-h/parse v0.0.0-20250122154542-74294addb73e/go.mod h1:3mnrkvGpurZ4ZrTDbYU84xhwXW2TjTKShSwjRi2ihfQ=
 github.com/a-h/templ v0.3.1100 h1:lQhjVs1IL+M6QWUvojaFBd21+kzwATppSyWkWB9oHoM=
 github.com/a-h/templ v0.3.1100/go.mod h1:j1WAOR7749mlo1AxFLQ7qbDFW5VwyoqszRTlKqEHN9M=
 github.com/adrg/strutil v0.3.1 h1:OLvSS7CSJO8lBii4YmBt8jiK9QOtB9CzCzwl4Ic/Fz4=

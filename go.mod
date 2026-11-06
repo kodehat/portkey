@@ -15,7 +15,7 @@ require (
 require (
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/HugoSmits86/nativewebp v1.3.0 // indirect
-	github.com/a-h/parse v0.0.0-20261027111828-db2689052003 // indirect
+	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/air-verse/air v1.67.4 // indirect
 	github.com/andybalholm/brotli v1.2.7 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
